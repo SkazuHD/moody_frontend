@@ -25,7 +25,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
               //Navigator.pushNamed(context, '/record');
                 break;
               case 'entries':
-              //Navigator.pushNamed(context, '/dashboard');
+              Navigator.pushNamed(context, '/dashboard');
                 break;
               case 'dashboard':
               //Navigator.pushNamed(context, '/entries');
