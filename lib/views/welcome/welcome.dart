@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moody_frontend/views/dashboard/dashboard.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
@@ -17,7 +18,7 @@ class Welcome extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     //Replace with route to Home when done
-                    MaterialPageRoute(builder: (context) => const Welcome()),
+                    MaterialPageRoute(builder: (context) => const Dashboard()),
                   );
                 },
                 child: Text("Get Started"),
