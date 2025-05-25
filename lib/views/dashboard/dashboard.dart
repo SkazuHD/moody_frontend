@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../components/filterList.dart';
+import '../recordList/recordList.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -17,7 +17,7 @@ class Dashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   //Replace with route to Home when done
-                  MaterialPageRoute(builder: (context) => const FilterList()),
+                  MaterialPageRoute(builder: (context) => const RecordList()),
                 );
               },
               child: Text("RecordList"),
