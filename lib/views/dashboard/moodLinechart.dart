@@ -135,7 +135,7 @@ class _MoodLineChartState extends State<MoodLineChart> {
       minX: -0,
       maxX: plotPoints.length.toDouble() - 1,
       minY: 0,
-      maxY: 6,
+      maxY: 8,
       lineBarsData: [
         LineChartBarData(
           spots: plotPoints,
