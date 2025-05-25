@@ -3,24 +3,20 @@ import 'package:flutter/material.dart';
 import '../data/models/record.dart';
 
 class FilterList extends StatefulWidget {
-  const FilterList({super.key});
+  final List<Recording> recordings;
+  final List<String> categories;
+
+  const FilterList({
+    super.key,
+    required this.recordings,
+    required this.categories,
+  });
 
   @override
   State<FilterList> createState() => _FilterListState();
 }
 
 class _FilterListState extends State<FilterList> {
-  final List<String> categories = [
-    "Happy",
-    "Sad",
-    "Angry",
-    "Surprised",
-    "Neutral",
-    "Fearful",
-    "Disgusted",
-    "Calm",
-  ];
-
   List<String> selectedCategories = [];
 
   @override
@@ -39,7 +35,7 @@ class _FilterListState extends State<FilterList> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children:
-                  categories
+                  widget.categories
                       .map(
                         (category) => Padding(
                           padding: const EdgeInsets.all(8.0),

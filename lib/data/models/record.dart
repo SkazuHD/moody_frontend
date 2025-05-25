@@ -61,4 +61,12 @@ List<Recording> recordings = [
     transcription: 'Yet another sample transcription.',
     mood: 'Surprised',
   ),
+  Recording(
+    id: 5,
+    filePath: 'assets/audio/recording5.mp3',
+    duration: 35,
+    createdAt: DateTime.now(),
+    transcription: 'Final sample transcription.',
+    mood: 'Neutral',
+  ),
 ];

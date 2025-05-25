@@ -28,6 +28,10 @@ class RecordsDB {
       },
       version: 1,
     );
+    recordings;
+    for (var record in recordings) {
+      await insertRecord(record);
+    }
   }
 
   Recording mapToRecord(Map<String, dynamic> map) {
