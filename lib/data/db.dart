@@ -5,12 +5,20 @@ import 'package:sqflite/sqflite.dart';
 
 List<Recording> recordings = [
   Recording(
+    id: 0,
+    filePath: 'assets/audio/recording1.mp3',
+    duration: 30,
+    createdAt: DateTime.now().subtract(Duration(days: 0)),
+    transcription: 'This is a sample transcription.',
+    mood: 'calm',
+  ),
+  Recording(
     id: 1,
     filePath: 'assets/audio/recording1.mp3',
     duration: 30,
     createdAt: DateTime.now().subtract(Duration(days: 1)),
     transcription: 'This is a sample transcription.',
-    mood: 'Happy',
+    mood: 'happy',
   ),
   Recording(
     id: 2,
@@ -18,7 +26,7 @@ List<Recording> recordings = [
     duration: 12,
     createdAt: DateTime.now().subtract(Duration(days: 2)),
     transcription: 'Another sample transcription.',
-    mood: 'Sad',
+    mood: 'sad',
   ),
   // Add more recordings as needed
   Recording(
@@ -27,7 +35,7 @@ List<Recording> recordings = [
     duration: 45,
     createdAt: DateTime.now().subtract(Duration(days: 3)),
     transcription: 'This is another sample transcription.',
-    mood: 'Angry',
+    mood: 'angry',
   ),
   Recording(
     id: 4,
@@ -35,7 +43,7 @@ List<Recording> recordings = [
     duration: 20,
     createdAt: DateTime.now().subtract(Duration(days: 4)),
     transcription: 'Yet another sample transcription.',
-    mood: 'Surprised',
+    mood: 'fear',
   ),
   Recording(
     id: 5,
@@ -43,7 +51,31 @@ List<Recording> recordings = [
     duration: 35,
     createdAt: DateTime.now().subtract(Duration(days: 5)),
     transcription: 'Final sample transcription.',
-    mood: 'Neutral',
+    mood: 'calm',
+  ),
+  Recording(
+    id: 6,
+    filePath: 'assets/audio/recording5.mp3',
+    duration: 35,
+    createdAt: DateTime.now().subtract(Duration(days: 6)),
+    transcription: 'Final sample transcription.',
+    mood: 'angry',
+  ),
+  Recording(
+    id: 7,
+    filePath: 'assets/audio/recording5.mp3',
+    duration: 35,
+    createdAt: DateTime.now().subtract(Duration(days: 9)),
+    transcription: 'Final sample transcription.',
+    mood: 'angry',
+  ),
+  Recording(
+    id: 8,
+    filePath: 'assets/audio/recording5.mp3',
+    duration: 35,
+    createdAt: DateTime.now().subtract(Duration(days: 10)),
+    transcription: 'Final sample transcription.',
+    mood: 'sad',
   ),
 ];
 

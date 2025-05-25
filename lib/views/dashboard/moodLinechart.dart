@@ -1,11 +1,14 @@
+import 'dart:developer';
+
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moody_frontend/data/constants/emotions.dart';
 
 class MoodLineChart extends StatefulWidget {
   final List<FlSpot> spots;
 
-  const MoodLineChart({super.key, required this.spots});
+  MoodLineChart({super.key, required this.spots});
 
   @override
   State<MoodLineChart> createState() => _MoodLineChartState();
@@ -48,9 +51,12 @@ class _MoodLineChartState extends State<MoodLineChart> {
       fontSize: 12,
       color: Colors.black,
     );
+    if (value < 0 || value >= widget.spots.length) {
+      return Container();
+    }
 
     final text = Text(
-      widget.spots.elementAt(value.toInt()).x.toString(),
+      widget.spots.elementAt(value.toInt()).x.toInt().toString(),
       style: style,
     );
     return SideTitleWidget(meta: meta, child: text);
@@ -59,26 +65,14 @@ class _MoodLineChartState extends State<MoodLineChart> {
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 15);
     String text;
-    Emotion emotion;
-    switch (value.toInt()) {
-      case 1:
-        emotion = Emotion.angry;
-        break;
-      case 2:
-        emotion = Emotion.fear;
-        break;
-      case 3:
-        emotion = Emotion.sad;
-        break;
-      case 4:
-        emotion = Emotion.happy;
-        break;
-      case 5:
-        emotion = Emotion.calm;
-        break;
-      default:
-        return Container();
+    Emotion? emotion = Emotion.values.cast<Emotion?>().firstWhere(
+      (element) => element!.value.toInt() == value.toInt(),
+      orElse: () => null,
+    );
+    if (emotion == null) {
+      return Container();
     }
+
     text = emotion.emoji;
 
     return Text(text, style: style, textAlign: TextAlign.left);
@@ -94,6 +88,10 @@ class _MoodLineChartState extends State<MoodLineChart> {
             spot.y,
           );
         }).toList();
+
+    if (kDebugMode) {
+      log("Plot Points: $plotPoints");
+    }
 
     return LineChartData(
       gridData: FlGridData(
@@ -134,7 +132,7 @@ class _MoodLineChartState extends State<MoodLineChart> {
         show: false,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      minX: 0,
+      minX: -0,
       maxX: plotPoints.length.toDouble() - 1,
       minY: 0,
       maxY: 6,

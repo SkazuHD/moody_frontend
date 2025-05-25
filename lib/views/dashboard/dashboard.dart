@@ -1,4 +1,4 @@
-import 'dart:developer' as dev;
+import 'dart:developer';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
@@ -19,14 +19,61 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  List<Recording> records = List.empty();
+  final _records = ValueNotifier<List<Recording>>([]);
+  final _spots = ValueNotifier<List<FlSpot>>([]);
+  final _sections = ValueNotifier<List<PieChartSection>>([]);
+  int _currentRangeOffset = 7;
 
-  int dateSubtract = 7;
+  @override
+  void initState() {
+    super.initState();
+    _fetchAndUpdateRecords();
+    _records.addListener(() {
+      _spots.value =
+          _records.value.map((record) {
+            return FlSpot(
+              record.createdAt.day.toDouble(),
+              record.mood != null
+                  ? Emotion.values
+                      .firstWhere(
+                        (e) =>
+                            e.label.toLowerCase() == record.mood!.toLowerCase(),
+                      )
+                      .value
+                  : 0.0,
+            );
+          }).toList();
+      _spots.value.sort((a, b) => a.x.compareTo(b.x));
+      if (kDebugMode) {
+        log('Updated spots: ${_spots.value} spots', name: 'Dashboard');
+      }
+      _sections.value.clear();
+      for (var emotion in Emotion.values) {
+        double total =
+            _records.value
+                .where(
+                  (record) =>
+                      record.mood != null &&
+                      record.mood!.toLowerCase() == emotion.label.toLowerCase(),
+                )
+                .length
+                .toDouble();
+        _sections.value.add(
+          PieChartSection(
+            color: emotion.color,
+            value: total,
+            title:
+                '${(total / _records.value.length * 100).toStringAsFixed(1)}%',
+          ),
+        );
+      }
+    });
+  }
 
-  DateTimeRange getDaterange() {
+  DateTimeRange getDateRange() {
     DateTimeRange dateRange = DateTimeRange(
-      start: DateTime.now().subtract(Duration(days: dateSubtract)),
-      end: DateTime.now().subtract(Duration(days: dateSubtract - 7)),
+      start: DateTime.now().subtract(Duration(days: _currentRangeOffset)),
+      end: DateTime.now().subtract(Duration(days: _currentRangeOffset - 7)),
     );
 
     return dateRange;
@@ -34,51 +81,25 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> _fetchAndUpdateRecords() async {
     RecordsDB db = await RecordsDB.getInstance();
-    DateTimeRange currentRange = getDaterange();
-    List<Recording> fetchedRecords = await db.getRecordsByDateRange(
-      currentRange.start,
-      currentRange.end,
-    );
-
-    if (kDebugMode) {
-      dev.log(
-        'Fetched ${fetchedRecords.length} records from ${currentRange.start} to ${currentRange.end}',
-        name: 'Dashboard',
-      );
-    }
-    setState(() {
-      records = fetchedRecords;
-    });
+    DateTimeRange currentRange = getDateRange();
+    db
+        .getRecordsByDateRange(currentRange.start, currentRange.end)
+        .then(
+          (records) => setState(() {
+            if (kDebugMode) {
+              log(
+                'Fetched ${records.length} records from ${currentRange.start} to ${currentRange.end}',
+                name: 'Dashboard',
+              );
+            }
+            _records.value = records;
+          }),
+        );
   }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchAndUpdateRecords();
-  }
-
-  // Example spots data
-  final List<FlSpot> _sampleSpots = [
-    FlSpot(8, Emotion.fear.value),
-    FlSpot(13, Emotion.angry.value),
-    FlSpot(15, Emotion.happy.value),
-    FlSpot(20, Emotion.fear.value),
-    FlSpot(22, Emotion.sad.value),
-    FlSpot(23, Emotion.calm.value),
-    FlSpot(25, Emotion.angry.value),
-  ];
-
-  final List<PieChartSection> _sampleSections = [
-    PieChartSection(color: Emotion.happy.color, value: 30, title: '30%'),
-    PieChartSection(color: Emotion.sad.color, value: 20, title: '20%'),
-    PieChartSection(color: Emotion.calm.color, value: 25, title: '25%'),
-    PieChartSection(color: Emotion.fear.color, value: 15, title: '15%'),
-    PieChartSection(color: Emotion.angry.color, value: 10, title: '10%'),
-  ];
 
   @override
   Widget build(BuildContext context) {
-    DateTimeRange currentRange = getDaterange();
+    DateTimeRange currentRange = getDateRange();
     String formattedDateRange =
         "${DateFormat('dd.MM').format(currentRange.start)} - ${DateFormat('dd.MM.yyyy').format(currentRange.end)}";
 
@@ -112,7 +133,7 @@ class _DashboardState extends State<Dashboard> {
                           icon: Icon(Icons.arrow_back),
                           onPressed: () {
                             setState(() {
-                              dateSubtract += 7;
+                              _currentRangeOffset += 7;
                             });
                             _fetchAndUpdateRecords(); // Fetch new records
                           },
@@ -125,8 +146,8 @@ class _DashboardState extends State<Dashboard> {
                           icon: Icon(Icons.arrow_forward),
                           onPressed: () {
                             setState(() {
-                              if (dateSubtract > 7) {
-                                dateSubtract -= 7;
+                              if (_currentRangeOffset > 7) {
+                                _currentRangeOffset -= 7;
                               }
                             });
                             _fetchAndUpdateRecords(); // Fetch new records
@@ -134,7 +155,7 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ],
                     ),
-                    MoodLineChart(spots: _sampleSpots),
+                    MoodLineChart(spots: _spots.value),
                     Text(
                       "Mood distribution",
                       style: TextStyle(
@@ -143,7 +164,7 @@ class _DashboardState extends State<Dashboard> {
                         color: Colors.black,
                       ),
                     ),
-                    MoodPieChart(sectionsData: _sampleSections),
+                    MoodPieChart(sectionsData: _sections.value),
                   ],
                 ),
               ),
