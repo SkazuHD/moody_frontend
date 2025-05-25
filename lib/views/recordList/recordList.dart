@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../components/filterList.dart';
+import 'package:moody_frontend/components/filterList.dart';
 
 class RecordList extends StatelessWidget {
   const RecordList({super.key});

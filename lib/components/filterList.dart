@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../data/models/record.dart';
+
 class FilterList extends StatefulWidget {
   const FilterList({super.key});
 
@@ -23,6 +25,11 @@ class _FilterListState extends State<FilterList> {
 
   @override
   Widget build(BuildContext context) {
+    final filterRecordings =
+        recordings.where((recording) {
+          return selectedCategories.isEmpty ||
+              selectedCategories.contains(recording.mood);
+        }).toList();
     return Column(
       children: [
         Container(
@@ -37,8 +44,17 @@ class _FilterListState extends State<FilterList> {
                         (category) => Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: FilterChip(
+                            selected: selectedCategories.contains(category),
                             label: Text(category),
-                            onSelected: (selected) {},
+                            onSelected: (bool selected) {
+                              setState(() {
+                                if (selected) {
+                                  selectedCategories.add(category);
+                                } else {
+                                  selectedCategories.remove(category);
+                                }
+                              });
+                            },
                           ),
                         ),
                       )
@@ -48,8 +64,9 @@ class _FilterListState extends State<FilterList> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: 10,
+            itemCount: filterRecordings.length,
             itemBuilder: (context, index) {
+              final recording = filterRecordings[index];
               return Card(
                 elevation: 8,
                 margin: const EdgeInsets.all(8),
@@ -61,14 +78,14 @@ class _FilterListState extends State<FilterList> {
                       vertical: 10,
                     ),
                     title: Text(
-                      "Example name",
+                      recording.transcription as String,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     subtitle: Text(
-                      "Example subtitle",
+                      recording.mood as String,
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
