@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       //Replace with route to Home when done
-      home: _showWelcome ? const Welcome() : const Home(),
+      home: _showWelcome ? const Welcome() :  Dashboard(),
     );
   }
 }

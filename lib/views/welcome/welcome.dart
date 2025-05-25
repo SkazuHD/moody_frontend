@@ -18,7 +18,7 @@ class Welcome extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     //Replace with route to Home when done
-                    MaterialPageRoute(builder: (context) => const Dashboard()),
+                    MaterialPageRoute(builder: (context) => Dashboard()),
                   );
                 },
                 child: Text("Get Started"),
