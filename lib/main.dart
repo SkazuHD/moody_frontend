@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moody_frontend/views/dashboard/dashboard.dart';
+import 'package:moody_frontend/views/home/home.dart';
 import 'package:moody_frontend/views/welcome/welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -79,7 +80,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       //Replace with route to Home when done
-      home: _showWelcome ? const Welcome() : const Dashboard(),
+      home: _showWelcome ? const Welcome() : const Home(),
     );
   }
 }
