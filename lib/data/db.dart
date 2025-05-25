@@ -74,6 +74,22 @@ class RecordsDB {
     return null;
   }
 
+  Future<List<Recording>> getRecordsByDateRange(
+    DateTime start,
+    DateTime end,
+  ) async {
+    if (db == null) return [];
+    final List<Map<String, dynamic>> maps = await db!.query(
+      tableName,
+      where: 'createdAt BETWEEN ? AND ?',
+      whereArgs: [start.toIso8601String(), end.toIso8601String()],
+    );
+
+    return List.generate(maps.length, (i) {
+      return mapToRecord(maps[i]);
+    });
+  }
+
   Future<List<Recording>> getRecords() async {
     if (db == null) return [];
     final List<Map<String, dynamic>> maps = await db!.query(tableName);
