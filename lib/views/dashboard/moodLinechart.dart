@@ -45,11 +45,14 @@ class _MoodLineChartState extends State<MoodLineChart> {
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 16,
+      fontSize: 12,
       color: Colors.black,
     );
-    Widget text = Text(value.toInt().toString(), style: style);
 
+    final text = Text(
+      widget.spots.elementAt(value.toInt()).x.toString(),
+      style: style,
+    );
     return SideTitleWidget(meta: meta, child: text);
   }
 
@@ -82,6 +85,16 @@ class _MoodLineChartState extends State<MoodLineChart> {
   }
 
   LineChartData mainData() {
+    List<FlSpot> plotPoints =
+        widget.spots.asMap().entries.map((entry) {
+          int index = entry.key; // This is the index of the element
+          FlSpot spot = entry.value; // This is the original FlSpot
+          return FlSpot(
+            index.toDouble(), // Use the index as the x-value
+            spot.y,
+          );
+        }).toList();
+
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -121,15 +134,15 @@ class _MoodLineChartState extends State<MoodLineChart> {
         show: false,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      minX: 1,
-      maxX: 7,
+      minX: 0,
+      maxX: plotPoints.length.toDouble() - 1,
       minY: 0,
       maxY: 6,
       lineBarsData: [
         LineChartBarData(
-          spots: widget.spots,
+          spots: plotPoints,
           isCurved: true,
-          curveSmoothness: 0.3,
+          curveSmoothness: 0.25,
           gradient: LinearGradient(
             colors: gradientColors,
             begin: Alignment.bottomCenter,
@@ -147,7 +160,11 @@ class _MoodLineChartState extends State<MoodLineChart> {
             ) {
               return FlDotCirclePainter(
                 radius: 4,
-                color: gradientColors[spot.y.toInt() - 1],
+                color:
+                    gradientColors[(spot.y.toInt() - 1).clamp(
+                      0,
+                      gradientColors.length - 1,
+                    )],
                 strokeWidth: 2,
                 strokeColor: Colors.white,
               );

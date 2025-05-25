@@ -9,14 +9,14 @@ class Dashboard extends StatelessWidget {
   Dashboard({super.key});
 
   // Example spots data
-  final List<FlSpot> _sampleSpots = const [
-    FlSpot(1, 3),
-    FlSpot(2, 2),
-    FlSpot(3, 5),
-    FlSpot(4, 3),
-    FlSpot(5, 2),
-    FlSpot(6, 1),
-    FlSpot(7, 4),
+  final List<FlSpot> _sampleSpots = [
+    FlSpot(8, Emotion.fear.value),
+    FlSpot(13, Emotion.angry.value),
+    FlSpot(15, Emotion.happy.value),
+    FlSpot(20, Emotion.fear.value),
+    FlSpot(22, Emotion.sad.value),
+    FlSpot(23, Emotion.calm.value),
+    FlSpot(25, Emotion.angry.value),
   ];
   final List<PieChartSection> _sampleSections = [
     PieChartSection(color: Emotion.happy.color, value: 30, title: '30%'),
@@ -50,6 +50,23 @@ class Dashboard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: () {},
+                        ),
+                        Text(
+                          "DATERANGE HERE!",
+                          style: TextStyle(fontSize: 18, color: Colors.black),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.arrow_forward),
+                          onPressed: () {},
+                        ),
+                      ],
                     ),
                     MoodLineChart(spots: _sampleSpots),
                     Text(
