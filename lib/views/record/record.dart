@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:record/record.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:moody_frontend/data/models/record.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 
 class Record extends StatelessWidget {
   const Record({super.key});
@@ -15,10 +18,7 @@ class Record extends StatelessWidget {
           Center(
             child: Text(
               'Whats on your mind',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
           SizedBox(height: 40),
@@ -27,39 +27,22 @@ class Record extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  InkWell(
-                    onTap: () {
-
-                    },
-                    child: SizedBox(
-                      width: 70,
-                      height: 70,
-                      child: Image.asset(
-                        'assets/radio_button_checked_200dp_EA3323_FILL0_wght400_GRAD0_opsz24.png',
-
-                      ),
-                    ),
-                  ),
+                  AudioRecorderPlayer(),
                   Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Deactivate Transcription', style: Theme
-                            .of(context)
-                            .textTheme
-                            .bodyLarge),
-                        const Center(child: SwitchTranscription()),
-                      ]
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Deactivate Transcription',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      const Center(child: SwitchTranscription()),
+                    ],
                   ),
 
                   SizedBox(height: 20),
                   const ObscuredTextFieldSample(),
                   SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-
-                    },
-                    child: Text("Save"),
-                  ),
+                  ElevatedButton(onPressed: () {}, child: Text("Save")),
                 ],
               ),
             ),
@@ -95,7 +78,6 @@ class _SwitchExampleState extends State<SwitchTranscription> {
   }
 }
 
-
 class ObscuredTextFieldSample extends StatelessWidget {
   const ObscuredTextFieldSample({super.key});
 
@@ -124,7 +106,6 @@ class ObscuredTextFieldSample extends StatelessWidget {
   }
 }
 
-
 class AudioRecorderPlayer extends StatefulWidget {
   const AudioRecorderPlayer({super.key});
 
@@ -135,6 +116,7 @@ class AudioRecorderPlayer extends StatefulWidget {
 class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
   bool showPlayer = false;
   String? audioPath;
+  DateTime? recordingStartTime;
 
   final recorder = AudioRecorder();
 
@@ -147,15 +129,36 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
   Future<void> toggleRecording() async {
     if (await recorder.isRecording()) {
       final path = await recorder.stop();
-      if (path != null) {
+
+      if (path != null && recordingStartTime != null) {
+        final duration =
+            DateTime.now().difference(recordingStartTime!).inSeconds;
+
+        final newRecording = Recording(
+          id: DateTime.now().millisecondsSinceEpoch,
+          filePath: path,
+          duration: duration,
+          createdAt: DateTime.now(),
+        );
         setState(() {
-          audioPath = path;
+          audioPath = newRecording.filePath;
           showPlayer = true;
         });
       }
     } else {
       if (await recorder.hasPermission()) {
-        await recorder.start();
+        final directory = await getApplicationDocumentsDirectory();
+        final audioDirectory = Directory('${directory.path}/Audio');
+
+        if (!await audioDirectory.exists()) {
+          await audioDirectory.create(recursive: true);
+        }
+        final filePath =
+            '${audioDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+        await recorder.start(const RecordConfig(), path: filePath);
+        recordingStartTime = DateTime.now();
+
         setState(() {
           showPlayer = false;
           audioPath = null;
@@ -172,29 +175,28 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
   Widget build(BuildContext context) {
     return showPlayer
         ? Column(
-      children: [
-        Text('Playing: $audioPath'),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              showPlayer = false;
-              audioPath = null;
-            });
-          },
-          child: const Text('Delete / Stop'),
-        ),
-      ],
-    )
+          children: [
+            Text('Playing: $audioPath'),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  showPlayer = false;
+                  audioPath = null;
+                });
+              },
+              child: const Text('Stop'),
+            ),
+          ],
+        )
         : InkWell(
-      onTap: toggleRecording,
-      child: SizedBox(
-        width: 70,
-        height: 70,
-        child: Image.asset(
-          'assets/radio_button_checked_200dp_EA3323_FILL0_wght400_GRAD0_opsz24.png',
-        ),
-      ),
-    );
+          onTap: toggleRecording,
+          child: SizedBox(
+            width: 70,
+            height: 70,
+            child: Image.asset(
+              'assets/radio_button_checked_200dp_EA3323_FILL0_wght400_GRAD0_opsz24.png',
+            ),
+          ),
+        );
   }
 }
-
