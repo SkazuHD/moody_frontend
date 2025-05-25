@@ -2,6 +2,50 @@ import 'package:moody_frontend/data/models/record.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+List<Recording> recordings = [
+  Recording(
+    id: 1,
+    filePath: 'assets/audio/recording1.mp3',
+    duration: 30,
+    createdAt: DateTime.now(),
+    transcription: 'This is a sample transcription.',
+    mood: 'Happy',
+  ),
+  Recording(
+    id: 2,
+    filePath: 'assets/audio/recording2.mp3',
+    duration: 12,
+    createdAt: DateTime.now(),
+    transcription: 'Another sample transcription.',
+    mood: 'Sad',
+  ),
+  // Add more recordings as needed
+  Recording(
+    id: 3,
+    filePath: 'assets/audio/recording3.mp3',
+    duration: 45,
+    createdAt: DateTime.now(),
+    transcription: 'This is another sample transcription.',
+    mood: 'Angry',
+  ),
+  Recording(
+    id: 4,
+    filePath: 'assets/audio/recording4.mp3',
+    duration: 20,
+    createdAt: DateTime.now(),
+    transcription: 'Yet another sample transcription.',
+    mood: 'Surprised',
+  ),
+  Recording(
+    id: 5,
+    filePath: 'assets/audio/recording5.mp3',
+    duration: 35,
+    createdAt: DateTime.now(),
+    transcription: 'Final sample transcription.',
+    mood: 'Neutral',
+  ),
+];
+
 class RecordsDB {
   static final RecordsDB _instance = RecordsDB._internal();
 
@@ -28,6 +72,9 @@ class RecordsDB {
       },
       version: 1,
     );
+    for (var record in recordings) {
+      await insertRecord(record);
+    }
   }
 
   Recording mapToRecord(Map<String, dynamic> map) {

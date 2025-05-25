@@ -20,6 +20,29 @@ class _DashboardState extends State<Dashboard> {
 
   List<Recording> records = List.empty();
 
+  int dateSubtract = 7;
+
+  DateTimeRange getDaterange() {
+    DateTimeRange dateRange = DateTimeRange(
+      start: DateTime.now().subtract(Duration(days: dateSubtract)),
+      end: DateTime.now().subtract(Duration(days: dateSubtract - 7)),
+    );
+
+    return dateRange;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    db.init();
+    db.getRecords().then(
+      (records) => setState(() {
+        this.records = records;
+        print(this.records);
+      }),
+    );
+  }
+
   // Example spots data
   final List<FlSpot> _sampleSpots = [
     FlSpot(8, Emotion.fear.value),
@@ -38,17 +61,6 @@ class _DashboardState extends State<Dashboard> {
     PieChartSection(color: Emotion.fear.color, value: 15, title: '15%'),
     PieChartSection(color: Emotion.angry.color, value: 10, title: '10%'),
   ];
-
-  int dateSubtract = 7;
-
-  DateTimeRange getDaterange() {
-    DateTimeRange dateRange = DateTimeRange(
-      start: DateTime.now().subtract(Duration(days: dateSubtract)),
-      end: DateTime.now().subtract(Duration(days: dateSubtract - 7)),
-    );
-
-    return dateRange;
-  }
 
   @override
   Widget build(BuildContext context) {
