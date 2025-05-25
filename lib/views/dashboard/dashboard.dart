@@ -1,4 +1,7 @@
+import 'dart:developer' as dev;
+
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moody_frontend/data/constants/emotions.dart';
@@ -16,8 +19,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  RecordsDB db = RecordsDB();
-
   List<Recording> records = List.empty();
 
   int dateSubtract = 7;
@@ -31,16 +32,29 @@ class _DashboardState extends State<Dashboard> {
     return dateRange;
   }
 
+  Future<void> _fetchAndUpdateRecords() async {
+    RecordsDB db = await RecordsDB.getInstance();
+    DateTimeRange currentRange = getDaterange();
+    List<Recording> fetchedRecords = await db.getRecordsByDateRange(
+      currentRange.start,
+      currentRange.end,
+    );
+
+    if (kDebugMode) {
+      dev.log(
+        'Fetched ${fetchedRecords.length} records from ${currentRange.start} to ${currentRange.end}',
+        name: 'Dashboard',
+      );
+    }
+    setState(() {
+      records = fetchedRecords;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    db.init();
-    db.getRecords().then(
-      (records) => setState(() {
-        this.records = records;
-        print(this.records);
-      }),
-    );
+    _fetchAndUpdateRecords();
   }
 
   // Example spots data
@@ -100,6 +114,7 @@ class _DashboardState extends State<Dashboard> {
                             setState(() {
                               dateSubtract += 7;
                             });
+                            _fetchAndUpdateRecords(); // Fetch new records
                           },
                         ),
                         Text(
@@ -111,10 +126,10 @@ class _DashboardState extends State<Dashboard> {
                           onPressed: () {
                             setState(() {
                               if (dateSubtract > 7) {
-                                // Prevent going into the future
                                 dateSubtract -= 7;
                               }
                             });
+                            _fetchAndUpdateRecords(); // Fetch new records
                           },
                         ),
                       ],

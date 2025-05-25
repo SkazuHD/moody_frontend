@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:moody_frontend/data/models/record.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -7,7 +8,7 @@ List<Recording> recordings = [
     id: 1,
     filePath: 'assets/audio/recording1.mp3',
     duration: 30,
-    createdAt: DateTime.now(),
+    createdAt: DateTime.now().subtract(Duration(days: 1)),
     transcription: 'This is a sample transcription.',
     mood: 'Happy',
   ),
@@ -15,7 +16,7 @@ List<Recording> recordings = [
     id: 2,
     filePath: 'assets/audio/recording2.mp3',
     duration: 12,
-    createdAt: DateTime.now(),
+    createdAt: DateTime.now().subtract(Duration(days: 2)),
     transcription: 'Another sample transcription.',
     mood: 'Sad',
   ),
@@ -24,7 +25,7 @@ List<Recording> recordings = [
     id: 3,
     filePath: 'assets/audio/recording3.mp3',
     duration: 45,
-    createdAt: DateTime.now(),
+    createdAt: DateTime.now().subtract(Duration(days: 3)),
     transcription: 'This is another sample transcription.',
     mood: 'Angry',
   ),
@@ -32,7 +33,7 @@ List<Recording> recordings = [
     id: 4,
     filePath: 'assets/audio/recording4.mp3',
     duration: 20,
-    createdAt: DateTime.now(),
+    createdAt: DateTime.now().subtract(Duration(days: 4)),
     transcription: 'Yet another sample transcription.',
     mood: 'Surprised',
   ),
@@ -40,41 +41,59 @@ List<Recording> recordings = [
     id: 5,
     filePath: 'assets/audio/recording5.mp3',
     duration: 35,
-    createdAt: DateTime.now(),
+    createdAt: DateTime.now().subtract(Duration(days: 5)),
     transcription: 'Final sample transcription.',
     mood: 'Neutral',
   ),
 ];
 
 class RecordsDB {
-  static final RecordsDB _instance = RecordsDB._internal();
+  static RecordsDB? _instance;
+  static bool _initialized = false;
 
-  factory RecordsDB() {
-    return _instance;
+  // Private constructor
+  RecordsDB._internal();
+
+  // Factory constructor that ensures initialization
+  static Future<RecordsDB> getInstance() async {
+    if (_instance == null) {
+      _instance = RecordsDB._internal();
+      await _instance!._init();
+      _initialized = true;
+    }
+    return _instance!;
   }
 
-  RecordsDB._internal() {
-    init();
-  }
+  // Rest of your fields...
+  final String _databaseName = 'records.db';
+  final String _tableName = 'records';
+  Database? _db;
 
-  final String databaseName = 'records.db';
-  final String tableName = 'records';
-
-  Database? db;
-
-  void init() async {
-    db = await openDatabase(
-      join(await getDatabasesPath(), databaseName),
+  Future<void> _init() async {
+    _db = await openDatabase(
+      join(await getDatabasesPath(), _databaseName),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT)',
+          'CREATE TABLE $_tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT)',
         );
       },
       version: 1,
     );
+
+    // Insert initial records if needed
     for (var record in recordings) {
       await insertRecord(record);
     }
+  }
+
+  Future<bool> _ensureInitialized() async {
+    if (_db == null || !_initialized) {
+      if (kDebugMode) {
+        print('Database not initialized, initializing now...');
+      }
+      await getInstance();
+    }
+    return true;
   }
 
   Recording mapToRecord(Map<String, dynamic> map) {
@@ -89,18 +108,27 @@ class RecordsDB {
   }
 
   Future<void> insertRecord(Recording record) async {
-    if (db == null) return;
-    await db!.insert(
-      tableName,
+    await _ensureInitialized();
+
+    if (kDebugMode) {
+      print('Inserting record: ${record.toJson()}');
+    }
+    await _db!.insert(
+      _tableName,
       record.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
   Future<void> updateRecord(Recording record) async {
-    if (db == null) return;
-    await db!.update(
-      tableName,
+    await _ensureInitialized();
+
+    if (kDebugMode) {
+      print('Updating record: ${record.toJson()}');
+    }
+
+    await _db!.update(
+      _tableName,
       record.toJson(),
       where: 'id = ?',
       whereArgs: [record.id],
@@ -108,9 +136,14 @@ class RecordsDB {
   }
 
   Future<Recording?> getRecord(int id) async {
-    if (db == null) return null;
-    final List<Map<String, dynamic>> maps = await db!.query(
-      tableName,
+    await _ensureInitialized();
+
+    if (kDebugMode) {
+      print('Fetching record with id: $id');
+    }
+
+    final List<Map<String, dynamic>> maps = await _db!.query(
+      _tableName,
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -125,9 +158,14 @@ class RecordsDB {
     DateTime start,
     DateTime end,
   ) async {
-    if (db == null) return [];
-    final List<Map<String, dynamic>> maps = await db!.query(
-      tableName,
+    await _ensureInitialized();
+
+    if (kDebugMode) {
+      print('Fetching records between $start and $end');
+    }
+
+    final List<Map<String, dynamic>> maps = await _db!.query(
+      _tableName,
       where: 'createdAt BETWEEN ? AND ?',
       whereArgs: [start.toIso8601String(), end.toIso8601String()],
     );
@@ -138,8 +176,12 @@ class RecordsDB {
   }
 
   Future<List<Recording>> getRecords() async {
-    if (db == null) return [];
-    final List<Map<String, dynamic>> maps = await db!.query(tableName);
+    await _ensureInitialized();
+
+    if (kDebugMode) {
+      print('Fetching all records');
+    }
+    final List<Map<String, dynamic>> maps = await _db!.query(_tableName);
 
     return List.generate(maps.length, (i) {
       return mapToRecord(maps[i]);
@@ -147,7 +189,11 @@ class RecordsDB {
   }
 
   Future<void> deleteRecord(int id) async {
-    if (db == null) return;
-    await db!.delete(tableName, where: 'id = ?', whereArgs: [id]);
+    if (kDebugMode) {
+      print('Deleting record with id: $id');
+    }
+
+    await _ensureInitialized();
+    await _db!.delete(_tableName, where: 'id = ?', whereArgs: [id]);
   }
 }
