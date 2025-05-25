@@ -3,14 +3,20 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class RecordsDB {
-  String databaseName = 'records.db';
-  String tableName = 'records';
+  static final RecordsDB _instance = RecordsDB._internal();
 
-  Database? db;
+  factory RecordsDB() {
+    return _instance;
+  }
 
-  RecordsDB(this.databaseName, this.tableName) {
+  RecordsDB._internal() {
     init();
   }
+
+  final String databaseName = 'records.db';
+  final String tableName = 'records';
+
+  Database? db;
 
   void init() async {
     db = await openDatabase(
