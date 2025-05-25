@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../components/filterList.dart';
+
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
 
@@ -7,7 +9,21 @@ class Dashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('Dashboard', style: Theme.of(context).textTheme.bodyLarge),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Dashboard', style: Theme.of(context).textTheme.bodyLarge),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  //Replace with route to Home when done
+                  MaterialPageRoute(builder: (context) => const FilterList()),
+                );
+              },
+              child: Text("RecordList"),
+            ),
+          ],
+        ),
       ),
     );
   }
