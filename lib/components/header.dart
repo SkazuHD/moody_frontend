@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moody_frontend/views/dashboard/dashboard.dart';
 import '../components/headlines.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
@@ -25,10 +26,9 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
               //Navigator.pushNamed(context, '/record');
                 break;
               case 'entries':
-              Navigator.pushNamed(context, '/dashboard');
                 break;
               case 'dashboard':
-              //Navigator.pushNamed(context, '/entries');
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Dashboard()));
                 break;
             }
           },

@@ -24,7 +24,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const Header(), // <--- Hier deine Header-Klasse verwenden
+      appBar: const Header(),
       body: Center(
         child: Align(
           alignment: Alignment.topCenter,

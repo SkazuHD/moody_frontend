@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:moody_frontend/components/header.dart';
+import 'package:moody_frontend/components/headlines.dart';
 import 'package:moody_frontend/data/constants/emotions.dart';
 import 'package:moody_frontend/data/db.dart';
 import 'package:moody_frontend/views/dashboard/moodPiechart.dart';
@@ -119,7 +121,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Dashboard')),
+      appBar: Header(),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -135,11 +137,7 @@ class _DashboardState extends State<Dashboard> {
                   children: [
                     Text(
                       "Mood overview",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                      style: h1Black
                     ),
                     Container(
                       padding: EdgeInsets.all(8.0),
@@ -177,10 +175,7 @@ class _DashboardState extends State<Dashboard> {
                           builder: (context, range, child) {
                             return Text(
                               formatDateRange(range),
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                              ),
+                              style: h2Black,
                             );
                           },
                         ),
@@ -202,11 +197,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     Text(
                       "Mood distribution",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                      style: h1Black
                     ),
                     ValueListenableBuilder<List<PieChartSection>>(
                       valueListenable: _sections,
