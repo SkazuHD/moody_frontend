@@ -1,7 +1,7 @@
+import 'package:Soullog/components/greyButton.dart';
+import 'package:Soullog/components/header.dart';
+import 'package:Soullog/components/headlines.dart';
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/components/header.dart';
-import 'package:moody_frontend/components/greyButton.dart';
-import 'package:moody_frontend/components/headlines.dart';
 
 final List<Map<String, dynamic>> emotions = [
   {'emoji': '😊', 'label': 'Happy', 'color': Colors.yellow},
@@ -31,7 +31,11 @@ class _HomeState extends State<Home> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Text('A moment from today - would you like to capture it?', style: h1White, textAlign: TextAlign.center),
+              const Text(
+                'A moment from today - would you like to capture it?',
+                style: h1White,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 style: greyButtonStyle,
@@ -41,7 +45,11 @@ class _HomeState extends State<Home> {
                 child: const Text('Record'),
               ),
               const SizedBox(height: 24),
-              const Text('Fast check in:', style: h1White, textAlign: TextAlign.center),
+              const Text(
+                'Fast check in:',
+                style: h1White,
+                textAlign: TextAlign.center,
+              ),
               SizedBox(
                 height: 100,
                 child: ListView.builder(
@@ -68,14 +76,19 @@ class _HomeState extends State<Home> {
                               backgroundColor: emotion['color'],
                               child: Text(
                                 emotion['emoji'],
-                                style: bodyWhite.copyWith(fontSize: isSelected ? 32 : 24),
+                                style: bodyWhite.copyWith(
+                                  fontSize: isSelected ? 32 : 24,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               emotion['label'],
                               style: bodyWhite.copyWith(
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                fontWeight:
+                                    isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                               ),
                             ),
                           ],
