@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moody_frontend/data/constants/emotions.dart';
@@ -30,49 +27,51 @@ class _DashboardState extends State<Dashboard> {
     ),
   );
 
+  List<FlSpot> calculateSpots(List<Recording> records) {
+    return records.map((record) {
+      return FlSpot(
+        record.createdAt.day.toDouble(),
+        record.mood != null
+            ? Emotion.values
+                .firstWhere(
+                  (e) => e.label.toLowerCase() == record.mood!.toLowerCase(),
+                )
+                .value
+            : 0.0,
+      );
+    }).toList();
+  }
+
+  List<PieChartSection> calculateSections(List<Recording> records) {
+    List<PieChartSection> sections = [];
+    for (var emotion in Emotion.values) {
+      double total =
+          records
+              .where(
+                (record) =>
+                    record.mood != null &&
+                    record.mood!.toLowerCase() == emotion.label.toLowerCase(),
+              )
+              .length
+              .toDouble();
+      sections.add(
+        PieChartSection(
+          color: emotion.color,
+          value: total,
+          title: '${(total / records.length * 100).toStringAsFixed(1)}%',
+        ),
+      );
+    }
+    return sections;
+  }
+
   @override
   void initState() {
     super.initState();
     _fetchAndUpdateRecords();
     _records.addListener(() {
-      _spots.value =
-          _records.value.map((record) {
-            return FlSpot(
-              record.createdAt.day.toDouble(),
-              record.mood != null
-                  ? Emotion.values
-                      .firstWhere(
-                        (e) =>
-                            e.label.toLowerCase() == record.mood!.toLowerCase(),
-                      )
-                      .value
-                  : 0.0,
-            );
-          }).toList();
-      _spots.value.sort((a, b) => a.x.compareTo(b.x));
-      if (kDebugMode) {
-        log('Updated spots: ${_spots.value} spots', name: 'Dashboard');
-      }
-      _sections.value = [];
-      for (var emotion in Emotion.values) {
-        double total =
-            _records.value
-                .where(
-                  (record) =>
-                      record.mood != null &&
-                      record.mood!.toLowerCase() == emotion.label.toLowerCase(),
-                )
-                .length
-                .toDouble();
-        _sections.value.add(
-          PieChartSection(
-            color: emotion.color,
-            value: total,
-            title:
-                '${(total / _records.value.length * 100).toStringAsFixed(1)}%',
-          ),
-        );
-      }
+      _spots.value = calculateSpots(_records.value);
+      _sections.value = calculateSections(_records.value);
     });
     _currentRangeOffset.addListener(() {
       _currentRange.value = DateTimeRange(

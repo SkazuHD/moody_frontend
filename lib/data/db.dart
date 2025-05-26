@@ -199,6 +199,7 @@ class RecordsDB {
     final List<Map<String, dynamic>> maps = await _db!.query(
       _tableName,
       where: 'createdAt BETWEEN ? AND ?',
+      orderBy: 'createdAt ASC',
       whereArgs: [start.toIso8601String(), end.toIso8601String()],
     );
 
