@@ -83,10 +83,8 @@ class RecordsDB {
   static RecordsDB? _instance;
   static bool _initialized = false;
 
-  // Private constructor
   RecordsDB._internal();
 
-  // Factory constructor that ensures initialization
   static Future<RecordsDB> getInstance() async {
     if (_instance == null) {
       _instance = RecordsDB._internal();
@@ -96,7 +94,6 @@ class RecordsDB {
     return _instance!;
   }
 
-  // Rest of your fields...
   final String _databaseName = 'records.db';
   final String _tableName = 'records';
   Database? _db;
@@ -112,7 +109,6 @@ class RecordsDB {
       version: 1,
     );
 
-    // Insert initial records if needed
     for (var record in recordings) {
       await insertRecord(record);
     }
