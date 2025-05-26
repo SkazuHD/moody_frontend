@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moody_frontend/components/filterList.dart';
 import 'package:moody_frontend/data/db.dart';
 
+import '../../components/header.dart';
 import '../../data/models/record.dart';
 
 class RecordList extends StatefulWidget {
@@ -21,7 +22,7 @@ class _RecordListState extends State<RecordList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: AppBarMoody()),
+      appBar: const Header(),
       body: Center(
         child: Column(
           children: [

@@ -24,13 +24,12 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
             switch (value) {
               case 'record':
               //Navigator.pushNamed(context, '/record');
+                break;
+              case 'entries':
                 Navigator.of(context).push(
                   //Replace with route to Home when done
                   MaterialPageRoute(builder: (context) => const RecordList()),
                 );
-                break;
-              case 'entries':
-              Navigator.pushNamed(context, '/dashboard');
                 break;
               case 'dashboard':
               //Navigator.pushNamed(context, '/entries');
