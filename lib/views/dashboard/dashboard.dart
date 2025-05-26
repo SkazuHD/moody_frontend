@@ -19,6 +19,7 @@ class _DashboardState extends State<Dashboard> {
   final _records = ValueNotifier<List<Recording>>([]);
   final _spots = ValueNotifier<List<FlSpot>>([]);
   final _sections = ValueNotifier<List<PieChartSection>>([]);
+  final _offsetIncrement = ValueNotifier<int>(7);
   final _currentRangeOffset = ValueNotifier<int>(7);
   final _currentRange = ValueNotifier<DateTimeRange>(
     DateTimeRange(
@@ -26,6 +27,8 @@ class _DashboardState extends State<Dashboard> {
       end: DateTime.now(),
     ),
   );
+
+  final _filterOptions = [7, 14, 30];
 
   List<FlSpot> calculateSpots(List<Recording> records) {
     return records.map((record) {
@@ -65,6 +68,17 @@ class _DashboardState extends State<Dashboard> {
     return sections;
   }
 
+  DateTimeRange _calculateDateRange(){
+    return DateTimeRange(
+      start: DateTime.now().subtract(
+        Duration(days: _currentRangeOffset.value),
+      ),
+      end: DateTime.now().subtract(
+        Duration(days: _currentRangeOffset.value - _offsetIncrement.value),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,14 +88,7 @@ class _DashboardState extends State<Dashboard> {
       _sections.value = calculateSections(_records.value);
     });
     _currentRangeOffset.addListener(() {
-      _currentRange.value = DateTimeRange(
-        start: DateTime.now().subtract(
-          Duration(days: _currentRangeOffset.value),
-        ),
-        end: DateTime.now().subtract(
-          Duration(days: _currentRangeOffset.value - 7),
-        ),
-      );
+      _currentRange.value = _calculateDateRange();
       _fetchAndUpdateRecords();
     });
   }
@@ -134,13 +141,35 @@ class _DashboardState extends State<Dashboard> {
                         color: Colors.black,
                       ),
                     ),
+                    Container(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:
+                          _filterOptions.map((filter) {
+                            return FilterChip(
+                              label: Text("$filter days"),
+                               onSelected: (bool selected){
+                                  setState(() {
+                                    _offsetIncrement.value = filter;
+                                    _currentRangeOffset.value = filter;
+                                  });
+
+                               },
+                               selected: filter == _offsetIncrement.value,
+                            );
+                          }).toList()
+
+
+                      ),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
                           icon: Icon(Icons.arrow_back),
                           onPressed: () {
-                            _currentRangeOffset.value += 7;
+                            _currentRangeOffset.value += _offsetIncrement.value;
                           },
                         ),
                         ValueListenableBuilder<DateTimeRange>(
@@ -158,8 +187,8 @@ class _DashboardState extends State<Dashboard> {
                         IconButton(
                           icon: Icon(Icons.arrow_forward),
                           onPressed: () {
-                            if (_currentRangeOffset.value > 7) {
-                              _currentRangeOffset.value -= 7;
+                            if (_currentRangeOffset.value > _offsetIncrement.value) {
+                              _currentRangeOffset.value -= _offsetIncrement.value;
                             }
                           },
                         ),
