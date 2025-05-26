@@ -22,7 +22,13 @@ class _DashboardState extends State<Dashboard> {
   final _records = ValueNotifier<List<Recording>>([]);
   final _spots = ValueNotifier<List<FlSpot>>([]);
   final _sections = ValueNotifier<List<PieChartSection>>([]);
-  int _currentRangeOffset = 7;
+  final _currentRangeOffset = ValueNotifier<int>(7);
+  final _currentRange = ValueNotifier<DateTimeRange>(
+    DateTimeRange(
+      start: DateTime.now().subtract(const Duration(days: 7)),
+      end: DateTime.now(),
+    ),
+  );
 
   @override
   void initState() {
@@ -47,7 +53,7 @@ class _DashboardState extends State<Dashboard> {
       if (kDebugMode) {
         log('Updated spots: ${_spots.value} spots', name: 'Dashboard');
       }
-      _sections.value.clear();
+      _sections.value = [];
       for (var emotion in Emotion.values) {
         double total =
             _records.value
@@ -68,41 +74,44 @@ class _DashboardState extends State<Dashboard> {
         );
       }
     });
+    _currentRangeOffset.addListener(() {
+      _currentRange.value = DateTimeRange(
+        start: DateTime.now().subtract(
+          Duration(days: _currentRangeOffset.value),
+        ),
+        end: DateTime.now().subtract(
+          Duration(days: _currentRangeOffset.value - 7),
+        ),
+      );
+      _fetchAndUpdateRecords();
+    });
   }
 
-  DateTimeRange getDateRange() {
-    DateTimeRange dateRange = DateTimeRange(
-      start: DateTime.now().subtract(Duration(days: _currentRangeOffset)),
-      end: DateTime.now().subtract(Duration(days: _currentRangeOffset - 7)),
-    );
-
-    return dateRange;
+  @override
+  void dispose() {
+    _records.dispose();
+    _spots.dispose();
+    _sections.dispose();
+    _currentRangeOffset.dispose();
+    _currentRange.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchAndUpdateRecords() async {
     RecordsDB db = await RecordsDB.getInstance();
-    DateTimeRange currentRange = getDateRange();
-    db
-        .getRecordsByDateRange(currentRange.start, currentRange.end)
-        .then(
-          (records) => setState(() {
-            if (kDebugMode) {
-              log(
-                'Fetched ${records.length} records from ${currentRange.start} to ${currentRange.end}',
-                name: 'Dashboard',
-              );
-            }
-            _records.value = records;
-          }),
-        );
+    DateTimeRange currentRange = _currentRange.value;
+    _records.value = await db.getRecordsByDateRange(
+      currentRange.start,
+      currentRange.end,
+    );
+  }
+
+  String formatDateRange(DateTimeRange range) {
+    return "${DateFormat('dd.MM').format(range.start)} - ${DateFormat('dd.MM.yyyy').format(range.end)}";
   }
 
   @override
   Widget build(BuildContext context) {
-    DateTimeRange currentRange = getDateRange();
-    String formattedDateRange =
-        "${DateFormat('dd.MM').format(currentRange.start)} - ${DateFormat('dd.MM.yyyy').format(currentRange.end)}";
-
     return Scaffold(
       appBar: AppBar(title: Text('Dashboard')),
       body: Center(
@@ -132,30 +141,37 @@ class _DashboardState extends State<Dashboard> {
                         IconButton(
                           icon: Icon(Icons.arrow_back),
                           onPressed: () {
-                            setState(() {
-                              _currentRangeOffset += 7;
-                            });
-                            _fetchAndUpdateRecords(); // Fetch new records
+                            _currentRangeOffset.value += 7;
                           },
                         ),
-                        Text(
-                          formattedDateRange,
-                          style: TextStyle(fontSize: 18, color: Colors.black),
+                        ValueListenableBuilder<DateTimeRange>(
+                          valueListenable: _currentRange,
+                          builder: (context, range, child) {
+                            return Text(
+                              formatDateRange(range),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
+                            );
+                          },
                         ),
                         IconButton(
                           icon: Icon(Icons.arrow_forward),
                           onPressed: () {
-                            setState(() {
-                              if (_currentRangeOffset > 7) {
-                                _currentRangeOffset -= 7;
-                              }
-                            });
-                            _fetchAndUpdateRecords(); // Fetch new records
+                            if (_currentRangeOffset.value > 7) {
+                              _currentRangeOffset.value -= 7;
+                            }
                           },
                         ),
                       ],
                     ),
-                    MoodLineChart(spots: _spots.value),
+                    ValueListenableBuilder<List<FlSpot>>(
+                      valueListenable: _spots,
+                      builder: (context, spotsValue, child) {
+                        return MoodLineChart(spots: spotsValue);
+                      },
+                    ),
                     Text(
                       "Mood distribution",
                       style: TextStyle(
@@ -164,7 +180,12 @@ class _DashboardState extends State<Dashboard> {
                         color: Colors.black,
                       ),
                     ),
-                    MoodPieChart(sectionsData: _sections.value),
+                    ValueListenableBuilder<List<PieChartSection>>(
+                      valueListenable: _sections,
+                      builder: (context, sectionsValue, child) {
+                        return MoodPieChart(sectionsData: sectionsValue);
+                      },
+                    ),
                   ],
                 ),
               ),
