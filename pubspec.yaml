@@ -39,10 +39,9 @@ dependencies:
   sqflite: ^2.4.2
   path: ^1.9.1
   fl_chart: ^1.0.0
-  intl: ^0.18.1
+  intl: ^0.20.2
   rxdart: ^0.28.0
-  rename: ^3.1.0
-  rename_app: ^1.6.3
+
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +55,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.4.6
   flutter_launcher_icons: ^0.14.3
+  rename: ^3.1.0
+  rename_app: ^1.6.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
