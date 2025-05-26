@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../components/headlines.dart';
+import '../views/recordList/recordList.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   const Header({super.key});
@@ -23,6 +24,10 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
             switch (value) {
               case 'record':
               //Navigator.pushNamed(context, '/record');
+                Navigator.of(context).push(
+                  //Replace with route to Home when done
+                  MaterialPageRoute(builder: (context) => const RecordList()),
+                );
                 break;
               case 'entries':
               Navigator.pushNamed(context, '/dashboard');
