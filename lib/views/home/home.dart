@@ -125,6 +125,7 @@ class _HomeState extends State<Home> {
 
             // 3. Container mit Chart
             Container(
+              width: double.infinity,
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -153,7 +154,6 @@ class _HomeState extends State<Home> {
 
             // 4. Container
             Container(
-              width: double.infinity,
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               padding: const EdgeInsets.all(16),
               child: Row(
