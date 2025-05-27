@@ -149,6 +149,8 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
+
+            // 4. Container
             Container(
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               padding: const EdgeInsets.all(16),
@@ -174,6 +176,8 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
+
+            // 5. Container
             Container(
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               padding: const EdgeInsets.all(16),
