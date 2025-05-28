@@ -109,9 +109,9 @@ class _HomeState extends State<Home> {
                                 transcription: null,
                                 mood: selectedMood,
                               ),
-                            );
-                            await db.createTodaysPlotCard(selectedMood);
-                          },*/
+                            );*/
+/*                            await db.createTodaysPlotCard(selectedMood);*/
+                          },
                           child: Container(
                             width: 65,
                             margin: const EdgeInsets.symmetric(horizontal: 8),
