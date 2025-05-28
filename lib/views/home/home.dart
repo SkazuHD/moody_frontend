@@ -5,9 +5,11 @@ import 'package:moody_frontend/components/greyButton.dart';
 import 'package:moody_frontend/components/headlines.dart';
 import 'package:moody_frontend/views/record/record.dart';
 import 'package:moody_frontend/views/recordList/recordList.dart';
+import 'dart:math';
 
 import '../../data/db.dart';
 import '../../data/models/plotCard.dart';
+import '../../data/models/record.dart';
 import '../dashboard/moodLinechart.dart';
 import 'chartHelper.dart';
 
@@ -90,13 +92,26 @@ class _HomeState extends State<Home> {
                       itemBuilder: (context, index) {
                         final emotion = emotions[index];
                         final isSelected = selectedEmotionIndex == index;
-
                         return GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             setState(() {
                               selectedEmotionIndex = index;
                             });
-                          },
+                            // TODO: Save a new Recording for today with selectedMood
+/*                            final selectedMood = emotion['label'];
+                            final db = await RecordsDB.getInstance();
+                            await db.insertRecord(
+                              Recording(
+                                id: Random().nextInt(1000000),
+                                filePath: 'assets/audio/fastcheckin_${DateTime.now().millisecondsSinceEpoch}.mp3',
+                                duration: 0,
+                                createdAt: DateTime.now(),
+                                transcription: null,
+                                mood: selectedMood,
+                              ),
+                            );
+                            await db.createTodaysPlotCard(selectedMood);
+                          },*/
                           child: Container(
                             width: 65,
                             margin: const EdgeInsets.symmetric(horizontal: 8),
