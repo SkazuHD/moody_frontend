@@ -6,6 +6,8 @@ import 'package:moody_frontend/components/headlines.dart';
 import 'package:moody_frontend/views/record/record.dart';
 import 'package:moody_frontend/views/recordList/recordList.dart';
 
+import '../../data/db.dart';
+import '../../data/models/plotCard.dart';
 import '../dashboard/moodLinechart.dart';
 import 'chartHelper.dart';
 
@@ -40,9 +42,10 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: const Header(),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 16),
         child: Column(
           children: [
-            // 1. Container
+            // 1. Container Text-Button
             Container(
               width: double.infinity,
               margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -70,7 +73,7 @@ class _HomeState extends State<Home> {
               ),
             ),
 
-            // 2. Container
+            // 2. Container Fast check-in
             Container(
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               padding: const EdgeInsets.all(16),
@@ -123,7 +126,7 @@ class _HomeState extends State<Home> {
               ),
             ),
 
-            // 3. Container mit Chart
+            // 3. Container Chart
             Container(
               width: double.infinity,
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -152,7 +155,7 @@ class _HomeState extends State<Home> {
               ),
             ),
 
-            // 4. Container
+            // 4. Container - Text-Button
             Container(
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               padding: const EdgeInsets.all(16),
@@ -179,31 +182,71 @@ class _HomeState extends State<Home> {
               ),
             ),
 
-            // 5. Container
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFDEBB97),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text('Plot card for today:', style: h1Black, textAlign: TextAlign.center,),
-                  ElevatedButton(
-                    style: greyButtonStyle,
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        //Replace with route to Home when done
-                        MaterialPageRoute(builder: (context) => Record()),
-                      );
-                    },
-                    child: const Text('Record'),
-                  ),
-                ],
-              ),
+            // 5. Container - Plot Card
+            FutureBuilder<PlotCard?>(
+              future: RecordsDB.getInstance().then((db) => db.getTodaysPlotCard()),    // fetch today's PlotCard from the DB
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();   // loading spinner while waiting for data
+                // Show an error message when error during loading
+                } else if (snapshot.hasError) {
+                  return Text('Error loading PlotCard. ${snapshot.error}');
+                } else {
+                  final plotCard = snapshot.data;   // Store the fetched data in a local variable when succ
+
+                  return Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDEBB97),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Today\'s Plot-Card:',
+                          style: h1Black,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        if (plotCard != null) ...[
+                          Text(
+                            plotCard.title,
+                            style: h2Black,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            plotCard.description,
+                            style: bodyBlack,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                        ] else ...[
+                          // fallback message if no data is found
+                          const Text(
+                            'No activities tracked today. Start your day by logging your progress!',
+                            style: bodyBlack,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            style: greyButtonStyle,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => Record()),
+                              );
+                            },
+                            child: const Text('Record'),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),
