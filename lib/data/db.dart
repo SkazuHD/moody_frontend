@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:moody_frontend/data/models/record.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:moody_frontend/data/models/plotCard.dart';
+import 'dart:math';
 
 List<Recording> recordings = [
   Recording(
@@ -79,9 +81,43 @@ List<Recording> recordings = [
   ),
 ];
 
+List<PlotCard> plotCards = [
+  PlotCard(
+    mood: 'happy',
+    title: 'Spread the Joy',
+    description: 'Send a kind message or compliment to someone today. Let your happiness ripple out.',
+    date: DateTime.now(),
+  ),
+  PlotCard(
+    mood: 'sad',
+    title: 'Small Step Forward',
+    description: 'Put on comfy shoes and go outside for a 10-minute walk. No goal, just move.',
+    date: DateTime.now(),
+  ),
+  PlotCard(
+    mood: 'angry',
+    title: 'Release the Pressure',
+    description: 'Find a quiet spot and write down everything that’s bothering you. No filter, just let it out.',
+    date: DateTime.now(),
+  ),
+  PlotCard(
+    mood: 'calm',
+    title: 'Deepen the Peace',
+    description: 'Take a walk in the forest without a route. Let your mind wander and your breath slow down.',
+    date: DateTime.now(),
+  ),
+  PlotCard(
+    mood: 'fear',
+    title: 'Brave Little Step',
+    description: 'Write down one thing that scares you—and then list three things you can do anyway.',
+    date: DateTime.now(),
+  ),
+];
+
 class RecordsDB {
   static RecordsDB? _instance;
   static bool _initialized = false;
+  PlotCard? _todaysPlotCard;
 
   RecordsDB._internal();
 
@@ -146,6 +182,71 @@ class RecordsDB {
       record.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    // Automatically create today's PlotCard if mood is set and record is from today
+    final now = DateTime.now();
+    final isToday = record.createdAt.year == now.year &&
+        record.createdAt.month == now.month &&
+        record.createdAt.day == now.day;
+    if (isToday) {
+      if (isToday && record.mood != null) {
+        await createTodaysPlotCard(record.mood!);
+      }
+    }
+  }
+
+  Future<void> createTodaysPlotCard(String mood) async {
+    try {
+      // Filter all PlotCards that match the mood
+      final matchingCards = plotCards.where((c) => c.mood == mood).toList();
+      if (matchingCards.isNotEmpty) {
+        final randomIndex = Random().nextInt(matchingCards.length);
+        final chosen = matchingCards[randomIndex];    // Select a random PlotCard
+        _todaysPlotCard = PlotCard(
+          mood: mood,
+          title: chosen.title,
+          description: chosen.description,
+          date: DateTime.now(),
+        );
+      } else {
+        if (kDebugMode) print("No PlotCard found for mood '$mood'.");
+      }
+    } catch (e) {
+      if (kDebugMode) print("Oops, something went wrong while picking a PlotCard for mood '$mood': $e");
+    }
+  }
+
+  Future<PlotCard?> getTodaysPlotCard() async {
+    final now = DateTime.now();
+
+    // Return cached PlotCard if it already exists for today
+    if (_todaysPlotCard != null &&
+        _todaysPlotCard!.date.year == now.year &&
+        _todaysPlotCard!.date.month == now.month &&
+        _todaysPlotCard!.date.day == now.day) {
+      return _todaysPlotCard;
+    }
+
+    // load all recordings from DB
+    final recordings = await getRecords();
+
+    // Find the first recording from today (if any)
+    final todayRecording = recordings.cast<Recording?>().firstWhere(
+          (r) => r != null &&
+          r.createdAt.year == now.year &&
+          r.createdAt.month == now.month &&
+          r.createdAt.day == now.day,
+      orElse: () => null,
+    );
+
+    if (todayRecording != null) {
+      // If found, create a PlotCard based on the mood of this recording
+      if (todayRecording.mood != null) {
+        await createTodaysPlotCard(todayRecording.mood!);
+      }
+      return _todaysPlotCard;
+    }
+    // No PlotCard for today found
+    return null;
   }
 
   Future<void> updateRecord(Recording record) async {
