@@ -1,4 +1,3 @@
-import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 
 import '../components/headlines.dart';
@@ -27,17 +26,21 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
         PopupMenuButton<String>(
           icon: const Icon(Icons.menu, color: Colors.white),
           onSelected: (value) {
+            String? targetRoute;
             switch (value) {
               case 'record':
-                //Navigator.pushNamed(context, '/record');
+                targetRoute = '/record';
                 break;
               case 'entries':
+                targetRoute = '/entries';
                 break;
               case 'dashboard':
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const Dashboard()),
-                );
+                targetRoute = '/dashboard';
                 break;
+            }
+            final currentRoute = ModalRoute.of(context)?.settings.name;
+            if (targetRoute != null && currentRoute != targetRoute) {
+              Navigator.of(context).pushNamed(targetRoute);
             }
           },
           itemBuilder:
