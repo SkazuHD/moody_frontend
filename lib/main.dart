@@ -1,8 +1,8 @@
+import 'package:Soullog/views/dashboard/dashboard.dart';
+import 'package:Soullog/views/home/home.dart';
+import 'package:Soullog/views/recordList/recordList.dart';
+import 'package:Soullog/views/welcome/welcome.dart';
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/views/dashboard/dashboard.dart';
-import 'package:moody_frontend/views/home/home.dart';
-import 'package:moody_frontend/views/recordList/recordList.dart';
-import 'package:moody_frontend/views/welcome/welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

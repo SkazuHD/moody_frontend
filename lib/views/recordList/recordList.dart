@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/components/filterList.dart';
-
+import '../../components/filterList.dart';
 import '../../components/header.dart';
 import '../../data/db.dart';
 import '../../data/models/record.dart';

@@ -1,5 +1,6 @@
-import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
+
+import '../home/home.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
@@ -18,7 +19,7 @@ class Welcome extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     //Replace with route to Home when done
-                    MaterialPageRoute(builder: (context) => Dashboard()),
+                    MaterialPageRoute(builder: (context) => Home()),
                   );
                 },
                 child: Text("Get Started"),
