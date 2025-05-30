@@ -1,11 +1,11 @@
+import 'package:Soullog/components/header.dart';
+import 'package:Soullog/components/headlines.dart';
+import 'package:Soullog/data/constants/emotions.dart';
+import 'package:Soullog/data/db.dart';
+import 'package:Soullog/views/dashboard/moodPiechart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:moody_frontend/components/header.dart';
-import 'package:moody_frontend/components/headlines.dart';
-import 'package:moody_frontend/data/constants/emotions.dart';
-import 'package:moody_frontend/data/db.dart';
-import 'package:moody_frontend/views/dashboard/moodPiechart.dart';
 
 import '../../data/models/record.dart';
 import 'moodLinechart.dart';
@@ -70,11 +70,9 @@ class _DashboardState extends State<Dashboard> {
     return sections;
   }
 
-  DateTimeRange _calculateDateRange(){
+  DateTimeRange _calculateDateRange() {
     return DateTimeRange(
-      start: DateTime.now().subtract(
-        Duration(days: _currentRangeOffset.value),
-      ),
+      start: DateTime.now().subtract(Duration(days: _currentRangeOffset.value)),
       end: DateTime.now().subtract(
         Duration(days: _currentRangeOffset.value - _offsetIncrement.value),
       ),
@@ -135,30 +133,24 @@ class _DashboardState extends State<Dashboard> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text(
-                      "Mood overview",
-                      style: h1Black
-                    ),
+                    Text("Mood overview", style: h1Black),
                     Container(
                       padding: EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:
-                          _filterOptions.map((filter) {
-                            return FilterChip(
-                              label: Text("$filter days"),
-                               onSelected: (bool selected){
+                            _filterOptions.map((filter) {
+                              return FilterChip(
+                                label: Text("$filter days"),
+                                onSelected: (bool selected) {
                                   setState(() {
                                     _offsetIncrement.value = filter;
                                     _currentRangeOffset.value = filter;
                                   });
-
-                               },
-                               selected: filter == _offsetIncrement.value,
-                            );
-                          }).toList()
-
-
+                                },
+                                selected: filter == _offsetIncrement.value,
+                              );
+                            }).toList(),
                       ),
                     ),
                     Row(
@@ -173,17 +165,16 @@ class _DashboardState extends State<Dashboard> {
                         ValueListenableBuilder<DateTimeRange>(
                           valueListenable: _currentRange,
                           builder: (context, range, child) {
-                            return Text(
-                              formatDateRange(range),
-                              style: h2Black,
-                            );
+                            return Text(formatDateRange(range), style: h2Black);
                           },
                         ),
                         IconButton(
                           icon: Icon(Icons.arrow_forward),
                           onPressed: () {
-                            if (_currentRangeOffset.value > _offsetIncrement.value) {
-                              _currentRangeOffset.value -= _offsetIncrement.value;
+                            if (_currentRangeOffset.value >
+                                _offsetIncrement.value) {
+                              _currentRangeOffset.value -=
+                                  _offsetIncrement.value;
                             }
                           },
                         ),
@@ -195,10 +186,7 @@ class _DashboardState extends State<Dashboard> {
                         return MoodLineChart(spots: spotsValue);
                       },
                     ),
-                    Text(
-                      "Mood distribution",
-                      style: h1Black
-                    ),
+                    Text("Mood distribution", style: h1Black),
                     ValueListenableBuilder<List<PieChartSection>>(
                       valueListenable: _sections,
                       builder: (context, sectionsValue, child) {

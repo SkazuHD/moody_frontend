@@ -1,5 +1,5 @@
+import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/views/dashboard/dashboard.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});

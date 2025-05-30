@@ -1,14 +1,14 @@
 import 'dart:developer';
 
+import 'package:Soullog/data/constants/emotions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/data/constants/emotions.dart';
 
 class MoodLineChart extends StatefulWidget {
   final List<FlSpot> spots;
 
-  MoodLineChart({super.key, required this.spots});
+  const MoodLineChart({super.key, required this.spots});
 
   @override
   State<MoodLineChart> createState() => _MoodLineChartState();

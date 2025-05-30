@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:Soullog/data/models/record.dart';
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/data/models/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 

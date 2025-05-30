@@ -1,7 +1,6 @@
+import 'package:Soullog/views/home/home.dart';
+import 'package:Soullog/views/welcome/welcome.dart';
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/views/dashboard/dashboard.dart';
-import 'package:moody_frontend/views/home/home.dart';
-import 'package:moody_frontend/views/welcome/welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -80,7 +79,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       //Replace with route to Home when done
-      home: _showWelcome ? const Welcome() :  Home(),
+      home: _showWelcome ? const Welcome() : Home(),
     );
   }
 }
