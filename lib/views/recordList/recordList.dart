@@ -1,4 +1,6 @@
+import 'package:Soullog/data/constants/emotions.dart';
 import 'package:flutter/material.dart';
+
 import '../../components/filterList.dart';
 import '../../components/header.dart';
 import '../../data/db.dart';
@@ -46,16 +48,7 @@ class _RecordListState extends State<RecordList> {
                 builder: (context, recordings, _) {
                   return FilterList(
                     recordings: recordings,
-                    categories: [
-                      "Happy",
-                      "Sad",
-                      "Angry",
-                      "Surprised",
-                      "Neutral",
-                      "Fearful",
-                      "Disgusted",
-                      "Calm",
-                    ],
+                    categories: Emotion.values.map((e) => e.label).toList(),
                   );
                 },
               ),
