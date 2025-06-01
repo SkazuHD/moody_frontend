@@ -25,4 +25,15 @@ class Recording {
       'mood': mood,
     };
   }
+
+  factory Recording.fromJson(Map<String, dynamic> json) {
+    return Recording(
+      id: json['id'] as int,
+      filePath: json['filePath'] as String,
+      duration: json['duration'] as int,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      transcription: json['transcription'] as String?,
+      mood: json['mood'] as String?,
+    );
+  }
 }

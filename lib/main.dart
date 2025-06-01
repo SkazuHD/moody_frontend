@@ -1,5 +1,6 @@
 import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:Soullog/views/home/home.dart';
+import 'package:Soullog/views/record/record.dart';
 import 'package:Soullog/views/recordList/recordList.dart';
 import 'package:Soullog/views/welcome/welcome.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +86,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/dashboard': (context) => const Dashboard(),
         '/entries': (context) => const RecordList(),
+        '/record': (context) => const Record(),
         '/home': (context) => const Home(),
         '/welcome': (context) => const Welcome(),
       },
