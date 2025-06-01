@@ -17,8 +17,20 @@ import 'package:Soullog/api/soullog-api/lib/soullog_api.dart';
   outputDirectory: 'soullog-api',
 )
 class SoullogApiService {
+  // OPEN QUESTION DO WE NEED A SERVICE
+  // OR DOES THE COMPONENT ITSELF GETS IT LIKE BELOW?
   final api = SoullogApi().getDefaultApi();
 
-  SoullogApiService(){}
+  SoullogApiService(){
+    api.rootGet().then(
+        (value) {
+          print(value.data);
+        }
+    ).catchError(
+        (error) {
+          print("Error: $error");
+        }
+    );
+  }
 
 }
