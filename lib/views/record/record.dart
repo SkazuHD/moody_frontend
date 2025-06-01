@@ -24,12 +24,15 @@ Recording recording = Recording(
 class Record extends StatefulWidget {
   const Record({super.key});
 
+
   @override
   State<Record> createState() => _RecordState();
 }
 
 class _RecordState extends State<Record> {
   final SoullogApiService _apiService = SoullogApiService();
+  final TextEditingController transcriptionController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,7 @@ class _RecordState extends State<Record> {
           SizedBox(height: 60),
           Center(
             child: Text(
-              'Whats on your mind',
+              'What’s on your mind',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
@@ -50,7 +53,7 @@ class _RecordState extends State<Record> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AudioRecorderPlayer(),
+                  AudioRecorderPlayer(controller: transcriptionController),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -61,8 +64,9 @@ class _RecordState extends State<Record> {
                       const Center(child: SwitchTranscription()),
                     ],
                   ),
+
                   SizedBox(height: 20),
-                  const ObscuredTextFieldSample(),
+                  ObscuredTextFieldSample(controller: transcriptionController),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
@@ -142,13 +146,16 @@ class _SwitchExampleState extends State<SwitchTranscription> {
 }
 
 class ObscuredTextFieldSample extends StatelessWidget {
-  const ObscuredTextFieldSample({super.key});
+  final TextEditingController controller;
+
+  const ObscuredTextFieldSample({required this.controller, super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 250,
       child: TextField(
+        controller: controller,
         style: const TextStyle(color: Colors.black),
         maxLines: null,
         textAlignVertical: TextAlignVertical.top,
@@ -170,7 +177,9 @@ class ObscuredTextFieldSample extends StatelessWidget {
 }
 
 class AudioRecorderPlayer extends StatefulWidget {
-  const AudioRecorderPlayer({super.key});
+  final TextEditingController controller;
+
+  const AudioRecorderPlayer({required this.controller, super.key});
 
   @override
   State<AudioRecorderPlayer> createState() => _AudioRecorderPlayerState();
@@ -204,11 +213,12 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
           filePath: path,
           duration: duration,
           createdAt: DateTime.now(),
-          transcription: 'This is a sample transcription.',
+          transcription: widget.controller.text,
           mood: 'calm',
         );
         await db.insertRecord(newRecording);
         setState(() {
+          widget.controller.clear();
           audioPath = newRecording.filePath;
           showPlayer = true;
         });
