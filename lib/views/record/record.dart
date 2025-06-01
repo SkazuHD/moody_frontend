@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
+import '../../data/db.dart';
+
 import '/components/popupViewSave.dart';
 
 Recording recording = Recording(
@@ -189,18 +191,23 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
 
   Future<void> toggleRecording() async {
     if (await recorder.isRecording()) {
+      final db = await RecordsDB.getInstance();
       final path = await recorder.stop();
 
       if (path != null && recordingStartTime != null) {
         final duration =
             DateTime.now().difference(recordingStartTime!).inSeconds;
 
+        final int nextId = await db.getNextId();
+
         final newRecording = Recording(
-          id: DateTime.now().millisecondsSinceEpoch,
           filePath: path,
           duration: duration,
           createdAt: DateTime.now(),
+          transcription: 'This is a sample transcription.',
+          mood: 'calm',
         );
+        await db.insertRecord(newRecording);
         setState(() {
           audioPath = newRecording.filePath;
           showPlayer = true;
