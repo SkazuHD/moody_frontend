@@ -6,6 +6,7 @@ import 'package:moody_frontend/components/headlines.dart';
 import 'package:moody_frontend/views/record/record.dart';
 import 'package:moody_frontend/views/recordList/recordList.dart';
 import 'dart:math';
+import '../../data/constants/emotions.dart';
 
 import '../../data/db.dart';
 import '../../data/models/plotCard.dart';
@@ -14,14 +15,6 @@ import '../dashboard/moodLinechart.dart';
 import 'chartHelper.dart';
 
 final moodSpotsNotifier = MoodSpotsNotifier();
-
-final List<Map<String, dynamic>> emotions = [
-  {'emoji': '😊', 'label': 'Happy', 'color': Color(0xFF9CD45B)},
-  {'emoji': '😢', 'label': 'Sad', 'color': Color(0xFF73B4D5)},
-  {'emoji': '😨', 'label': 'Fear', 'color': Color(0xFFF4A658)},
-  {'emoji': '😠', 'label': 'Angry', 'color': Color(0xFFDA7167)},
-  {'emoji': '😌', 'label': 'Calm', 'color': Color(0xFF46C6A8)},
-];
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -88,9 +81,9 @@ class _HomeState extends State<Home> {
                     height: 100,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: emotions.length,
+                      itemCount: Emotion.values.length,
                       itemBuilder: (context, index) {
-                        final emotion = emotions[index];
+                        final emotion = Emotion.values[index];
                         final isSelected = selectedEmotionIndex == index;
                         return GestureDetector(
                           onTap: () async {
@@ -120,11 +113,11 @@ class _HomeState extends State<Home> {
                               children: [
                                 CircleAvatar(
                                   radius: isSelected ? 32 : 24,
-                                  backgroundColor: emotion['color'],
-                                  child: Text(emotion['emoji'], style: bodyWhite.copyWith(fontSize: isSelected ? 32 : 24,),),
+                                  backgroundColor: emotion.color,
+                                  child: Text(emotion.emoji, style: bodyWhite.copyWith(fontSize: isSelected ? 32 : 24,),),
                                 ),
                                 const SizedBox(height: 8),
-                                Text(emotion['label'], style: bodyWhite.copyWith(
+                                Text(emotion.label, style: bodyWhite.copyWith(
                                     fontWeight: isSelected
                                         ? FontWeight.bold
                                         : FontWeight.normal,
