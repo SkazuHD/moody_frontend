@@ -31,6 +31,25 @@ class _FilterListState extends State<FilterList> {
                     (recording.mood ?? '').trim().toLowerCase(),
               );
         }).toList();
+    final sortedCategories = List<String>.from(widget.categories)..sort((a, b) {
+      final countA =
+          widget.recordings
+              .where(
+                (r) =>
+                    (r.mood ?? '').toLowerCase().trim() ==
+                    a.toLowerCase().trim(),
+              )
+              .length;
+      final countB =
+          widget.recordings
+              .where(
+                (r) =>
+                    (r.mood ?? '').toLowerCase().trim() ==
+                    b.toLowerCase().trim(),
+              )
+              .length;
+      return countB.compareTo(countA); // absteigend
+    });
     return Container(
       margin: const EdgeInsets.only(top: 30, bottom: 30, left: 20, right: 20),
       decoration: BoxDecoration(
@@ -47,7 +66,7 @@ class _FilterListState extends State<FilterList> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children:
-                    widget.categories
+                    sortedCategories
                         .map(
                           (category) => Padding(
                             padding: const EdgeInsets.all(8.0),
