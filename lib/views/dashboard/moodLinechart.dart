@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:Soullog/data/constants/emotions.dart';
-import 'package:Soullog/views/home/home.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,26 +15,28 @@ class MoodLineChart extends StatefulWidget {
 }
 
 class _MoodLineChartState extends State<MoodLineChart> {
-
-  List<Color> get gradientColors{
+  List<Color> get gradientColors {
     if (widget.spots.isEmpty) {
       return [Colors.grey, Colors.grey];
     }
 
-    var gradient = widget.spots
-        .map((spot) => Emotion.values
-        .firstWhere(
-            (element) => element.value.toInt() == spot.y.toInt())
-        .color)
-        .toList();
+    var gradient =
+        widget.spots
+            .map(
+              (spot) =>
+                  Emotion.values
+                      .firstWhere(
+                        (element) => element.value.toInt() == spot.y.toInt(),
+                      )
+                      .color,
+            )
+            .toList();
     return gradient;
   }
-
 
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -150,7 +151,6 @@ class _MoodLineChartState extends State<MoodLineChart> {
       minY: 1,
       maxY: 8,
       lineBarsData: [
-
         LineChartBarData(
           spots: plotPoints,
           isCurved: true,
@@ -173,11 +173,7 @@ class _MoodLineChartState extends State<MoodLineChart> {
             ) {
               return FlDotCirclePainter(
                 radius: 4,
-                color:
-                    gradientColors[(spot.y.toInt() - 1).clamp(
-                      0,
-                      gradientColors.length - 1,
-                    )],
+                color: gradientColors[index % gradientColors.length],
                 strokeWidth: 2,
                 strokeColor: Colors.white,
               );
