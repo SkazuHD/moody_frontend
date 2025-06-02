@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    moodSpotsNotifier.fetchAndCalculateSpots();
+    moodSpotsNotifier.loadSpots(pastDays: 7);
   }
 
   @override
