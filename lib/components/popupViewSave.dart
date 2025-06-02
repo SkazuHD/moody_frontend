@@ -3,24 +3,7 @@ import 'package:flutter/material.dart';
 import '/data/models/record.dart';
 import '../data/constants/emotions.dart';
 
-class PopupViewSave extends StatelessWidget {
-  const PopupViewSave({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('AlertDialog Sample')),
-      body: Center(
-        child: OutlinedButton(
-          onPressed: () {
-            Navigator.of(context).restorablePush(dialogBuilder);
-          },
-          child: const Text('Open Dialog'),
-        ),
-      ),
-    );
-  }
-
+class PopupViewSave {
   @pragma('vm:entry-point')
   static Route<Object?> dialogBuilder(BuildContext context, Object? arguments) {
     final recording = Recording.fromJson(arguments as Map<String, dynamic>);
@@ -43,6 +26,7 @@ class PopupViewSave extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 TextField(
+                  style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     labelText: 'Title',
                     hintText: 'Enter a title for your recording',
