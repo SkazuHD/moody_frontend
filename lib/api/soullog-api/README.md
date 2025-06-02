@@ -72,6 +72,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [AnalyzeResponse](doc/AnalyzeResponse.md)
  - [HTTPValidationError](doc/HTTPValidationError.md)
  - [ValidationError](doc/ValidationError.md)
  - [ValidationErrorLocInner](doc/ValidationErrorLocInner.md)

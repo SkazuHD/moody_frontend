@@ -8,14 +8,14 @@ void main() {
   group(DefaultApi, () {
     // Analyze
     //
-    //Future<JsonObject> analyzeAnalyzePost(MultipartFile audio, { BuiltList<JsonObject> personality }) async
+    //Future<AnalyzeResponse> analyzeAnalyzePost(MultipartFile audio, { BuiltList<JsonObject> personality }) async
     test('test analyzeAnalyzePost', () async {
       // TODO
     });
 
     // Root
     //
-    //Future<JsonObject> rootGet() async
+    //Future<BuiltMap<String, JsonObject>> rootGet() async
     test('test rootGet', () async {
       // TODO
     });

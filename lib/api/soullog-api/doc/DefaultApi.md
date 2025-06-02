@@ -14,7 +14,7 @@ Method | HTTP request | Description
 
 
 # **analyzeAnalyzePost**
-> JsonObject analyzeAnalyzePost(audio, personality)
+> AnalyzeResponse analyzeAnalyzePost(audio, personality)
 
 Analyze
 
@@ -43,7 +43,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**JsonObject**](JsonObject.md)
+[**AnalyzeResponse**](AnalyzeResponse.md)
 
 ### Authorization
 
@@ -57,7 +57,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **rootGet**
-> JsonObject rootGet()
+> BuiltMap<String, JsonObject> rootGet()
 
 Root
 
@@ -80,7 +80,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**JsonObject**](JsonObject.md)
+[**BuiltMap&lt;String, JsonObject&gt;**](JsonObject.md)
 
 ### Authorization
 

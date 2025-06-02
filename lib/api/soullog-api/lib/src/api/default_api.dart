@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/json_object.dart';
 import 'package:soullog_api/src/api_util.dart';
+import 'package:soullog_api/src/model/analyze_response.dart';
 import 'package:soullog_api/src/model/http_validation_error.dart';
 
 class DefaultApi {
@@ -33,9 +34,9 @@ class DefaultApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [JsonObject] as data
+  /// Returns a [Future] containing a [Response] with a [AnalyzeResponse] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<JsonObject>> analyzeAnalyzePost({
+  Future<Response<AnalyzeResponse>> analyzeAnalyzePost({
     required MultipartFile audio,
     BuiltList<JsonObject>? personality,
     CancelToken? cancelToken,
@@ -89,7 +90,7 @@ class DefaultApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    JsonObject? _responseData;
+    AnalyzeResponse? _responseData;
 
     try {
       final rawResponse = _response.data;
@@ -97,8 +98,8 @@ class DefaultApi {
           ? null
           : _serializers.deserialize(
               rawResponse,
-              specifiedType: const FullType(JsonObject),
-            ) as JsonObject;
+              specifiedType: const FullType(AnalyzeResponse),
+            ) as AnalyzeResponse;
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -109,7 +110,7 @@ class DefaultApi {
       );
     }
 
-    return Response<JsonObject>(
+    return Response<AnalyzeResponse>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,
@@ -132,9 +133,9 @@ class DefaultApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [JsonObject] as data
+  /// Returns a [Future] containing a [Response] with a [BuiltMap<String, JsonObject>] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<JsonObject>> rootGet({
+  Future<Response<BuiltMap<String, JsonObject>>> rootGet({
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -163,7 +164,7 @@ class DefaultApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    JsonObject? _responseData;
+    BuiltMap<String, JsonObject>? _responseData;
 
     try {
       final rawResponse = _response.data;
@@ -171,8 +172,9 @@ class DefaultApi {
           ? null
           : _serializers.deserialize(
               rawResponse,
-              specifiedType: const FullType(JsonObject),
-            ) as JsonObject;
+              specifiedType: const FullType(
+                  BuiltMap, [FullType(String), FullType(JsonObject)]),
+            ) as BuiltMap<String, JsonObject>;
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -183,7 +185,7 @@ class DefaultApi {
       );
     }
 
-    return Response<JsonObject>(
+    return Response<BuiltMap<String, JsonObject>>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,
