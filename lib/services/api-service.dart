@@ -20,13 +20,19 @@ import '../data/models/record.dart';
   outputDirectory: 'lib/api/soullog-api',
 )
 class SoullogApiService {
+  static final SoullogApiService _instance = SoullogApiService._internal();
+
   final SoullogApi _soullogApi = SoullogApi();
   final _api = SoullogApi().getDefaultApi();
   final _serializers = SoullogApi().serializers;
   final _dio = SoullogApi().dio;
 
-  SoullogApiService() {
-    // Initialize any additional configurations if needed
+  factory SoullogApiService() {
+    return _instance;
+  }
+
+  SoullogApiService._internal() {
+    // Initialize any necessary configurations here
   }
 
   Future<AnalyzeResponse> analyzeRecording(Recording recording) async {
