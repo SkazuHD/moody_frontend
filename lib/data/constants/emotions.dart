@@ -10,7 +10,6 @@ enum Emotion {
   sad(emoji: '😢', label: 'Sad', color: Colors.blue, value: 2.0),
   angry(emoji: '😠', label: 'Angry', color: Colors.red, value: 1.0);
 
-
   const Emotion({
     required this.emoji,
     required this.label,
