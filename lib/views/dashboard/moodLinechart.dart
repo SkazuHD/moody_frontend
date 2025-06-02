@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:Soullog/data/constants/emotions.dart';
+import 'package:Soullog/views/home/home.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +16,26 @@ class MoodLineChart extends StatefulWidget {
 }
 
 class _MoodLineChartState extends State<MoodLineChart> {
-  List<Color> get gradientColors {
-    return [
-      Emotion.angry.color,
-      Emotion.fear.color,
-      Emotion.sad.color,
-      Emotion.happy.color,
-      Emotion.calm.color,
-    ];
+
+  List<Color> get gradientColors{
+    if (widget.spots.isEmpty) {
+      return [Colors.grey, Colors.grey];
+    }
+
+    var gradient = widget.spots
+        .map((spot) => Emotion.values
+        .firstWhere(
+            (element) => element.value.toInt() == spot.y.toInt())
+        .color)
+        .toList();
+    return gradient;
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+
   }
 
   @override
@@ -134,17 +147,19 @@ class _MoodLineChartState extends State<MoodLineChart> {
       ),
       minX: -0,
       maxX: plotPoints.length.toDouble() - 1,
-      minY: 0,
+      minY: 1,
       maxY: 8,
       lineBarsData: [
+
         LineChartBarData(
           spots: plotPoints,
           isCurved: true,
           curveSmoothness: 0.25,
+          preventCurveOverShooting: true,
           gradient: LinearGradient(
             colors: gradientColors,
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
           ),
           barWidth: 5,
           isStrokeCapRound: true,

@@ -75,7 +75,7 @@ List<Recording> recordings = [
     duration: 35,
     createdAt: DateTime.now().subtract(Duration(days: 10)),
     transcription: 'Final sample transcription.',
-    mood: 'sad',
+    mood: 'neutral',
   ),
 ];
 
