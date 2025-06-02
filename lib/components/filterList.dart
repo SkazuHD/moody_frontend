@@ -53,7 +53,9 @@ class _FilterListState extends State<FilterList> {
                             padding: const EdgeInsets.all(8.0),
                             child: FilterChip(
                               selected: selectedCategories.contains(category),
-                              label: Text(category),
+                              label: Text(
+                                '$category (${widget.recordings.where((recording) => recording.mood?.toLowerCase().trim() == category.toLowerCase().trim()).length})',
+                              ),
                               onSelected: (bool selected) {
                                 setState(() {
                                   if (selected) {
