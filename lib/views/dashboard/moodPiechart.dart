@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:Soullog/components/loadingIndicator.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PieChartSection {
@@ -6,17 +10,14 @@ class PieChartSection {
   final double value;
   final String title;
 
-  PieChartSection({
-    required this.color,
-    required this.value,
-    required this.title,
-  });
+  PieChartSection({required this.color, required this.value, required this.title});
 }
 
 class MoodPieChart extends StatefulWidget {
   final List<PieChartSection> sectionsData;
+  final bool isLoading;
 
-  const MoodPieChart({super.key, required this.sectionsData});
+  const MoodPieChart({super.key, required this.sectionsData, this.isLoading = false});
 
   @override
   State<StatefulWidget> createState() => MoodPieChartState();
@@ -27,9 +28,6 @@ class MoodPieChartState extends State<MoodPieChart> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.sectionsData.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
     return AspectRatio(
       aspectRatio: 1.3,
       child: Row(
@@ -38,30 +36,30 @@ class MoodPieChartState extends State<MoodPieChart> {
           Expanded(
             child: AspectRatio(
               aspectRatio: 1,
-              child: PieChart(
-                PieChartData(
-                  pieTouchData: PieTouchData(
-                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                      setState(() {
-                        if (!event.isInterestedForInteractions ||
-                            pieTouchResponse == null ||
-                            pieTouchResponse.touchedSection == null) {
-                          touchedIndex = -1;
-                          return;
-                        }
-                        touchedIndex =
-                            pieTouchResponse
-                                .touchedSection!
-                                .touchedSectionIndex;
-                      });
-                    },
-                  ),
-                  borderData: FlBorderData(show: false),
-                  sectionsSpace: 0,
-                  centerSpaceRadius: 40,
-                  sections: showingSections(),
-                ),
-              ),
+              child:
+                  widget.isLoading
+                      ? loadingIndicator()
+                      : PieChart(
+                        PieChartData(
+                          pieTouchData: PieTouchData(
+                            touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                              setState(() {
+                                if (!event.isInterestedForInteractions ||
+                                    pieTouchResponse == null ||
+                                    pieTouchResponse.touchedSection == null) {
+                                  touchedIndex = -1;
+                                  return;
+                                }
+                                touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                              });
+                            },
+                          ),
+                          borderData: FlBorderData(show: false),
+                          sectionsSpace: 0,
+                          centerSpaceRadius: 40,
+                          sections: showingSections(),
+                        ),
+                      ),
             ),
           ),
         ],
@@ -70,6 +68,10 @@ class MoodPieChartState extends State<MoodPieChart> {
   }
 
   List<PieChartSectionData> showingSections() {
+    if (kDebugMode) {
+      log("Showing sections with touchedIndex: ${widget.sectionsData.length}");
+    }
+
     return List.generate(widget.sectionsData.length, (i) {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;

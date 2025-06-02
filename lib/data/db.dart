@@ -1,76 +1,12 @@
+import 'dart:math';
+
+import 'package:Soullog/data/constants/emotions.dart';
 import 'package:Soullog/data/models/record.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import '../../data/models/plotCard.dart';
-import 'dart:math';
 
-List<Recording> recordings = [
-  Recording(
-    filePath: 'assets/audio/recording1.mp3',
-    duration: 30,
-    createdAt: DateTime.now().subtract(Duration(days: 0)),
-    transcription: 'This is a sample transcription.',
-    mood: 'calm',
-  ),
-  Recording(
-    filePath: 'assets/audio/recording1.mp3',
-    duration: 30,
-    createdAt: DateTime.now().subtract(Duration(days: 1)),
-    transcription: 'This is a sample transcription.',
-    mood: 'happy',
-  ),
-  Recording(
-    filePath: 'assets/audio/recording2.mp3',
-    duration: 12,
-    createdAt: DateTime.now().subtract(Duration(days: 2)),
-    transcription: 'Another sample transcription.',
-    mood: 'sad',
-  ),
-  // Add more recordings as needed
-  Recording(
-    filePath: 'assets/audio/recording3.mp3',
-    duration: 45,
-    createdAt: DateTime.now().subtract(Duration(days: 3)),
-    transcription: 'This is another sample transcription.',
-    mood: 'angry',
-  ),
-  Recording(
-    filePath: 'assets/audio/recording4.mp3',
-    duration: 20,
-    createdAt: DateTime.now().subtract(Duration(days: 4)),
-    transcription: 'Yet another sample transcription.',
-    mood: 'fear',
-  ),
-  Recording(
-    filePath: 'assets/audio/recording5.mp3',
-    duration: 35,
-    createdAt: DateTime.now().subtract(Duration(days: 5)),
-    transcription: 'Final sample transcription.',
-    mood: 'calm',
-  ),
-  Recording(
-    filePath: 'assets/audio/recording5.mp3',
-    duration: 35,
-    createdAt: DateTime.now().subtract(Duration(days: 6)),
-    transcription: 'Final sample transcription.',
-    mood: 'angry',
-  ),
-  Recording(
-    filePath: 'assets/audio/recording5.mp3',
-    duration: 35,
-    createdAt: DateTime.now().subtract(Duration(days: 9)),
-    transcription: 'Final sample transcription.',
-    mood: 'angry',
-  ),
-  Recording(
-    filePath: 'assets/audio/recording5.mp3',
-    duration: 35,
-    createdAt: DateTime.now().subtract(Duration(days: 10)),
-    transcription: 'Final sample transcription.',
-    mood: 'neutral',
-  ),
-];
+import '../../data/models/plotCard.dart';
 
 List<PlotCard> plotCards = [
   PlotCard(
@@ -132,9 +68,7 @@ class RecordsDB {
       join(await getDatabasesPath(), _databaseName),
       onCreate: (db, version) {
         if (kDebugMode) {
-          print(
-            'Database file created. Creating table $_tableName via onCreate.',
-          );
+          print('Database file created. Creating table $_tableName via onCreate.');
         }
         return db.execute(initScript);
       },
@@ -145,15 +79,29 @@ class RecordsDB {
       print('Debug Mode: Dropping and recreating table $_tableName in _init.');
       await _db!.execute('DROP TABLE IF EXISTS $_tableName');
       await _db!.execute(initScript);
-      for (var record in recordings) {
-        print('Inserting record: ${record.toDbValuesMap()}');
+      await _db!.transaction((txn) async {
+        final batch = txn.batch();
+        final int recordCount = 250;
+        for (var i = 0; i < recordCount; i++) {
+          final randomEmotion = Emotion.values[Random().nextInt(Emotion.values.length)];
 
-        await _db!.insert(
-          _tableName,
-          record.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
+          final record = Recording(
+            filePath: 'assets/audio/recording$i.mp3',
+            duration: Random().nextInt(60) + 1,
+            createdAt: DateTime.now().subtract(Duration(days: i)),
+            transcription: 'Sample transcription for recording $i.',
+            mood: randomEmotion.label,
+          );
+
+          batch.insert(_tableName, record.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+
+        await batch.commit();
+
+        if (kDebugMode) {
+          print('Batch insert von 60 Datensätzen abgeschlossen');
+        }
+      });
     }
 
     _initialized = true;
@@ -189,16 +137,11 @@ class RecordsDB {
     if (kDebugMode) {
       print('Inserting record: ${record.toDbValuesMap()}');
     }
-    await _db!.insert(
-      _tableName,
-      record.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await _db!.insert(_tableName, record.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
     // Automatically create today's PlotCard if mood is set and record is from today
     final now = DateTime.now();
-    final isToday = record.createdAt.year == now.year &&
-        record.createdAt.month == now.month &&
-        record.createdAt.day == now.day;
+    final isToday =
+        record.createdAt.year == now.year && record.createdAt.month == now.month && record.createdAt.day == now.day;
     if (isToday) {
       if (isToday && record.mood != null) {
         await createTodaysPlotCard(record.mood!);
@@ -212,7 +155,7 @@ class RecordsDB {
       final matchingCards = plotCards.where((c) => c.mood == mood).toList();
       if (matchingCards.isNotEmpty) {
         final randomIndex = Random().nextInt(matchingCards.length);
-        final chosen = matchingCards[randomIndex];    // Select a random PlotCard
+        final chosen = matchingCards[randomIndex]; // Select a random PlotCard
         _todaysPlotCard = PlotCard(
           mood: mood,
           title: chosen.title,
@@ -243,10 +186,7 @@ class RecordsDB {
 
     // Find the first recording from today (if any)
     final todayRecording = recordings.cast<Recording?>().firstWhere(
-          (r) => r != null &&
-          r.createdAt.year == now.year &&
-          r.createdAt.month == now.month &&
-          r.createdAt.day == now.day,
+      (r) => r != null && r.createdAt.year == now.year && r.createdAt.month == now.month && r.createdAt.day == now.day,
       orElse: () => null,
     );
 
@@ -268,12 +208,7 @@ class RecordsDB {
       print('Updating record: ${record.toJson()}');
     }
 
-    await _db!.update(
-      _tableName,
-      record.toJson(),
-      where: 'id = ?',
-      whereArgs: [record.id],
-    );
+    await _db!.update(_tableName, record.toJson(), where: 'id = ?', whereArgs: [record.id]);
   }
 
   Future<Recording?> getRecord(int id) async {
@@ -283,11 +218,7 @@ class RecordsDB {
       print('Fetching record with id: $id');
     }
 
-    final List<Map<String, dynamic>> maps = await _db!.query(
-      _tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final List<Map<String, dynamic>> maps = await _db!.query(_tableName, where: 'id = ?', whereArgs: [id]);
 
     if (maps.isNotEmpty) {
       return mapToRecord(maps.first);
@@ -295,10 +226,7 @@ class RecordsDB {
     return null;
   }
 
-  Future<List<Recording>> getRecordsByDateRange(
-    DateTime start,
-    DateTime end,
-  ) async {
+  Future<List<Recording>> getRecordsByDateRange(DateTime start, DateTime end) async {
     await _ensureInitialized();
 
     if (kDebugMode) {
