@@ -41,6 +41,9 @@ class _MoodLineChartState extends State<MoodLineChart> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.spots.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Stack(
       children: <Widget>[
         AspectRatio(

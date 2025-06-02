@@ -27,6 +27,9 @@ class MoodPieChartState extends State<MoodPieChart> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.sectionsData.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return AspectRatio(
       aspectRatio: 1.3,
       child: Row(
