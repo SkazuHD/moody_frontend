@@ -2,6 +2,7 @@
 import 'package:Soullog/api/soullog-api/lib/soullog_api.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/json_object.dart';
+import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
 
@@ -22,17 +23,20 @@ import '../data/models/record.dart';
 class SoullogApiService {
   static final SoullogApiService _instance = SoullogApiService._internal();
 
-  final SoullogApi _soullogApi = SoullogApi();
-  final _api = SoullogApi().getDefaultApi();
-  final _serializers = SoullogApi().serializers;
-  final _dio = SoullogApi().dio;
+  late final SoullogApi _soullogApi;
+  late final DefaultApi _api;
+  late final Serializers _serializers;
+  late final Dio _dio;
 
   factory SoullogApiService() {
     return _instance;
   }
 
   SoullogApiService._internal() {
-    // Initialize any necessary configurations here
+    _soullogApi = SoullogApi();
+    _api = _soullogApi.getDefaultApi();
+    _serializers = _soullogApi.serializers;
+    _dio = _soullogApi.dio;
   }
 
   Future<AnalyzeResponse> analyzeRecording(Recording recording) async {
@@ -41,7 +45,7 @@ class SoullogApiService {
     }
 
     var personalityBuilder = ListBuilder<JsonObject>();
-    var file = MultipartFile.fromFileSync(recording.filePath);
+    var file = await MultipartFile.fromFile(recording.filePath);
     var result = await _api.analyzeAnalyzePost(
       audio: file,
       personality: personalityBuilder.build(),
@@ -52,7 +56,7 @@ class SoullogApiService {
       var responseData = result.data;
       return Future.value(responseData);
     } else {
-      throw Future.error(
+      return Future.error(
         'Failed to analyze recording: ${result.statusMessage}',
       );
     }
