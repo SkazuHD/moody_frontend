@@ -1,4 +1,6 @@
+import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:Soullog/views/home/home.dart';
+import 'package:Soullog/views/recordList/recordList.dart';
 import 'package:Soullog/views/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -80,6 +82,12 @@ class _MyAppState extends State<MyApp> {
       ),
       //Replace with route to Home when done
       home: _showWelcome ? const Welcome() : Home(),
+      routes: {
+        '/dashboard': (context) => const Dashboard(),
+        '/entries': (context) => const RecordList(),
+        '/home': (context) => const Home(),
+        '/welcome': (context) => const Welcome(),
+      },
     );
   }
 }

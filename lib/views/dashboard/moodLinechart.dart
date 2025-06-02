@@ -16,17 +16,34 @@ class MoodLineChart extends StatefulWidget {
 
 class _MoodLineChartState extends State<MoodLineChart> {
   List<Color> get gradientColors {
-    return [
-      Emotion.angry.color,
-      Emotion.fear.color,
-      Emotion.sad.color,
-      Emotion.happy.color,
-      Emotion.calm.color,
-    ];
+    if (widget.spots.isEmpty) {
+      return [Colors.grey, Colors.grey];
+    }
+
+    var gradient =
+        widget.spots
+            .map(
+              (spot) =>
+                  Emotion.values
+                      .firstWhere(
+                        (element) => element.value.toInt() == spot.y.toInt(),
+                      )
+                      .color,
+            )
+            .toList();
+    return gradient;
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.spots.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Stack(
       children: <Widget>[
         AspectRatio(
@@ -134,17 +151,18 @@ class _MoodLineChartState extends State<MoodLineChart> {
       ),
       minX: -0,
       maxX: plotPoints.length.toDouble() - 1,
-      minY: 0,
-      maxY: 6,
+      minY: 1,
+      maxY: 8,
       lineBarsData: [
         LineChartBarData(
           spots: plotPoints,
           isCurved: true,
           curveSmoothness: 0.25,
+          preventCurveOverShooting: true,
           gradient: LinearGradient(
             colors: gradientColors,
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
           ),
           barWidth: 5,
           isStrokeCapRound: true,
@@ -158,11 +176,7 @@ class _MoodLineChartState extends State<MoodLineChart> {
             ) {
               return FlDotCirclePainter(
                 radius: 4,
-                color:
-                    gradientColors[(spot.y.toInt() - 1).clamp(
-                      0,
-                      gradientColors.length - 1,
-                    )],
+                color: gradientColors[index % gradientColors.length],
                 strokeWidth: 2,
                 strokeColor: Colors.white,
               );
