@@ -1,10 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/components/header.dart';
-import 'package:moody_frontend/components/greyButton.dart';
-import 'package:moody_frontend/components/headlines.dart';
-import 'package:moody_frontend/views/record/record.dart';
-import 'package:moody_frontend/views/recordList/recordList.dart';
+import '../../components/header.dart';
+import '../../components/greyButton.dart';
+import '../../components/headlines.dart';
+import '../../views/record/record.dart';
+import '../../views/recordList/recordList.dart';
 import 'dart:math';
 import '../../data/constants/emotions.dart';
 

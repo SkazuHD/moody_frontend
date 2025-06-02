@@ -2,7 +2,7 @@ import 'package:Soullog/data/models/record.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:moody_frontend/data/models/plotCard.dart';
+import '../../data/models/plotCard.dart';
 import 'dart:math';
 
 List<Recording> recordings = [
