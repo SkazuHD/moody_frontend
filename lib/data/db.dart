@@ -5,7 +5,6 @@ import 'package:sqflite/sqflite.dart';
 
 List<Recording> recordings = [
   Recording(
-    id: 0,
     filePath: 'assets/audio/recording1.mp3',
     duration: 30,
     createdAt: DateTime.now().subtract(Duration(days: 0)),
@@ -13,7 +12,6 @@ List<Recording> recordings = [
     mood: 'calm',
   ),
   Recording(
-    id: 1,
     filePath: 'assets/audio/recording1.mp3',
     duration: 30,
     createdAt: DateTime.now().subtract(Duration(days: 1)),
@@ -21,7 +19,6 @@ List<Recording> recordings = [
     mood: 'happy',
   ),
   Recording(
-    id: 2,
     filePath: 'assets/audio/recording2.mp3',
     duration: 12,
     createdAt: DateTime.now().subtract(Duration(days: 2)),
@@ -30,7 +27,6 @@ List<Recording> recordings = [
   ),
   // Add more recordings as needed
   Recording(
-    id: 3,
     filePath: 'assets/audio/recording3.mp3',
     duration: 45,
     createdAt: DateTime.now().subtract(Duration(days: 3)),
@@ -38,7 +34,6 @@ List<Recording> recordings = [
     mood: 'angry',
   ),
   Recording(
-    id: 4,
     filePath: 'assets/audio/recording4.mp3',
     duration: 20,
     createdAt: DateTime.now().subtract(Duration(days: 4)),
@@ -46,7 +41,6 @@ List<Recording> recordings = [
     mood: 'fear',
   ),
   Recording(
-    id: 5,
     filePath: 'assets/audio/recording5.mp3',
     duration: 35,
     createdAt: DateTime.now().subtract(Duration(days: 5)),
@@ -54,7 +48,6 @@ List<Recording> recordings = [
     mood: 'calm',
   ),
   Recording(
-    id: 6,
     filePath: 'assets/audio/recording5.mp3',
     duration: 35,
     createdAt: DateTime.now().subtract(Duration(days: 6)),
@@ -62,7 +55,6 @@ List<Recording> recordings = [
     mood: 'angry',
   ),
   Recording(
-    id: 7,
     filePath: 'assets/audio/recording5.mp3',
     duration: 35,
     createdAt: DateTime.now().subtract(Duration(days: 9)),
@@ -70,7 +62,6 @@ List<Recording> recordings = [
     mood: 'angry',
   ),
   Recording(
-    id: 8,
     filePath: 'assets/audio/recording5.mp3',
     duration: 35,
     createdAt: DateTime.now().subtract(Duration(days: 10)),
@@ -99,18 +90,39 @@ class RecordsDB {
   Database? _db;
 
   Future<void> _init() async {
+    final String initScript =
+        'CREATE TABLE $_tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT)';
     _db = await openDatabase(
       join(await getDatabasesPath(), _databaseName),
       onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE $_tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT)',
-        );
+        if (kDebugMode) {
+          print(
+            'Database file created. Creating table $_tableName via onCreate.',
+          );
+        }
+        return db.execute(initScript);
       },
       version: 1,
     );
 
-    for (var record in recordings) {
-      await insertRecord(record);
+    if (kDebugMode) {
+      print('Debug Mode: Dropping and recreating table $_tableName in _init.');
+      await _db!.execute('DROP TABLE IF EXISTS $_tableName');
+      await _db!.execute(initScript);
+      for (var record in recordings) {
+        print('Inserting record: ${record.toDbValuesMap()}');
+
+        await _db!.insert(
+          _tableName,
+          record.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+
+    _initialized = true;
+    if (kDebugMode) {
+      print('Database initialization process completed in _init.');
     }
   }
 
@@ -139,7 +151,7 @@ class RecordsDB {
     await _ensureInitialized();
 
     if (kDebugMode) {
-      print('Inserting record: ${record.toJson()}');
+      print('Inserting record: ${record.toDbValuesMap()}');
     }
     await _db!.insert(
       _tableName,
