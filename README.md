@@ -1,4 +1,4 @@
-# moody_frontend
+# Soullog
 
 Mental Health Diary
 

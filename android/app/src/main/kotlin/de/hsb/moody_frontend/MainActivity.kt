@@ -1,4 +1,4 @@
-package de.hsb.moody_frontend
+package de.hsb.soullog
 
 import io.flutter.embedding.android.FlutterActivity
 

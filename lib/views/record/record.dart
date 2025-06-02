@@ -1,9 +1,20 @@
 import 'dart:io';
 
+import 'package:Soullog/data/models/record.dart';
 import 'package:flutter/material.dart';
-import 'package:moody_frontend/data/models/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+
+import '/components/popupViewSave.dart';
+
+Recording recording = Recording(
+  id: 0,
+  filePath: 'assets/audio/recording1.mp3',
+  duration: 30,
+  createdAt: DateTime.now().subtract(Duration(days: 0)),
+  transcription: 'This is a sample transcription.',
+  mood: 'calm',
+);
 
 class Record extends StatelessWidget {
   const Record({super.key});
@@ -42,7 +53,15 @@ class Record extends StatelessWidget {
                   SizedBox(height: 20),
                   const ObscuredTextFieldSample(),
                   SizedBox(height: 20),
-                  ElevatedButton(onPressed: () {}, child: Text("Save")),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).restorablePush(
+                        PopupViewSave.dialogBuilder,
+                        arguments: recording.toJson(),
+                      );
+                    },
+                    child: Text("Save"),
+                  ),
                 ],
               ),
             ),
