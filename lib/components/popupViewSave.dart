@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '/data/db.dart';
 import '/data/models/record.dart';
 import '../data/constants/emotions.dart';
 
@@ -7,13 +8,14 @@ class PopupViewSave {
   @pragma('vm:entry-point')
   static Route<Object?> dialogBuilder(BuildContext context, Object? arguments) {
     final recording = Recording.fromJson(arguments as Map<String, dynamic>);
+
     return DialogRoute<void>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext innerContext) {
         return AlertDialog(
           title: Text(
             "Save Recording",
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: Theme.of(innerContext).textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
           content: SizedBox(
@@ -22,12 +24,12 @@ class PopupViewSave {
               children: [
                 Text(
                   "Do you want to save this recording?",
-                  style: TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
                 TextField(
-                  style: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
+                  style: const TextStyle(color: Colors.black),
+                  decoration: const InputDecoration(
                     labelText: 'Title',
                     hintText: 'Enter a title for your recording',
                   ),
@@ -48,15 +50,15 @@ class PopupViewSave {
                           vertical: 10,
                         ),
                         title: Text(
-                          recording.transcription as String,
-                          style: TextStyle(
+                          recording.transcription ?? '',
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         subtitle: Text(
-                          recording.mood as String,
-                          style: TextStyle(color: Colors.white),
+                          recording.mood ?? '',
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
@@ -74,21 +76,24 @@ class PopupViewSave {
                 children: [
                   ElevatedButton(
                     style: TextButton.styleFrom(
-                      textStyle: Theme.of(context).textTheme.labelLarge,
+                      textStyle: Theme.of(innerContext).textTheme.labelLarge,
                     ),
                     child: const Text('Cancel'),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(innerContext).pop();
                     },
                   ),
-                  const SizedBox(width: 16), // Abstand zwischen den Buttons
+                  const SizedBox(width: 16),
                   ElevatedButton(
                     style: TextButton.styleFrom(
-                      textStyle: Theme.of(context).textTheme.labelLarge,
+                      textStyle: Theme.of(innerContext).textTheme.labelLarge,
                     ),
                     child: const Text('Save'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
+                    onPressed: () async {
+                      final db = await RecordsDB.getInstance();
+                      await db.insertRecord(recording);
+
+                      Navigator.of(innerContext).pop();
                     },
                   ),
                 ],

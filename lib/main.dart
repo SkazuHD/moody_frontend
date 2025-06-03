@@ -86,7 +86,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/dashboard': (context) => const Dashboard(),
         '/entries': (context) => const RecordList(),
-        '/record': (context) => const Record(),
+        '/record': (context) => Record(),
         '/home': (context) => const Home(),
         '/welcome': (context) => const Welcome(),
       },
