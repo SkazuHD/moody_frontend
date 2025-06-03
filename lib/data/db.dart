@@ -131,16 +131,6 @@ class RecordsDB {
     );
   }
 
-  Future<int> getNextId() async {
-    await _ensureInitialized();
-
-    final result = await _db!.rawQuery(
-      'SELECT MAX(id) as maxId FROM $_tableName',
-    );
-    final maxId = result.first['maxId'] as int?;
-    return (maxId ?? -1) + 1;
-  }
-
   Future<void> insertRecord(Recording record) async {
     await _ensureInitialized();
 

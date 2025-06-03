@@ -38,7 +38,7 @@ class Recording {
 
   factory Recording.fromJson(Map<String, dynamic> json) {
     return Recording(
-      id: json['id'] as int,
+      id: json['id'] as int?,
       filePath: json['filePath'] as String,
       duration: json['duration'] as int,
       createdAt: DateTime.parse(json['createdAt'] as String),
