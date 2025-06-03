@@ -1,7 +1,12 @@
 // Openapi Generator last run: : 2025-06-02T17:48:31.142230
-
-import 'package:Soullog/api/soullog-api/lib/src/api.dart';
+import 'package:Soullog/api/soullog-api/lib/soullog_api.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:built_value/json_object.dart';
+import 'package:built_value/serializer.dart';
+import 'package:dio/dio.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
+
+import '../data/models/record.dart';
 
 // To generate files run: dart run build_runner build --delete-conflicting-outputs
 @Openapi(
@@ -16,18 +21,44 @@ import 'package:openapi_generator_annotations/openapi_generator_annotations.dart
   outputDirectory: 'lib/api/soullog-api',
 )
 class SoullogApiService {
-  // OPEN QUESTION DO WE NEED A SERVICE
-  // OR DOES THE COMPONENT ITSELF GETS IT LIKE BELOW?
-  final api = SoullogApi().getDefaultApi();
+  static final SoullogApiService _instance = SoullogApiService._internal();
 
-  SoullogApiService() {
-    api
-        .rootGet()
-        .then((value) {
-          print(value.data);
-        })
-        .catchError((error) {
-          print("Error: $error");
-        });
+  late final SoullogApi _soullogApi;
+  late final DefaultApi _api;
+  late final Serializers _serializers;
+  late final Dio _dio;
+
+  factory SoullogApiService() {
+    return _instance;
+  }
+
+  SoullogApiService._internal() {
+    _soullogApi = SoullogApi();
+    _api = _soullogApi.getDefaultApi();
+    _serializers = _soullogApi.serializers;
+    _dio = _soullogApi.dio;
+  }
+
+  Future<AnalyzeResponse> analyzeRecording(Recording recording) async {
+    if (recording.filePath.isEmpty) {
+      return Future.error("No audio file path provided for analysis.");
+    }
+
+    var personalityBuilder = ListBuilder<JsonObject>();
+    var file = await MultipartFile.fromFile(recording.filePath);
+    var result = await _api.analyzeAnalyzePost(
+      audio: file,
+      personality: personalityBuilder.build(),
+      cancelToken: CancelToken(),
+      headers: {'Content-Type': 'multipart/form-data'},
+    );
+    if (result.statusCode == 200) {
+      var responseData = result.data;
+      return Future.value(responseData);
+    } else {
+      return Future.error(
+        'Failed to analyze recording: ${result.statusMessage}',
+      );
+    }
   }
 }
