@@ -15,7 +15,10 @@ import 'package:soullog_api/src/date_serializer.dart';
 import 'package:soullog_api/src/model/date.dart';
 
 import 'package:soullog_api/src/model/analyze_response.dart';
+import 'package:soullog_api/src/model/contextual_insight.dart';
 import 'package:soullog_api/src/model/http_validation_error.dart';
+import 'package:soullog_api/src/model/persona.dart';
+import 'package:soullog_api/src/model/short_term_state.dart';
 import 'package:soullog_api/src/model/validation_error.dart';
 import 'package:soullog_api/src/model/validation_error_loc_inner.dart';
 
@@ -23,15 +26,14 @@ part 'serializers.g.dart';
 
 @SerializersFor([
   AnalyzeResponse,
+  ContextualInsight,
   HTTPValidationError,
+  Persona,
+  ShortTermState,
   ValidationError,
   ValidationErrorLocInner,
 ])
 Serializers serializers = (_$serializers.toBuilder()
-      ..addBuilderFactory(
-        const FullType(BuiltList, [FullType.nullable(JsonObject)]),
-        () => ListBuilder<JsonObject>(),
-      )
       ..addBuilderFactory(
         const FullType(BuiltMap, [FullType(String), FullType(JsonObject)]),
         () => MapBuilder<String, JsonObject>(),

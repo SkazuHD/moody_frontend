@@ -49,13 +49,13 @@ import 'package:soullog_api/soullog_api.dart';
 
 final api = SoullogApi().getDefaultApi();
 final MultipartFile audio = BINARY_DATA_HERE; // MultipartFile | 
-final BuiltList<JsonObject> personality = ; // BuiltList<JsonObject> | 
+final String personality = personality_example; // String | 
 
 try {
-    final response = await api.analyzeAnalyzePost(audio, personality);
+    final response = await api.analyzeAudio(audio, personality);
     print(response);
 } catch on DioException (e) {
-    print("Exception when calling DefaultApi->analyzeAnalyzePost: $e\n");
+    print("Exception when calling DefaultApi->analyzeAudio: $e\n");
 }
 
 ```
@@ -66,14 +66,17 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-[*DefaultApi*](doc/DefaultApi.md) | [**analyzeAnalyzePost**](doc/DefaultApi.md#analyzeanalyzepost) | **POST** /analyze | Analyze
+[*DefaultApi*](doc/DefaultApi.md) | [**analyzeAudio**](doc/DefaultApi.md#analyzeaudio) | **POST** /analyze | Analyze audio diary entry
 [*DefaultApi*](doc/DefaultApi.md) | [**rootGet**](doc/DefaultApi.md#rootget) | **GET** / | Root
 
 
 ## Documentation For Models
 
  - [AnalyzeResponse](doc/AnalyzeResponse.md)
+ - [ContextualInsight](doc/ContextualInsight.md)
  - [HTTPValidationError](doc/HTTPValidationError.md)
+ - [Persona](doc/Persona.md)
+ - [ShortTermState](doc/ShortTermState.md)
  - [ValidationError](doc/ValidationError.md)
  - [ValidationErrorLocInner](doc/ValidationErrorLocInner.md)
 
