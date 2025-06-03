@@ -8,12 +8,8 @@ import 'package:Soullog/views/recordList/recordList.dart';
 import 'package:Soullog/views/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
-
   runApp(const MyApp());
 }
 
@@ -68,7 +64,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       routes: {
         '/dashboard': (context) => const Dashboard(),
         '/entries': (context) => const RecordList(),
-        '/record': (context) => const Record(),
+        '/record': (context) => Record(),
         '/home': (context) => const Home(),
         '/welcome': (context) => const Welcome(),
       },

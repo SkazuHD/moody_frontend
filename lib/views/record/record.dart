@@ -1,16 +1,12 @@
-import 'dart:io';
-
-import 'package:Soullog/data/db.dart';
-import 'package:Soullog/data/models/plotCard.dart';
 import 'package:Soullog/data/models/record.dart';
 import 'package:Soullog/services/api-service.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:record/record.dart';
-
-import '../../data/db.dart';
 
 import '/components/popupViewSave.dart';
+import '../../components/ObscuredTextField.dart';
+import '../../components/SwitchTransciption.dart';
+import '../../components/audioRecorder.dart';
+
 
 Recording recording = Recording(
   id: 0,
@@ -21,17 +17,24 @@ Recording recording = Recording(
   mood: 'calm',
 );
 
+
+
 class Record extends StatefulWidget {
   const Record({super.key});
-
 
   @override
   State<Record> createState() => _RecordState();
 }
 
 class _RecordState extends State<Record> {
-  final SoullogApiService _apiService = SoullogApiService();
   final TextEditingController transcriptionController = TextEditingController();
+  Recording? newRecording;
+
+  void setNewRecording(Recording recording) {
+    setState(() {
+      newRecording = recording;
+    });
+  }
 
 
   @override
@@ -53,7 +56,10 @@ class _RecordState extends State<Record> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AudioRecorderPlayer(controller: transcriptionController),
+                  AudioRecorderPlayer(
+                    controller: transcriptionController,
+                    onRecordingComplete: setNewRecording,
+                  ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -66,7 +72,7 @@ class _RecordState extends State<Record> {
                   ),
 
                   SizedBox(height: 20),
-                  ObscuredTextFieldSample(controller: transcriptionController),
+                  ObscuredTextField(controller: transcriptionController),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
@@ -77,7 +83,6 @@ class _RecordState extends State<Record> {
                         },
                       );
                       if (res) {
-                        // Handle the saved recording
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Recording saved: ${res.filePath}'),
@@ -117,164 +122,5 @@ class _RecordState extends State<Record> {
         ],
       ),
     );
-  }
-}
-
-class SwitchTranscription extends StatefulWidget {
-  const SwitchTranscription({super.key});
-
-  @override
-  State<SwitchTranscription> createState() => _SwitchExampleState();
-}
-
-class _SwitchExampleState extends State<SwitchTranscription> {
-  bool light = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Switch(
-      // This bool value toggles the switch.
-      value: light,
-      activeColor: Colors.red,
-      onChanged: (bool value) {
-        setState(() {
-          light = value;
-        });
-      },
-    );
-  }
-}
-
-class ObscuredTextFieldSample extends StatelessWidget {
-  final TextEditingController controller;
-
-  const ObscuredTextFieldSample({required this.controller, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 250,
-      child: TextField(
-        controller: controller,
-        style: const TextStyle(color: Colors.black),
-        maxLines: null,
-        textAlignVertical: TextAlignVertical.top,
-        decoration: const InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          labelText: 'Transcript',
-          labelStyle: TextStyle(color: Colors.black),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 3),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 4),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AudioRecorderPlayer extends StatefulWidget {
-  final TextEditingController controller;
-
-  const AudioRecorderPlayer({required this.controller, super.key});
-
-  @override
-  State<AudioRecorderPlayer> createState() => _AudioRecorderPlayerState();
-}
-
-class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
-  bool showPlayer = false;
-  String? audioPath;
-  DateTime? recordingStartTime;
-
-  final recorder = AudioRecorder();
-
-  @override
-  void dispose() {
-    recorder.dispose();
-    super.dispose();
-  }
-
-  Future<void> toggleRecording() async {
-    if (await recorder.isRecording()) {
-      final db = await RecordsDB.getInstance();
-      final path = await recorder.stop();
-
-      if (path != null && recordingStartTime != null) {
-        final duration =
-            DateTime.now().difference(recordingStartTime!).inSeconds;
-
-        final int nextId = await db.getNextId();
-
-        final newRecording = Recording(
-          filePath: path,
-          duration: duration,
-          createdAt: DateTime.now(),
-          transcription: widget.controller.text,
-          mood: 'calm',
-        );
-        await db.insertRecord(newRecording);
-        setState(() {
-          widget.controller.clear();
-          audioPath = newRecording.filePath;
-          showPlayer = true;
-        });
-      }
-    } else {
-      if (await recorder.hasPermission()) {
-        final directory = await getApplicationDocumentsDirectory();
-        final audioDirectory = Directory('${directory.path}/Audio');
-
-        if (!await audioDirectory.exists()) {
-          await audioDirectory.create(recursive: true);
-        }
-        final filePath =
-            '${audioDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
-
-        await recorder.start(const RecordConfig(), path: filePath);
-        recordingStartTime = DateTime.now();
-
-        setState(() {
-          showPlayer = false;
-          audioPath = null;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Microphone permission denied')),
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return showPlayer
-        ? Column(
-          children: [
-            Text('Playing: $audioPath'),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  showPlayer = false;
-                  audioPath = null;
-                });
-              },
-              child: const Text('Stop'),
-            ),
-          ],
-        )
-        : InkWell(
-          onTap: toggleRecording,
-          child: SizedBox(
-            width: 70,
-            height: 70,
-            child: Image.asset(
-              'assets/radio_button_checked_200dp_EA3323_FILL0_wght400_GRAD0_opsz24.png',
-            ),
-          ),
-        );
   }
 }
