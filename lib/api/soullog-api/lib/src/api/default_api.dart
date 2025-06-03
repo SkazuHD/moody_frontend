@@ -21,8 +21,8 @@ class DefaultApi {
 
   const DefaultApi(this._dio, this._serializers);
 
-  /// Analyze
-  ///
+  /// Analyze audio diary entry
+  /// Transcribe audio, detect mood, and update user persona based on the transcript.
   ///
   /// Parameters:
   /// * [audio]
@@ -36,9 +36,9 @@ class DefaultApi {
   ///
   /// Returns a [Future] containing a [Response] with a [AnalyzeResponse] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<AnalyzeResponse>> analyzeAnalyzePost({
+  Future<Response<AnalyzeResponse>> analyzeAudio({
     required MultipartFile audio,
-    BuiltList<JsonObject>? personality,
+    String? personality,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -65,9 +65,8 @@ class DefaultApi {
     try {
       _bodyData = FormData.fromMap(<String, dynamic>{
         r'audio': audio,
-        if (personality != null)
-          r'personality': encodeFormParameter(_serializers, personality,
-              const FullType(BuiltList, [FullType(JsonObject)])),
+        r'personality': encodeFormParameter(
+            _serializers, personality, const FullType(String)),
       });
     } catch (error, stackTrace) {
       throw DioException(

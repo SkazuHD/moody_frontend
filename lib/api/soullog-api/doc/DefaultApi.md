@@ -9,14 +9,16 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**analyzeAnalyzePost**](DefaultApi.md#analyzeanalyzepost) | **POST** /analyze | Analyze
+[**analyzeAudio**](DefaultApi.md#analyzeaudio) | **POST** /analyze | Analyze audio diary entry
 [**rootGet**](DefaultApi.md#rootget) | **GET** / | Root
 
 
-# **analyzeAnalyzePost**
-> AnalyzeResponse analyzeAnalyzePost(audio, personality)
+# **analyzeAudio**
+> AnalyzeResponse analyzeAudio(audio, personality)
 
-Analyze
+Analyze audio diary entry
+
+Transcribe audio, detect mood, and update user persona based on the transcript.
 
 ### Example
 ```dart
@@ -24,13 +26,13 @@ import 'package:soullog_api/api.dart';
 
 final api = SoullogApi().getDefaultApi();
 final MultipartFile audio = BINARY_DATA_HERE; // MultipartFile | 
-final BuiltList<JsonObject> personality = ; // BuiltList<JsonObject> | 
+final String personality = personality_example; // String | 
 
 try {
-    final response = api.analyzeAnalyzePost(audio, personality);
+    final response = api.analyzeAudio(audio, personality);
     print(response);
 } catch on DioException (e) {
-    print('Exception when calling DefaultApi->analyzeAnalyzePost: $e\n');
+    print('Exception when calling DefaultApi->analyzeAudio: $e\n');
 }
 ```
 
@@ -39,7 +41,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **audio** | **MultipartFile**|  | 
- **personality** | [**BuiltList&lt;JsonObject&gt;**](JsonObject.md)|  | [optional] 
+ **personality** | **String**|  | [optional] 
 
 ### Return type
 
