@@ -6,7 +6,9 @@ import '../../data/db.dart';
 import '../../data/models/record.dart';
 
 class Fastcheckin extends StatefulWidget {
-  const Fastcheckin({super.key});
+  final VoidCallback onDataChanged;
+
+  const Fastcheckin({super.key, required this.onDataChanged});
 
   @override
   State<Fastcheckin> createState() => _FastcheckinState();
@@ -47,7 +49,7 @@ class _FastcheckinState extends State<Fastcheckin> {
                       Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood),
                     );
                     await db.createTodaysPlotCard(selectedMood);
-
+                    widget.onDataChanged();
                     ScaffoldMessenger.of(
                       context,
                     ).showSnackBar(const SnackBar(content: Text('Your mood has been recorded!')));
