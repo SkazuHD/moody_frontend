@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:Soullog/components/loadingIndicator.dart';
@@ -27,6 +28,13 @@ class MoodPieChart extends StatefulWidget {
 
 class MoodPieChartState extends State<MoodPieChart> {
   int touchedIndex = -1;
+  Timer? _resetTouchTimer;
+
+  @override
+  void dispose() {
+    _resetTouchTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +59,15 @@ class MoodPieChartState extends State<MoodPieChart> {
                                 }
                                 final index = pieTouchResponse.touchedSection!.touchedSectionIndex;
                                 touchedIndex = (touchedIndex == index) ? -1 : index;
-                                Future.delayed(Duration(milliseconds: 3500)).then((_) {
-                                  setState(() {
-                                    touchedIndex = -1;
-                                  });
+                                if (_resetTouchTimer != null && _resetTouchTimer!.isActive) {
+                                  _resetTouchTimer!.cancel();
+                                }
+                                _resetTouchTimer = Timer(const Duration(milliseconds: 3500), () {
+                                  if (mounted) {
+                                    setState(() {
+                                      touchedIndex = -1;
+                                    });
+                                  }
                                 });
                               });
                             },
