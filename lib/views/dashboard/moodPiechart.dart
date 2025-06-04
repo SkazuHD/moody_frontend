@@ -57,18 +57,20 @@ class MoodPieChartState extends State<MoodPieChart> {
                                 if (pieTouchResponse == null || pieTouchResponse.touchedSection == null) {
                                   return;
                                 }
-                                final index = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                                touchedIndex = (touchedIndex == index) ? -1 : index;
-                                if (_resetTouchTimer != null && _resetTouchTimer!.isActive) {
-                                  _resetTouchTimer!.cancel();
-                                }
-                                _resetTouchTimer = Timer(const Duration(milliseconds: 3500), () {
-                                  if (mounted) {
-                                    setState(() {
-                                      touchedIndex = -1;
-                                    });
+                                if (event is FlTapDownEvent || event is FlLongPressEnd) {
+                                  final index = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                                  touchedIndex = (touchedIndex == index) ? -1 : index;
+                                  if (_resetTouchTimer != null && _resetTouchTimer!.isActive) {
+                                    _resetTouchTimer!.cancel();
                                   }
-                                });
+                                  _resetTouchTimer = Timer(const Duration(milliseconds: 3500), () {
+                                    if (mounted) {
+                                      setState(() {
+                                        touchedIndex = -1;
+                                      });
+                                    }
+                                  });
+                                }
                               });
                             },
                           ),
