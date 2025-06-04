@@ -11,8 +11,6 @@ import '../../views/record/record.dart';
 import '../dashboard/moodLinechart.dart';
 import 'chartHelper.dart';
 
-final moodSpotsNotifier = MoodSpotsNotifier();
-
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -21,10 +19,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final moodSpotsNotifier = MoodSpotsNotifier();
   @override
   void initState() {
     super.initState();
     moodSpotsNotifier.loadSpots(pastDays: 7);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    moodSpotsNotifier.spots.dispose();
   }
 
   @override
