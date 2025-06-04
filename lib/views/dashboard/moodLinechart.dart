@@ -62,13 +62,22 @@ class _MoodLineChartState extends State<MoodLineChart> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black);
-    if (value < 0 || value >= _spots.length) {
-      return Container();
-    }
+    const style = TextStyle(fontWeight: FontWeight.w500, fontSize: 9, color: Colors.black);
+    final index = value.toInt();
 
-    final text = Text(_spots.elementAt(value.toInt()).x.toInt().toString(), style: style);
-    return SideTitleWidget(meta: meta, child: text);
+    if (index < 0 || index >= _spots.length) return const SizedBox.shrink();
+
+    final label = _spots[index].x.toInt().toString(); // or format as date if needed
+
+    double offset = (_spots.length > 15 && value % 2 != 0) ? 0 : 10;
+
+    return SideTitleWidget(
+      meta: meta,
+      child: Transform.rotate(
+        angle: 0,
+        child: Transform.translate(offset: Offset(0, offset), child: Text(label, style: style)),
+      ),
+    );
   }
 
   static final Map<int, Widget> _emotionWidgets = _createEmotionWidgetsMap(MoodLineChart.maxY);
