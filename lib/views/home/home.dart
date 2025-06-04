@@ -66,8 +66,8 @@ class _HomeState extends State<Home> {
 
             // 2. Container Fast check-in
             Fastcheckin(
-              onDataChanged: () {
-                moodSpotsNotifier.loadSpots(pastDays: 7);
+              onDataChanged: () async {
+                await moodSpotsNotifier.loadSpots(pastDays: 7);
               },
             ),
 
