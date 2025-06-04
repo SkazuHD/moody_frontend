@@ -7,11 +7,7 @@ class FilterList extends StatefulWidget {
   final List<Recording> recordings;
   final List<String> categories;
 
-  const FilterList({
-    super.key,
-    required this.recordings,
-    required this.categories,
-  });
+  const FilterList({super.key, required this.recordings, required this.categories});
 
   @override
   State<FilterList> createState() => _FilterListState();
@@ -25,37 +21,18 @@ class _FilterListState extends State<FilterList> {
     final filterRecordings =
         widget.recordings.where((recording) {
           return selectedCategories.isEmpty ||
-              selectedCategories.any(
-                (cat) =>
-                    cat.trim().toLowerCase() ==
-                    (recording.mood ?? '').trim().toLowerCase(),
-              );
+              selectedCategories.any((cat) => cat.trim().toLowerCase() == (recording.mood ?? '').trim().toLowerCase());
         }).toList();
     final sortedCategories = List<String>.from(widget.categories)..sort((a, b) {
       final countA =
-          widget.recordings
-              .where(
-                (r) =>
-                    (r.mood ?? '').toLowerCase().trim() ==
-                    a.toLowerCase().trim(),
-              )
-              .length;
+          widget.recordings.where((r) => (r.mood ?? '').toLowerCase().trim() == a.toLowerCase().trim()).length;
       final countB =
-          widget.recordings
-              .where(
-                (r) =>
-                    (r.mood ?? '').toLowerCase().trim() ==
-                    b.toLowerCase().trim(),
-              )
-              .length;
-      return countB.compareTo(countA); // absteigend
+          widget.recordings.where((r) => (r.mood ?? '').toLowerCase().trim() == b.toLowerCase().trim()).length;
+      return countB.compareTo(countA);
     });
     return Container(
       margin: const EdgeInsets.only(top: 30, bottom: 30, left: 20, right: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Color(0xFFE4E4E4),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Color(0xFFE4E4E4)),
 
       child: Column(
         children: [
@@ -105,21 +82,12 @@ class _FilterListState extends State<FilterList> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 10,
-                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       title: Text(
                         recording.transcription as String,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(
-                        recording.mood as String,
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      subtitle: Text(recording.mood as String, style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 );

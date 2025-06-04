@@ -245,13 +245,13 @@ class RecordsDB {
     });
   }
 
-  Future<List<Recording>> getRecords() async {
+  Future<List<Recording>> getRecords({String sort = "DESC", String orderBy = "createdAt"}) async {
     await _ensureInitialized();
 
     if (kDebugMode) {
       print('Fetching all records');
     }
-    final List<Map<String, dynamic>> maps = await _db!.query(_tableName);
+    final List<Map<String, dynamic>> maps = await _db!.query(_tableName, orderBy: '$orderBy $sort');
 
     return List.generate(maps.length, (i) {
       return mapToRecord(maps[i]);

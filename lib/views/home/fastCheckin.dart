@@ -35,6 +35,9 @@ class _FastcheckinState extends State<Fastcheckin> {
                 final isSelected = selectedEmotionIndex == index;
                 return GestureDetector(
                   onTap: () async {
+                    if (isSelected) {
+                      return;
+                    }
                     setState(() {
                       selectedEmotionIndex = index;
                     });
