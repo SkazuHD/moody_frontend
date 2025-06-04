@@ -34,7 +34,7 @@ class MoodPieChartState extends State<MoodPieChart> {
       aspectRatio: 1.3,
       child: Row(
         children: <Widget>[
-          const SizedBox(height: 200),
+          const SizedBox(height: 18),
           Expanded(
             child: AspectRatio(
               aspectRatio: 1,
@@ -46,13 +46,16 @@ class MoodPieChartState extends State<MoodPieChart> {
                           pieTouchData: PieTouchData(
                             touchCallback: (FlTouchEvent event, pieTouchResponse) {
                               setState(() {
-                                if (!event.isInterestedForInteractions ||
-                                    pieTouchResponse == null ||
-                                    pieTouchResponse.touchedSection == null) {
-                                  touchedIndex = -1;
+                                if (pieTouchResponse == null || pieTouchResponse.touchedSection == null) {
                                   return;
                                 }
-                                touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                                final index = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                                touchedIndex = (touchedIndex == index) ? -1 : index;
+                                Future.delayed(Duration(milliseconds: 3500)).then((_) {
+                                  setState(() {
+                                    touchedIndex = -1;
+                                  });
+                                });
                               });
                             },
                           ),
@@ -72,7 +75,7 @@ class MoodPieChartState extends State<MoodPieChart> {
 
   List<PieChartSectionData> showingSections() {
     if (kDebugMode) {
-      log("Showing sections with touchedIndex: ${widget.sectionsData.length}");
+      log("Showing ${widget.sectionsData.length} sections");
     }
 
     return List.generate(widget.sectionsData.length, (i) {
