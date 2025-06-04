@@ -25,7 +25,8 @@ class _MoodLineChartState extends State<MoodLineChart> {
   List<FlSpot> _plotPoints = [];
   List<FlSpot> _spots = [];
   Timer? _resetTouchTimer;
-  List<ShowingTooltipIndicators> toolTipSpots = [];
+  List<ShowingTooltipIndicators> _toolTipSpots = [];
+  final bool _handleBuiltInTouches = true;
 
   @override
   void initState() {
@@ -143,12 +144,15 @@ class _MoodLineChartState extends State<MoodLineChart> {
       maxX: plotPoints.length.toDouble() - 1,
       minY: 1,
       maxY: 8,
-      showingTooltipIndicators: toolTipSpots,
+      showingTooltipIndicators: _toolTipSpots,
       lineTouchData: LineTouchData(
         enabled: true,
-        handleBuiltInTouches: false,
+        handleBuiltInTouches: _handleBuiltInTouches,
 
         touchCallback: (touchEvent, response) {
+          if (_handleBuiltInTouches) {
+            return;
+          }
           if (touchEvent is FlTapUpEvent) {
             var touchedSpots = response?.lineBarSpots ?? [];
 
@@ -160,17 +164,17 @@ class _MoodLineChartState extends State<MoodLineChart> {
               _resetTouchTimer = Timer(const Duration(milliseconds: 3500), () {
                 if (mounted) {
                   setState(() {
-                    toolTipSpots = [];
+                    _toolTipSpots = [];
                   });
                 }
               });
               setState(() {
-                if (toolTipSpots.isNotEmpty &&
-                    toolTipSpots.first.showingSpots.first.x == spot.x &&
-                    toolTipSpots.first.showingSpots.first.y == spot.y) {
-                  toolTipSpots = [];
+                if (_toolTipSpots.isNotEmpty &&
+                    _toolTipSpots.first.showingSpots.first.x == spot.x &&
+                    _toolTipSpots.first.showingSpots.first.y == spot.y) {
+                  _toolTipSpots = [];
                 } else {
-                  toolTipSpots = [
+                  _toolTipSpots = [
                     ShowingTooltipIndicators([spot]),
                   ];
                 }
@@ -190,7 +194,7 @@ class _MoodLineChartState extends State<MoodLineChart> {
 
               return LineTooltipItem(
                 '${emotion?.emoji ?? ''} ${emotion?.name ?? 'Unbekannt'}',
-                const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               );
             }).toList();
           },
