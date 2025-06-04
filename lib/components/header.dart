@@ -8,19 +8,22 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: ModalRoute.of(context)?.settings.name != '/home',
       backgroundColor: const Color(0xFF528A7D),
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(
-            'assets/Soullog_WT.png',
-            width: 24,
-            height: 24,
-            fit: BoxFit.contain,
-          ),
-          const SizedBox(width: 8),
-          Text('SOULLOG', style: h2White),
-        ],
+      title: GestureDetector(
+        onTap: () {
+          final currentRoute = ModalRoute.of(context)?.settings.name;
+          if (currentRoute == '/home') return;
+          Navigator.of(context).pushNamed('/home');
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/Soullog_WT.png', width: 24, height: 24, fit: BoxFit.contain),
+            const SizedBox(width: 8),
+            Text('SOULLOG', style: h2White),
+          ],
+        ),
       ),
       actions: [
         PopupMenuButton<String>(
