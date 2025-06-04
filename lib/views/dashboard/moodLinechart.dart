@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:Soullog/components/loadingIndicator.dart';
@@ -23,6 +24,8 @@ class _MoodLineChartState extends State<MoodLineChart> {
   List<Color> _gradientColors = [const Color(0xff23b6e6), const Color(0xff02d39a)];
   List<FlSpot> _plotPoints = [];
   List<FlSpot> _spots = [];
+  Timer? _resetTouchTimer;
+  List<ShowingTooltipIndicators> toolTipSpots = [];
 
   @override
   void initState() {
@@ -140,8 +143,41 @@ class _MoodLineChartState extends State<MoodLineChart> {
       maxX: plotPoints.length.toDouble() - 1,
       minY: 1,
       maxY: 8,
+      showingTooltipIndicators: toolTipSpots,
       lineTouchData: LineTouchData(
         enabled: true,
+        handleBuiltInTouches: false,
+
+        touchCallback: (touchEvent, response) {
+          if (touchEvent is FlTapUpEvent) {
+            var touchedSpots = response?.lineBarSpots ?? [];
+
+            if (touchedSpots.isNotEmpty) {
+              final spot = touchedSpots.first;
+              if (_resetTouchTimer != null && _resetTouchTimer!.isActive) {
+                _resetTouchTimer!.cancel();
+              }
+              _resetTouchTimer = Timer(const Duration(milliseconds: 3500), () {
+                if (mounted) {
+                  setState(() {
+                    toolTipSpots = [];
+                  });
+                }
+              });
+              setState(() {
+                if (toolTipSpots.isNotEmpty &&
+                    toolTipSpots.first.showingSpots.first.x == spot.x &&
+                    toolTipSpots.first.showingSpots.first.y == spot.y) {
+                  toolTipSpots = [];
+                } else {
+                  toolTipSpots = [
+                    ShowingTooltipIndicators([spot]),
+                  ];
+                }
+              });
+            }
+          }
+        },
         touchTooltipData: LineTouchTooltipData(
           tooltipMargin: 8,
           getTooltipItems: (List<LineBarSpot> touchedSpots) {
@@ -159,7 +195,6 @@ class _MoodLineChartState extends State<MoodLineChart> {
             }).toList();
           },
         ),
-        handleBuiltInTouches: true,
       ),
       lineBarsData: [
         LineChartBarData(
