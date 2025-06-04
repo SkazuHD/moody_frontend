@@ -18,6 +18,7 @@ List<PieChartSection> calculateSections(List<Recording> records) {
         color: emotion.color,
         value: total,
         title: '${(total / records.length * 100).toStringAsFixed(1)}%',
+        emotion: emotion,
       ),
     );
   }
