@@ -110,7 +110,6 @@ class _MoodLineChartState extends State<MoodLineChart> {
     if (kDebugMode) {
       log("Plot Points: $plotPoints");
     }
-
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -141,20 +140,42 @@ class _MoodLineChartState extends State<MoodLineChart> {
       maxX: plotPoints.length.toDouble() - 1,
       minY: 1,
       maxY: 8,
+      lineTouchData: LineTouchData(
+        enabled: true,
+        touchTooltipData: LineTouchTooltipData(
+          tooltipMargin: 8,
+          getTooltipItems: (List<LineBarSpot> touchedSpots) {
+            return touchedSpots.map((spot) {
+              final emotionValue = spot.y.toInt();
+              final Emotion? emotion = Emotion.values.cast<Emotion?>().firstWhere(
+                (element) => element!.value.toInt() == emotionValue,
+                orElse: () => null,
+              );
+
+              return LineTooltipItem(
+                '${emotion?.emoji ?? ''} ${emotion?.name ?? 'Unbekannt'}',
+                const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              );
+            }).toList();
+          },
+        ),
+        handleBuiltInTouches: true,
+      ),
       lineBarsData: [
         LineChartBarData(
           spots: plotPoints,
-          isCurved: false,
+          isCurved: true,
           curveSmoothness: 0.25,
           preventCurveOverShooting: true,
           gradient: LinearGradient(colors: gradientColors, begin: Alignment.centerLeft, end: Alignment.centerRight),
-          barWidth: 5,
+          barWidth: 4,
           isStrokeCapRound: true,
+
           dotData: FlDotData(
             show: true,
             getDotPainter: (FlSpot spot, double percent, LineChartBarData barData, int index) {
               return FlDotCirclePainter(
-                radius: 4,
+                radius: 3,
                 color: gradientColors[index % gradientColors.length],
                 strokeWidth: 2,
                 strokeColor: Colors.white,
