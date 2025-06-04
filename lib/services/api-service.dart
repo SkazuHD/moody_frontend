@@ -10,10 +10,7 @@ import '../data/models/record.dart';
 
 // To generate files run: dart run build_runner build --delete-conflicting-outputs
 @Openapi(
-  additionalProperties: DioProperties(
-    pubName: 'soullog_api',
-    pubAuthor: 'Soullog',
-  ),
+  additionalProperties: DioProperties(pubName: 'soullog_api', pubAuthor: 'Soullog'),
   inputSpec: RemoteSpec(path: 'https://moody-app.skazu.net/openapi.json'),
   // typeMappings: {'Pet': 'ExamplePet'},
   generatorName: Generator.dio,
@@ -40,12 +37,12 @@ class SoullogApiService {
   }
 
   Future<AnalyzeResponse> analyzeRecording(Recording recording) async {
-    if (recording.filePath.isEmpty) {
+    if (recording.filePath == null || recording.filePath!.isEmpty) {
       return Future.error("No audio file path provided for analysis.");
     }
 
     var personalityBuilder = ListBuilder<JsonObject>();
-    var file = await MultipartFile.fromFile(recording.filePath);
+    var file = await MultipartFile.fromFile(recording.filePath!);
     var result = await _api.analyzeAnalyzePost(
       audio: file,
       personality: personalityBuilder.build(),
@@ -56,9 +53,7 @@ class SoullogApiService {
       var responseData = result.data;
       return Future.value(responseData);
     } else {
-      return Future.error(
-        'Failed to analyze recording: ${result.statusMessage}',
-      );
+      return Future.error('Failed to analyze recording: ${result.statusMessage}');
     }
   }
 }
