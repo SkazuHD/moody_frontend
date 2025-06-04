@@ -87,7 +87,7 @@ class _DashboardState extends State<Dashboard> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Text("Mood overview", style: h1Black),
+                    const Text("Mood overview", style: h1Black),
                     ValueListenableBuilder(
                       valueListenable: _offsetIncrement,
                       builder: (context, offsetIncrement, child) {
@@ -142,12 +142,20 @@ class _DashboardState extends State<Dashboard> {
                         return MoodLineChart(spots: spotsValue);
                       },
                     ),
-                    Text("Mood distribution", style: h1Black),
-                    ValueListenableBuilder<List<PieChartSection>>(
-                      valueListenable: _sections,
-                      builder: (context, sectionsValue, child) {
-                        return MoodPieChart(sectionsData: sectionsValue);
-                      },
+                    Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                        spacing: 32,
+                        children: [
+                          const Text("Mood distribution", style: h1Black),
+                          ValueListenableBuilder<List<PieChartSection>>(
+                            valueListenable: _sections,
+                            builder: (context, sectionsValue, child) {
+                              return MoodPieChart(sectionsData: sectionsValue);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
