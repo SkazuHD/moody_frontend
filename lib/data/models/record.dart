@@ -5,8 +5,17 @@ class Recording {
   final DateTime createdAt;
   String? transcription;
   String? mood;
+  final bool isFastCheckIn;
 
-  Recording({this.id, this.filePath, this.duration, required this.createdAt, this.transcription, this.mood});
+  Recording({
+    this.id,
+    this.filePath,
+    this.duration,
+    required this.createdAt,
+    this.transcription,
+    this.mood,
+    this.isFastCheckIn = false,
+  });
 
   Map<String, dynamic> toDbValuesMap() {
     return {
@@ -15,6 +24,7 @@ class Recording {
       'createdAt': createdAt.toIso8601String(),
       'transcription': transcription,
       'mood': mood,
+      'isFastCheckIn': isFastCheckIn ? 1 : 0,
     };
   }
 
@@ -26,17 +36,19 @@ class Recording {
       'createdAt': createdAt.toIso8601String(),
       'transcription': transcription,
       'mood': mood,
+      'isFastCheckIn': isFastCheckIn ? 1 : 0,
     };
   }
 
   factory Recording.fromJson(Map<String, dynamic> json) {
     return Recording(
       id: json['id'] as int,
-      filePath: json['filePath'] as String,
-      duration: json['duration'] as int,
+      filePath: json['filePath'],
+      duration: json['duration'],
       createdAt: DateTime.parse(json['createdAt'] as String),
       transcription: json['transcription'] as String?,
       mood: json['mood'] as String?,
+      isFastCheckIn: json['isFastCheckIn'] == 1,
     );
   }
 }
