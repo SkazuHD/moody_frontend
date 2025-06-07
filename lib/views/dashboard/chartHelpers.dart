@@ -33,17 +33,6 @@ List<FlSpot> calculatePlotPoints(List<FlSpot> spots) {
   }).toList();
 }
 
-List<FlSpot> _calculateSpots(List<Recording> records) {
-  return records.map((record) {
-    return FlSpot(
-      record.createdAt.day.toDouble(),
-      record.mood != null
-          ? Emotion.values.firstWhere((e) => e.label.toLowerCase() == record.mood!.toLowerCase()).value
-          : 0.0,
-    );
-  }).toList();
-}
-
 List<FlSpot> calculateSpots(List<Recording> records) {
   final Map<String, Recording> latestPerDay = {};
   for (var record in records) {
