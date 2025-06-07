@@ -81,7 +81,7 @@ class RecordsDB {
       await _db!.execute(initScript);
       await _db!.transaction((txn) async {
         final batch = txn.batch();
-        final int recordCount = 1;
+        final int recordCount = 31;
         for (var i = 0; i < recordCount; i++) {
           final randomEmotion = Emotion.values[Random().nextInt(Emotion.values.length)];
 
