@@ -18,6 +18,7 @@ List<PieChartSection> calculateSections(List<Recording> records) {
         color: emotion.color,
         value: total,
         title: '${(total / records.length * 100).toStringAsFixed(1)}%',
+        emotion: emotion,
       ),
     );
   }
@@ -33,13 +34,22 @@ List<FlSpot> calculatePlotPoints(List<FlSpot> spots) {
 }
 
 List<FlSpot> calculateSpots(List<Recording> records) {
-  return records.map((record) {
-    return FlSpot(
-      record.createdAt.day.toDouble(),
-      record.mood != null
-          ? Emotion.values.firstWhere((e) => e.label.toLowerCase() == record.mood!.toLowerCase()).value
-          : 0.0,
-    );
+  final Map<String, Recording> latestPerDay = {};
+  for (var record in records) {
+    final date = record.createdAt;
+    final key = '${date.year}-${date.month}-${date.day}';
+    if (!latestPerDay.containsKey(key) || record.createdAt.isAfter(latestPerDay[key]!.createdAt)) {
+      latestPerDay[key] = record;
+    }
+  }
+  return latestPerDay.values.map((record) {
+    final date = record.createdAt;
+    final x = date.day.toDouble();
+    final y =
+        record.mood != null
+            ? Emotion.values.firstWhere((e) => e.label.toLowerCase() == record.mood!.toLowerCase()).value
+            : 0.0;
+    return FlSpot(x, y);
   }).toList();
 }
 

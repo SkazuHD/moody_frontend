@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:Soullog/components/loadingIndicator.dart';
@@ -23,6 +24,9 @@ class _MoodLineChartState extends State<MoodLineChart> {
   List<Color> _gradientColors = [const Color(0xff23b6e6), const Color(0xff02d39a)];
   List<FlSpot> _plotPoints = [];
   List<FlSpot> _spots = [];
+  Timer? _resetTouchTimer;
+  List<ShowingTooltipIndicators> _toolTipSpots = [];
+  final bool _handleBuiltInTouches = true;
 
   @override
   void initState() {
@@ -62,13 +66,22 @@ class _MoodLineChartState extends State<MoodLineChart> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black);
-    if (value < 0 || value >= _spots.length) {
-      return Container();
-    }
+    const style = TextStyle(fontWeight: FontWeight.w500, fontSize: 9, color: Colors.black);
+    final index = value.toInt();
 
-    final text = Text(_spots.elementAt(value.toInt()).x.toInt().toString(), style: style);
-    return SideTitleWidget(meta: meta, child: text);
+    if (index < 0 || index >= _spots.length) return const SizedBox.shrink();
+
+    final label = _spots[index].x.toInt().toString(); // or format as date if needed
+
+    double offset = (_spots.length > 15 && value % 2 != 0) ? 0 : 10;
+
+    return SideTitleWidget(
+      meta: meta,
+      child: Transform.rotate(
+        angle: 0,
+        child: Transform.translate(offset: Offset(0, offset), child: Text(label, style: style)),
+      ),
+    );
   }
 
   static final Map<int, Widget> _emotionWidgets = _createEmotionWidgetsMap(MoodLineChart.maxY);
@@ -101,7 +114,6 @@ class _MoodLineChartState extends State<MoodLineChart> {
     if (kDebugMode) {
       log("Plot Points: $plotPoints");
     }
-
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -132,20 +144,77 @@ class _MoodLineChartState extends State<MoodLineChart> {
       maxX: plotPoints.length.toDouble() - 1,
       minY: 1,
       maxY: 8,
+      showingTooltipIndicators: _toolTipSpots,
+      lineTouchData: LineTouchData(
+        enabled: true,
+        handleBuiltInTouches: _handleBuiltInTouches,
+
+        touchCallback: (touchEvent, response) {
+          if (_handleBuiltInTouches) {
+            return;
+          }
+          if (touchEvent is FlTapUpEvent) {
+            var touchedSpots = response?.lineBarSpots ?? [];
+
+            if (touchedSpots.isNotEmpty) {
+              final spot = touchedSpots.first;
+              if (_resetTouchTimer != null && _resetTouchTimer!.isActive) {
+                _resetTouchTimer!.cancel();
+              }
+              _resetTouchTimer = Timer(const Duration(milliseconds: 3500), () {
+                if (mounted) {
+                  setState(() {
+                    _toolTipSpots = [];
+                  });
+                }
+              });
+              setState(() {
+                if (_toolTipSpots.isNotEmpty &&
+                    _toolTipSpots.first.showingSpots.first.x == spot.x &&
+                    _toolTipSpots.first.showingSpots.first.y == spot.y) {
+                  _toolTipSpots = [];
+                } else {
+                  _toolTipSpots = [
+                    ShowingTooltipIndicators([spot]),
+                  ];
+                }
+              });
+            }
+          }
+        },
+        touchTooltipData: LineTouchTooltipData(
+          tooltipMargin: 8,
+          getTooltipItems: (List<LineBarSpot> touchedSpots) {
+            return touchedSpots.map((spot) {
+              final emotionValue = spot.y.toInt();
+              final Emotion? emotion = Emotion.values.cast<Emotion?>().firstWhere(
+                (element) => element!.value.toInt() == emotionValue,
+                orElse: () => null,
+              );
+
+              return LineTooltipItem(
+                '${emotion?.emoji ?? ''} ${emotion?.name ?? 'Unbekannt'}',
+                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              );
+            }).toList();
+          },
+        ),
+      ),
       lineBarsData: [
         LineChartBarData(
           spots: plotPoints,
-          isCurved: false,
+          isCurved: true,
           curveSmoothness: 0.25,
           preventCurveOverShooting: true,
           gradient: LinearGradient(colors: gradientColors, begin: Alignment.centerLeft, end: Alignment.centerRight),
-          barWidth: 5,
+          barWidth: 4,
           isStrokeCapRound: true,
+
           dotData: FlDotData(
             show: true,
             getDotPainter: (FlSpot spot, double percent, LineChartBarData barData, int index) {
               return FlDotCirclePainter(
-                radius: 4,
+                radius: 3,
                 color: gradientColors[index % gradientColors.length],
                 strokeWidth: 2,
                 strokeColor: Colors.white,
