@@ -32,7 +32,7 @@ class _RecordListState extends State<RecordList> {
 
   Future<void> _fetchRecords() async {
     RecordsDB db = await RecordsDB.getInstance();
-    _records.value = await db.getRecords(sort: "ASC");
+    _records.value = await db.getRecords(sort: "DESC");
   }
 
   @override

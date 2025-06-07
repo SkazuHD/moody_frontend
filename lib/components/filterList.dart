@@ -73,6 +73,29 @@ class _FilterListState extends State<FilterList> {
               itemCount: filterRecordings.length,
               itemBuilder: (context, index) {
                 final recording = filterRecordings[index];
+                if (recording.isFastCheckIn) {
+                  return Card(
+                    elevation: 8,
+                    margin: const EdgeInsets.all(8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: getEmotionColor(recording.mood),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        title: Text(
+                          'Fast Check In',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          '${recording.mood} ${recording.createdAt.toLocal().toIso8601String()}',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  );
+                }
                 return Card(
                   elevation: 8,
                   margin: const EdgeInsets.all(8),
@@ -84,10 +107,13 @@ class _FilterListState extends State<FilterList> {
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       title: Text(
-                        recording.transcription as String,
+                        recording.transcription ?? '',
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(recording.mood as String, style: TextStyle(color: Colors.white)),
+                      subtitle: Text(
+                        '${recording.mood} ${recording.createdAt.toLocal().toIso8601String()}',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 );

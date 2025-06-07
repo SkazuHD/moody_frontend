@@ -43,13 +43,22 @@ class _FastcheckinState extends State<Fastcheckin> {
                     setState(() {
                       selectedEmotionIndex = index;
                     });
+
+                    // Todo : Should we show a confirmation dialog?
+
                     final selectedMood = emotion.label;
                     final db = await RecordsDB.getInstance();
                     await db.insertRecord(
-                      Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood),
+                      Recording(
+                        createdAt: DateTime.now(),
+                        transcription: null,
+                        mood: selectedMood,
+                        isFastCheckIn: true,
+                      ),
                     );
                     await db.createTodaysPlotCard(selectedMood);
                     widget.onDataChanged();
+                    // Todo : SnackBar or Something else
                     ScaffoldMessenger.of(
                       context,
                     ).showSnackBar(const SnackBar(content: Text('Your mood has been recorded!')));
