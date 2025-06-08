@@ -27,10 +27,6 @@ class AudioService {
   AudioService._internal() {
     player = AudioPlayer();
     player.playerStateStream.listen((state) {
-      if (state.processingState == ProcessingState.completed) {
-        //isPlaying.value = false;
-        //currentMedia.value = -1;
-      }
       state.playing ? isPlaying.value = true : isPlaying.value = false;
     });
     currentMedia.addListener(() {
@@ -57,7 +53,6 @@ class AudioService {
 
   Future<void> playAudio() async {
     try {
-      isPlaying.value = true;
       log("Playing audio for recording ID: ${currentMedia.value}");
       await player.play();
     } catch (e) {
@@ -68,7 +63,6 @@ class AudioService {
   Future<void> pauseAudio() async {
     try {
       await player.pause();
-      isPlaying.value = false;
     } catch (e) {
       return Future.error('Error pausing audio: $e');
     }
@@ -77,7 +71,6 @@ class AudioService {
   Future<void> stopAudio() async {
     try {
       await player.stop();
-      isPlaying.value = false;
       currentMedia.value = -1;
     } catch (e) {
       return Future.error('Error stopping audio: $e');
