@@ -1,4 +1,5 @@
-import 'dart:math';
+import 'dart:developer';
+import 'dart:math' hide log;
 
 import 'package:Soullog/data/constants/emotions.dart';
 import 'package:Soullog/data/models/record.dart';
@@ -76,8 +77,16 @@ class RecordsDB {
     );
 
     if (kDebugMode) {
+      var links = [
+        "https://cdn.discordapp.com/attachments/1107642333920497755/1381342131494457354/Bread.mp3?ex=68472a9c&is=6845d91c&hm=abb343ba0da46f3430c18c00f65d9d575f5df9e891b42083f8c9aeaedd7c6956&",
+        "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3",
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345893739004115/surprise2.mp3?ex=68472e1d&is=6845dc9d&hm=e8998599e4cd28ddca4ac0dd70e56015e0328f3ac3d7b23ffc35d9f88d0f91f6&",
+        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345541484712196/Surprise.mp3?ex=68472dc9&is=6845dc49&hm=4c64b35e33f0877abd387e2d2ae2751503557d0573b728714c10ca3fe12f1077&",
+        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345232049668116/amogus.mp3?ex=68472d7f&is=6845dbff&hm=7d4a7d180969bad1146f8316cf0bedf813259b74a8f25a9a905223cc9aca2ae1&",
+      ];
       await _db!.transaction((txn) async {
-        print('Debug Mode: Dropping and recreating table $_tableName in _init.');
+        log('Debug Mode: Dropping and recreating table $_tableName in _init.');
         await txn.execute('DROP TABLE IF EXISTS $_tableName');
         await txn.execute(initScript);
 
@@ -87,7 +96,7 @@ class RecordsDB {
           final randomEmotion = Emotion.values[Random().nextInt(Emotion.values.length)];
 
           final record = Recording(
-            filePath: 'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',
+            filePath: links[Random().nextInt(links.length)],
             duration: Random().nextInt(60) + 1,
             createdAt: DateTime.now().subtract(Duration(days: i)),
             transcription: 'Sample transcription for recording $i.',

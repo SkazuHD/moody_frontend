@@ -22,10 +22,14 @@ class _RecordCardState extends State<RecordCard> {
   bool isCurrentlyPlaying = false;
   bool isPlaying = false;
 
+  late VoidCallback _currentMediaListener;
+  late VoidCallback _isPlayingListener;
+
   @override
   void initState() {
     super.initState();
-    audioService.currentMedia.addListener(() {
+    _currentMediaListener = () {
+      if (!mounted) return;
       if (audioService.currentMedia.value == widget.recording.id) {
         setState(() {
           isCurrentlyPlaying = true;
@@ -35,8 +39,10 @@ class _RecordCardState extends State<RecordCard> {
           isCurrentlyPlaying = false;
         });
       }
-    });
-    audioService.isPlaying.addListener(() {
+    };
+
+    _isPlayingListener = () {
+      if (!mounted) return;
       if (audioService.isPlaying.value) {
         setState(() {
           isPlaying = true;
@@ -46,7 +52,21 @@ class _RecordCardState extends State<RecordCard> {
           isPlaying = false;
         });
       }
-    });
+    };
+
+    audioService.currentMedia.addListener(_currentMediaListener);
+    audioService.isPlaying.addListener(_isPlayingListener);
+  }
+
+  @override
+  void dispose() {
+    audioService.currentMedia.removeListener(_currentMediaListener);
+    audioService.isPlaying.removeListener(_isPlayingListener);
+
+    if (isCurrentlyPlaying) {
+      audioService.stopAudio();
+    }
+    super.dispose();
   }
 
   @override

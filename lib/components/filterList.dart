@@ -149,10 +149,10 @@ class _FilterListState extends State<FilterList> {
                 return GestureDetector(
                   onLongPress: () {
                     setState(() {
-                      _toggleSelectionMode();
                       if (!_selectedRecordings.contains(recording)) {
                         _selectedRecordings.add(recording);
                       }
+                      _toggleSelectionMode();
                     });
                   },
                   child:
