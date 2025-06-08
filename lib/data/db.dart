@@ -63,7 +63,7 @@ class RecordsDB {
 
   Future<void> _init() async {
     final String initScript =
-        'CREATE TABLE $_tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT)';
+        'CREATE TABLE $_tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT, isFastCheckIn BOOLEAN DEFAULT 0)';
     _db = await openDatabase(
       join(await getDatabasesPath(), _databaseName),
       onCreate: (db, version) {
@@ -81,7 +81,7 @@ class RecordsDB {
       await _db!.execute(initScript);
       await _db!.transaction((txn) async {
         final batch = txn.batch();
-        final int recordCount = 250;
+        final int recordCount = 31;
         for (var i = 0; i < recordCount; i++) {
           final randomEmotion = Emotion.values[Random().nextInt(Emotion.values.length)];
 
@@ -93,13 +93,13 @@ class RecordsDB {
             mood: randomEmotion.label,
           );
 
-          batch.insert(_tableName, record.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+          batch.insert(_tableName, record.toDbValuesMap(), conflictAlgorithm: ConflictAlgorithm.replace);
         }
 
         await batch.commit();
 
         if (kDebugMode) {
-          print('Batch insert von 60 Datensätzen abgeschlossen');
+          print('Batch insert von $recordCount Datensätzen abgeschlossen');
         }
       });
     }
@@ -120,24 +120,16 @@ class RecordsDB {
     return true;
   }
 
-  Recording mapToRecord(Map<String, dynamic> map) {
-    return Recording(
-      id: map['id'],
-      filePath: map['filePath'],
-      duration: map['duration'],
-      createdAt: DateTime.parse(map['createdAt']),
-      transcription: map['transcription'],
-      mood: map['mood'],
-    );
-  }
-
   Future<void> insertRecord(Recording record) async {
     await _ensureInitialized();
 
     if (kDebugMode) {
       print('Inserting record: ${record.toDbValuesMap()}');
     }
-    await _db!.insert(_tableName, record.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+    var res = await _db!.insert(_tableName, record.toDbValuesMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    if (kDebugMode) {
+      print('Inserted record with id: $res');
+    }
     // Automatically create today's PlotCard if mood is set and record is from today
     final now = DateTime.now();
     final isToday =
@@ -221,7 +213,7 @@ class RecordsDB {
     final List<Map<String, dynamic>> maps = await _db!.query(_tableName, where: 'id = ?', whereArgs: [id]);
 
     if (maps.isNotEmpty) {
-      return mapToRecord(maps.first);
+      return Recording.fromJson(maps.first);
     }
     return null;
   }
@@ -241,20 +233,20 @@ class RecordsDB {
     );
 
     return List.generate(maps.length, (i) {
-      return mapToRecord(maps[i]);
+      return Recording.fromJson(maps[i]);
     });
   }
 
-  Future<List<Recording>> getRecords() async {
+  Future<List<Recording>> getRecords({String sort = "DESC", String orderBy = "createdAt"}) async {
     await _ensureInitialized();
 
     if (kDebugMode) {
       print('Fetching all records');
     }
-    final List<Map<String, dynamic>> maps = await _db!.query(_tableName);
+    final List<Map<String, dynamic>> maps = await _db!.query(_tableName, orderBy: '$orderBy $sort');
 
     return List.generate(maps.length, (i) {
-      return mapToRecord(maps[i]);
+      return Recording.fromJson(maps[i]);
     });
   }
 

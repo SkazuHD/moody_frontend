@@ -9,14 +9,11 @@ class MoodSpotsNotifier {
 
   Future<void> loadSpots({required int pastDays}) async {
     final now = DateTime.now();
-    final range = DateTimeRange(
-      start: now.subtract(Duration(days: pastDays)),
-      end: now,
-    );
+    final range = DateTimeRange(start: now.subtract(Duration(days: pastDays)), end: now);
 
     final db = await RecordsDB.getInstance();
     final records = await db.getRecordsByDateRange(range.start, range.end);
 
-    spots.value = await calculateSpots(records);
+    spots.value = calculateSpots(records);
   }
 }

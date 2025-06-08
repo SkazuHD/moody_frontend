@@ -32,7 +32,7 @@ class _RecordListState extends State<RecordList> {
 
   Future<void> _fetchRecords() async {
     RecordsDB db = await RecordsDB.getInstance();
-    _records.value = await db.getRecords();
+    _records.value = await db.getRecords(sort: "DESC");
   }
 
   @override
@@ -46,10 +46,7 @@ class _RecordListState extends State<RecordList> {
               child: ValueListenableBuilder<List<Recording>>(
                 valueListenable: _records,
                 builder: (context, recordings, _) {
-                  return FilterList(
-                    recordings: recordings,
-                    categories: Emotion.values.map((e) => e.label).toList(),
-                  );
+                  return FilterList(recordings: recordings, categories: Emotion.values.map((e) => e.label).toList());
                 },
               ),
             ),
