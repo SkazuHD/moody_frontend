@@ -44,25 +44,42 @@ class _FastcheckinState extends State<Fastcheckin> {
                       selectedEmotionIndex = index;
                     });
 
-                    // Todo : Should we show a confirmation dialog?
-
-                    final selectedMood = emotion.label;
-                    final db = await RecordsDB.getInstance();
-                    await db.insertRecord(
-                      Recording(
-                        createdAt: DateTime.now(),
-                        transcription: null,
-                        mood: selectedMood,
-                        isFastCheckIn: true,
-                      ),
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Confirm Mood'),
+                          content: Text(
+                            'Are you sure you want to record your mood as "${emotion.label}"?',
+                            style: bodyBlack,
+                          ),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+                            TextButton(
+                              onPressed: () async {
+                                final selectedMood = emotion.label;
+                                final db = await RecordsDB.getInstance();
+                                await db.insertRecord(
+                                  Recording(
+                                    createdAt: DateTime.now(),
+                                    transcription: null,
+                                    mood: selectedMood,
+                                    isFastCheckIn: true,
+                                  ),
+                                );
+                                await db.createTodaysPlotCard(selectedMood);
+                                widget.onDataChanged();
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(const SnackBar(content: Text('Your mood has been recorded!')));
+                                return Navigator.of(context).pop();
+                              },
+                              child: const Text('Confirm'),
+                            ),
+                          ],
+                        );
+                      },
                     );
-                    await db.createTodaysPlotCard(selectedMood);
-                    widget.onDataChanged();
-                    // Todo : SnackBar or Something else
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('Your mood has been recorded!')));
-                    return;
                   },
                   child: Container(
                     width: 65,

@@ -76,10 +76,11 @@ class RecordsDB {
     );
 
     if (kDebugMode) {
-      print('Debug Mode: Dropping and recreating table $_tableName in _init.');
-      await _db!.execute('DROP TABLE IF EXISTS $_tableName');
-      await _db!.execute(initScript);
       await _db!.transaction((txn) async {
+        print('Debug Mode: Dropping and recreating table $_tableName in _init.');
+        await txn.execute('DROP TABLE IF EXISTS $_tableName');
+        await txn.execute(initScript);
+
         final batch = txn.batch();
         final int recordCount = 31;
         for (var i = 0; i < recordCount; i++) {
@@ -120,25 +121,31 @@ class RecordsDB {
     return true;
   }
 
-  Future<void> insertRecord(Recording record) async {
+  Future<int> insertRecord(Recording record) async {
     await _ensureInitialized();
 
-    if (kDebugMode) {
-      print('Inserting record: ${record.toDbValuesMap()}');
-    }
-    var res = await _db!.insert(_tableName, record.toDbValuesMap(), conflictAlgorithm: ConflictAlgorithm.replace);
-    if (kDebugMode) {
-      print('Inserted record with id: $res');
-    }
-    // Automatically create today's PlotCard if mood is set and record is from today
-    final now = DateTime.now();
-    final isToday =
-        record.createdAt.year == now.year && record.createdAt.month == now.month && record.createdAt.day == now.day;
-    if (isToday) {
+    return await _db!.transaction((txn) async {
+      if (kDebugMode) {
+        print('Inserting record: ${record.toDbValuesMap()}');
+      }
+
+      int res = await txn.insert(_tableName, record.toDbValuesMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+
+      if (kDebugMode) {
+        print('Inserted record with id: $res');
+      }
+
+      // Automatically create today's PlotCard if mood is set and record is from today
+      final now = DateTime.now();
+      final isToday =
+          record.createdAt.year == now.year && record.createdAt.month == now.month && record.createdAt.day == now.day;
+
       if (isToday && record.mood != null) {
         await createTodaysPlotCard(record.mood!);
       }
-    }
+
+      return res;
+    });
   }
 
   Future<void> createTodaysPlotCard(String mood) async {
@@ -196,11 +203,13 @@ class RecordsDB {
   Future<void> updateRecord(Recording record) async {
     await _ensureInitialized();
 
-    if (kDebugMode) {
-      print('Updating record: ${record.toJson()}');
-    }
+    await _db!.transaction((txn) async {
+      if (kDebugMode) {
+        print('Updating record: ${record.toJson()}');
+      }
 
-    await _db!.update(_tableName, record.toJson(), where: 'id = ?', whereArgs: [record.id]);
+      await txn.update(_tableName, record.toJson(), where: 'id = ?', whereArgs: [record.id]);
+    });
   }
 
   Future<Recording?> getRecord(int id) async {
@@ -251,11 +260,33 @@ class RecordsDB {
   }
 
   Future<void> deleteRecord(int id) async {
-    if (kDebugMode) {
-      print('Deleting record with id: $id');
-    }
-
     await _ensureInitialized();
-    await _db!.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+
+    await _db!.transaction((txn) async {
+      if (kDebugMode) {
+        print('Deleting record with id: $id');
+      }
+
+      await txn.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+    });
+  }
+
+  Future<void> deleteRecords(List<Recording> records) async {
+    await _ensureInitialized();
+
+    await _db!.transaction((txn) async {
+      if (kDebugMode) {
+        print('Löschen von ${records.length} Aufzeichnungen mit IDs: ${records.map((r) => r.id).join(', ')}');
+      }
+      final batch = txn.batch();
+
+      for (var record in records) {
+        if (record.id != null) {
+          batch.delete(_tableName, where: 'id = ?', whereArgs: [record.id]);
+        }
+      }
+
+      await batch.commit();
+    });
   }
 }

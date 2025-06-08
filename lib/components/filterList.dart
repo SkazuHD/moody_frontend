@@ -2,7 +2,9 @@ import 'package:Soullog/views/recordList/FastCheckInCard.dart';
 import 'package:Soullog/views/recordList/RecordCard.dart';
 import 'package:flutter/material.dart';
 
+import '../data/db.dart';
 import '../data/models/record.dart';
+import 'headlines.dart';
 
 class FilterList extends StatefulWidget {
   final List<Recording> recordings;
@@ -15,14 +17,59 @@ class FilterList extends StatefulWidget {
 }
 
 class _FilterListState extends State<FilterList> {
-  List<String> selectedCategories = [];
+  final List<String> _selectedCategories = [];
+  final List<Recording> _selectedRecordings = [];
+  bool _isSelectionMode = false;
+
+  void _toggleSelectionMode() {
+    setState(() {
+      _isSelectionMode = !_isSelectionMode;
+    });
+    if (_isSelectionMode == false) {
+      _selectedRecordings.clear();
+    }
+  }
+
+  void deleteSelectedRecordings() {
+    if (_selectedRecordings.isEmpty) return;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Delete Recordings"),
+          content: Text("Are you sure you want to delete ${_selectedRecordings.length} recordings?", style: bodyBlack),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                final db = await RecordsDB.getInstance();
+                await db.deleteRecords(_selectedRecordings);
+                setState(() {
+                  widget.recordings.removeWhere((recording) => _selectedRecordings.contains(recording));
+                });
+                _toggleSelectionMode();
+                Navigator.of(context).pop();
+              },
+              child: Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final filterRecordings =
         widget.recordings.where((recording) {
-          return selectedCategories.isEmpty ||
-              selectedCategories.any((cat) => cat.trim().toLowerCase() == (recording.mood ?? '').trim().toLowerCase());
+          return _selectedCategories.isEmpty ||
+              _selectedCategories.any((cat) => cat.trim().toLowerCase() == (recording.mood ?? '').trim().toLowerCase());
         }).toList();
     final sortedCategories = List<String>.from(widget.categories)..sort((a, b) {
       final countA =
@@ -40,33 +87,55 @@ class _FilterListState extends State<FilterList> {
           Container(
             padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.all(8),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children:
-                    sortedCategories
-                        .map(
-                          (category) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: FilterChip(
-                              selected: selectedCategories.contains(category),
-                              label: Text(
-                                '$category (${widget.recordings.where((recording) => recording.mood?.toLowerCase().trim() == category.toLowerCase().trim()).length})',
+            child: Column(
+              children: [
+                if (_isSelectionMode)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          _toggleSelectionMode();
+                        },
+                        icon: Icon(Icons.close),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          deleteSelectedRecordings();
+                        },
+                        child: Text("Delete (${_selectedRecordings.length})"),
+                      ),
+                    ],
+                  ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children:
+                        sortedCategories
+                            .map(
+                              (category) => Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: FilterChip(
+                                  selected: _selectedCategories.contains(category),
+                                  label: Text(
+                                    '$category (${widget.recordings.where((recording) => recording.mood?.toLowerCase().trim() == category.toLowerCase().trim()).length})',
+                                  ),
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      if (selected) {
+                                        _selectedCategories.add(category);
+                                      } else {
+                                        _selectedCategories.remove(category);
+                                      }
+                                    });
+                                  },
+                                ),
                               ),
-                              onSelected: (bool selected) {
-                                setState(() {
-                                  if (selected) {
-                                    selectedCategories.add(category);
-                                  } else {
-                                    selectedCategories.remove(category);
-                                  }
-                                });
-                              },
-                            ),
-                          ),
-                        )
-                        .toList(),
-              ),
+                            )
+                            .toList(),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -74,11 +143,36 @@ class _FilterListState extends State<FilterList> {
               itemCount: filterRecordings.length,
               itemBuilder: (context, index) {
                 final recording = filterRecordings[index];
-                if (recording.isFastCheckIn) {
-                  return FastCheckInCard(recording: recording);
-                } else {
-                  return RecordCard(recording: recording);
-                }
+                Widget cardWidget =
+                    recording.isFastCheckIn ? FastCheckInCard(recording: recording) : RecordCard(recording: recording);
+
+                return GestureDetector(
+                  onLongPress: () {
+                    setState(() {
+                      _toggleSelectionMode();
+                      if (!_selectedRecordings.contains(recording)) {
+                        _selectedRecordings.add(recording);
+                      }
+                    });
+                  },
+                  child:
+                      _isSelectionMode
+                          ? CheckboxListTile(
+                            controlAffinity: ListTileControlAffinity.leading,
+                            value: _selectedRecordings.contains(recording),
+                            onChanged: (bool? selected) {
+                              setState(() {
+                                if (selected == true) {
+                                  _selectedRecordings.add(recording);
+                                } else {
+                                  _selectedRecordings.remove(recording);
+                                }
+                              });
+                            },
+                            title: cardWidget,
+                          )
+                          : cardWidget,
+                );
               },
             ),
           ),
