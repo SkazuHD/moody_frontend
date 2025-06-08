@@ -27,6 +27,7 @@ class _RecordCardState extends State<RecordCard> {
 
   @override
   void dispose() {
+    audioService.stop();
     super.dispose();
   }
 
@@ -36,17 +37,25 @@ class _RecordCardState extends State<RecordCard> {
     return Card(
       elevation: 8,
       margin: const EdgeInsets.all(8),
-      child: Container(
-        decoration: BoxDecoration(color: getEmotionColor(recording.mood), borderRadius: BorderRadius.circular(10)),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          trailing: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            child: Text(getEmotionEmoji(recording.mood), style: TextStyle(fontSize: 24)),
-          ),
-          title: Row(
-            children: [
-              StreamBuilder(
+      child: ListTile(
+        tileColor: getEmotionColor(recording.mood),
+        horizontalTitleGap: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        trailing: Column(
+          children: [
+            Expanded(
+              child: CircleAvatar(
+                backgroundColor: Colors.transparent,
+                child: Text(getEmotionEmoji(recording.mood), style: TextStyle(fontSize: 24)),
+              ),
+            ),
+          ],
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: StreamBuilder(
                 stream: audioService.isThisCurrentlyPlaying(recording),
                 builder: (context, asyncSnapshot) {
                   final isPlaying = asyncSnapshot.data ?? false;
@@ -64,13 +73,10 @@ class _RecordCardState extends State<RecordCard> {
                   );
                 },
               ),
-            ],
-          ),
-          subtitle: Text(
-            '${recording.mood} ${getFullDate(recording.createdAt)}',
-            style: TextStyle(color: Colors.white),
-          ),
+            ),
+          ],
         ),
+        subtitle: Text('${recording.mood} ${getFullDate(recording.createdAt)}', style: TextStyle(color: Colors.white)),
       ),
     );
   }

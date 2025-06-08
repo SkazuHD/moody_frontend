@@ -18,28 +18,26 @@ class AudioControls extends StatelessWidget {
     return SizedBox(
       height: 50,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: [
           if (!isPlaying)
             IconButton(icon: const Icon(Icons.play_arrow, size: 30), onPressed: () => {if (onPlay != null) onPlay!()}),
           if (isPlaying)
-            Row(
-              children: [
-                IconButton(icon: const Icon(Icons.pause, size: 30), onPressed: () => {if (onPause != null) onPause!()}),
-              ],
+            IconButton(icon: const Icon(Icons.pause, size: 30), onPressed: () => {if (onPause != null) onPause!()}),
+          Expanded(
+            child: StreamBuilder<TrackProgress>(
+              stream: trackProgress,
+              builder: (context, snapshot) {
+                final positionData = snapshot.data;
+                return SeekBar(
+                  duration: positionData?.duration ?? Duration.zero,
+                  position: positionData?.position ?? Duration.zero,
+                  bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
+                  onChangeEnd: audioService.player.seek,
+                  enabled: isPlaying || (positionData?.enabled ?? false),
+                );
+              },
             ),
-          StreamBuilder<TrackProgress>(
-            stream: trackProgress,
-            builder: (context, snapshot) {
-              final positionData = snapshot.data;
-              return SeekBar(
-                duration: positionData?.duration ?? Duration.zero,
-                position: positionData?.position ?? Duration.zero,
-                bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
-                onChangeEnd: audioService.player.seek,
-                enabled: isPlaying || (positionData?.enabled ?? false),
-              );
-            },
           ),
         ],
       ),

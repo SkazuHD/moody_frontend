@@ -64,6 +64,12 @@ class AudioService {
     _isPlaying.add(false);
   }
 
+  Future<void> stop() async {
+    await _player.stop();
+    _isPlaying.add(false);
+    _currentMedia.add(null);
+  }
+
   void dispose() {
     _currentMedia.close();
     _isPlaying.close();
