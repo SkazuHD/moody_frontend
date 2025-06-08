@@ -42,7 +42,7 @@ class SoullogApiService {
     final store = await SharedPreferences.getInstance();
     final String personality = store.getString('personality') ?? "";
 
-    var file = await MultipartFile.fromFile(recording!.filePath);
+    var file = await MultipartFile.fromFile(recording.filePath!);
     var result = await _api.analyzeAudio(
       audio: file,
       personality: personality,
