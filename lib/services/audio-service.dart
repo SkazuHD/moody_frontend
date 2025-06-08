@@ -1,9 +1,17 @@
+import 'dart:developer';
+
 import 'package:Soullog/data/models/record.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../components/AudioControlComponents.dart';
+class PositionData {
+  final Duration position;
+  final Duration bufferedPosition;
+  final Duration duration;
+
+  PositionData(this.position, this.bufferedPosition, this.duration);
+}
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
@@ -21,9 +29,12 @@ class AudioService {
     player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
         isPlaying.value = false;
-        isCurrentlyPlaying.value = -1;
+        // isCurrentlyPlaying.value = -1;
       }
       state.playing ? isPlaying.value = true : isPlaying.value = false;
+    });
+    isCurrentlyPlaying.addListener(() {
+      log("isCurrentlyPlaying changed to ${isCurrentlyPlaying.value}");
     });
   }
 
@@ -35,7 +46,6 @@ class AudioService {
   );
 
   Future<void> setSource(String filePath) async {
-    print(filePath);
     try {
       await player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
     } catch (e) {
@@ -45,9 +55,10 @@ class AudioService {
 
   Future<void> playAudio(Recording recording) async {
     try {
-      await player.play();
       isPlaying.value = true;
+      log("Playing audio for recording ID: ${recording.id}");
       isCurrentlyPlaying.value = recording.id!;
+      await player.play();
     } catch (e) {
       return Future.error('Error playing audio: $e');
     }
@@ -60,15 +71,6 @@ class AudioService {
       isCurrentlyPlaying.value = -1;
     } catch (e) {
       return Future.error('Error pausing audio: $e');
-    }
-  }
-
-  Future<void> resumeAudio() async {
-    try {
-      await player.play();
-      isPlaying.value = true;
-    } catch (e) {
-      return Future.error('Error resuming audio: $e');
     }
   }
 

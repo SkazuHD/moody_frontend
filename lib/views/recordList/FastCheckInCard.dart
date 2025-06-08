@@ -17,7 +17,10 @@ class FastCheckInCard extends StatelessWidget {
         decoration: BoxDecoration(color: getEmotionColor(recording.mood), borderRadius: BorderRadius.circular(10)),
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          title: Text('Fast Check In', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          title: Text(
+            'Fast Check In (${recording.id})',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
           subtitle: Text(
             '${recording.mood} ${recording.createdAt.toLocal().toIso8601String()}',
             style: TextStyle(color: Colors.white),
