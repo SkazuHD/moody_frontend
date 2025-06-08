@@ -8,9 +8,10 @@ class AudioControls extends StatelessWidget {
   final VoidCallback? onPlay;
   final VoidCallback? onPause;
   final bool isPlaying;
+  final bool showSeekBar;
   final AudioService audioService = AudioService();
 
-  AudioControls({super.key, this.onPlay, this.onPause, this.isPlaying = false});
+  AudioControls({super.key, this.onPlay, this.onPause, this.isPlaying = false, this.showSeekBar = false});
 
   @override
   Widget build(BuildContext context) {
@@ -25,19 +26,20 @@ class AudioControls extends StatelessWidget {
             Row(
               children: [
                 IconButton(icon: const Icon(Icons.pause, size: 30), onPressed: () => {if (onPause != null) onPause!()}),
-                StreamBuilder<PositionData>(
-                  stream: audioService.positionDataStream,
-                  builder: (context, snapshot) {
-                    final positionData = snapshot.data;
-                    return SeekBar(
-                      duration: positionData?.duration ?? Duration.zero,
-                      position: positionData?.position ?? Duration.zero,
-                      bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
-                      onChangeEnd: audioService.player.seek,
-                    );
-                  },
-                ),
               ],
+            ),
+          if (showSeekBar)
+            StreamBuilder<PositionData>(
+              stream: audioService.positionDataStream,
+              builder: (context, snapshot) {
+                final positionData = snapshot.data;
+                return SeekBar(
+                  duration: positionData?.duration ?? Duration.zero,
+                  position: positionData?.position ?? Duration.zero,
+                  bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
+                  onChangeEnd: audioService.player.seek,
+                );
+              },
             ),
         ],
       ),

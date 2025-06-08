@@ -31,7 +31,7 @@ class _FilterListState extends State<FilterList> {
   }
 
   void deleteSelectedRecordings() {
-    if (_selectedRecordings.isEmpty) return;
+    if (_selectedRecordings.isEmpty) return _toggleSelectionMode();
 
     showDialog(
       context: context,

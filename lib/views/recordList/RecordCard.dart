@@ -19,11 +19,34 @@ class RecordCard extends StatefulWidget {
 
 class _RecordCardState extends State<RecordCard> {
   final audioService = AudioService();
+  bool isCurrentlyPlaying = false;
+  bool isPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    log("RecordCard initialized with recording ID: ${widget.recording.id}");
+    audioService.currentMedia.addListener(() {
+      if (audioService.currentMedia.value == widget.recording.id) {
+        setState(() {
+          isCurrentlyPlaying = true;
+        });
+      } else {
+        setState(() {
+          isCurrentlyPlaying = false;
+        });
+      }
+    });
+    audioService.isPlaying.addListener(() {
+      if (audioService.isPlaying.value) {
+        setState(() {
+          isPlaying = true;
+        });
+      } else {
+        setState(() {
+          isPlaying = false;
+        });
+      }
+    });
   }
 
   @override
@@ -42,21 +65,20 @@ class _RecordCardState extends State<RecordCard> {
           ),
           title: Row(
             children: [
-              ValueListenableBuilder(
-                valueListenable: audioService.isCurrentlyPlaying,
-                builder: (context, recordID, child) {
-                  return AudioControls(
-                    isPlaying: recordID == recording.id,
-                    onPlay: () async {
-                      log("On Play pressed with ID: ${recording.id}");
-                      await audioService.setSource(recording.filePath!);
-                      await audioService.playAudio(recording);
-                    },
-                    onPause: () async {
-                      log("On Pause pressed");
-                      await audioService.pauseAudio();
-                    },
-                  );
+              AudioControls(
+                isPlaying: isPlaying && isCurrentlyPlaying,
+                showSeekBar: isCurrentlyPlaying,
+                onPlay: () async {
+                  log("On Play pressed with ID: ${recording.id}");
+                  if (!isCurrentlyPlaying) {
+                    await audioService.setSource(recording);
+                  }
+
+                  await audioService.playAudio();
+                },
+                onPause: () async {
+                  log("On Pause pressed");
+                  await audioService.pauseAudio();
                 },
               ),
             ],

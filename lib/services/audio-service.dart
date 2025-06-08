@@ -22,19 +22,19 @@ class AudioService {
 
   late final AudioPlayer player;
   ValueNotifier<bool> isPlaying = ValueNotifier(false);
-  ValueNotifier<int> isCurrentlyPlaying = ValueNotifier(-1);
+  ValueNotifier<int> currentMedia = ValueNotifier(-1);
 
   AudioService._internal() {
     player = AudioPlayer();
     player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
-        isPlaying.value = false;
-        // isCurrentlyPlaying.value = -1;
+        //isPlaying.value = false;
+        //currentMedia.value = -1;
       }
       state.playing ? isPlaying.value = true : isPlaying.value = false;
     });
-    isCurrentlyPlaying.addListener(() {
-      log("isCurrentlyPlaying changed to ${isCurrentlyPlaying.value}");
+    currentMedia.addListener(() {
+      log("isCurrentlyPlaying changed to ${currentMedia.value}");
     });
   }
 
@@ -45,19 +45,20 @@ class AudioService {
     (position, bufferedPosition, duration) => PositionData(position, bufferedPosition, duration ?? Duration.zero),
   );
 
-  Future<void> setSource(String filePath) async {
+  Future<void> setSource(Recording recording) async {
+    final filePath = recording.filePath!;
     try {
       await player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
+      currentMedia.value = recording.id!;
     } catch (e) {
       return Future.error('Error setting audio source: $e');
     }
   }
 
-  Future<void> playAudio(Recording recording) async {
+  Future<void> playAudio() async {
     try {
       isPlaying.value = true;
-      log("Playing audio for recording ID: ${recording.id}");
-      isCurrentlyPlaying.value = recording.id!;
+      log("Playing audio for recording ID: ${currentMedia.value}");
       await player.play();
     } catch (e) {
       return Future.error('Error playing audio: $e');
@@ -68,7 +69,6 @@ class AudioService {
     try {
       await player.pause();
       isPlaying.value = false;
-      isCurrentlyPlaying.value = -1;
     } catch (e) {
       return Future.error('Error pausing audio: $e');
     }
@@ -78,7 +78,7 @@ class AudioService {
     try {
       await player.stop();
       isPlaying.value = false;
-      isCurrentlyPlaying.value = -1;
+      currentMedia.value = -1;
     } catch (e) {
       return Future.error('Error stopping audio: $e');
     }
