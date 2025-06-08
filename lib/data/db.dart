@@ -86,7 +86,7 @@ class RecordsDB {
           final randomEmotion = Emotion.values[Random().nextInt(Emotion.values.length)];
 
           final record = Recording(
-            filePath: 'assets/audio/recording$i.mp3',
+            filePath: 'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',
             duration: Random().nextInt(60) + 1,
             createdAt: DateTime.now().subtract(Duration(days: i)),
             transcription: 'Sample transcription for recording $i.',

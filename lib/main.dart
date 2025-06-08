@@ -64,21 +64,9 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         scaffoldBackgroundColor: Color(0xFF528a7d),
         textTheme: const TextTheme(
-          bodyLarge: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 16,
-            color: Colors.white,
-          ),
-          bodyMedium: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.white,
-          ),
-          bodySmall: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 12,
-            color: Colors.white,
-          ),
+          bodyLarge: TextStyle(fontFamily: 'Poppins', fontSize: 16, color: Colors.white),
+          bodyMedium: TextStyle(fontFamily: 'Poppins', fontSize: 14, color: Colors.white),
+          bodySmall: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: Colors.white),
         ),
       ),
       //Replace with route to Home when done
