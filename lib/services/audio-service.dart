@@ -6,8 +6,9 @@ class TrackProgress {
   final Duration position;
   final Duration bufferedPosition;
   final Duration duration;
+  final bool enabled;
 
-  TrackProgress(this.position, this.bufferedPosition, this.duration);
+  TrackProgress(this.position, this.bufferedPosition, this.duration, this.enabled);
 }
 
 class AudioService {
@@ -41,10 +42,9 @@ class AudioService {
       (position, bufferedPosition, duration, currentMedia) {
         if (currentMedia == null || currentMedia.id != recording.id) {
           final recordingDuration = Duration(seconds: recording.duration ?? 0);
-
-          return TrackProgress(Duration.zero, Duration.zero, recordingDuration);
+          return TrackProgress(Duration.zero, Duration.zero, recordingDuration, false);
         }
-        return TrackProgress(position, bufferedPosition, duration ?? Duration.zero);
+        return TrackProgress(position, bufferedPosition, duration ?? Duration.zero, true);
       },
     );
   }

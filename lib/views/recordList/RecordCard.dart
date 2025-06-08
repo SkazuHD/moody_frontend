@@ -52,7 +52,6 @@ class _RecordCardState extends State<RecordCard> {
                   final isPlaying = asyncSnapshot.data ?? false;
                   return AudioControls(
                     isPlaying: isPlaying,
-                    showSeekBar: true,
                     trackProgress: audioService.trackProgressFor(recording),
                     onPlay: () async {
                       log("On Play pressed");

@@ -8,18 +8,10 @@ class AudioControls extends StatelessWidget {
   final VoidCallback? onPlay;
   final VoidCallback? onPause;
   final bool isPlaying;
-  final bool showSeekBar;
   final AudioService audioService = AudioService();
   final Stream<TrackProgress> trackProgress;
 
-  AudioControls({
-    super.key,
-    this.onPlay,
-    this.onPause,
-    this.isPlaying = false,
-    this.showSeekBar = false,
-    required this.trackProgress,
-  });
+  AudioControls({super.key, this.onPlay, this.onPause, this.isPlaying = false, required this.trackProgress});
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +28,19 @@ class AudioControls extends StatelessWidget {
                 IconButton(icon: const Icon(Icons.pause, size: 30), onPressed: () => {if (onPause != null) onPause!()}),
               ],
             ),
-          if (showSeekBar)
-            StreamBuilder<TrackProgress>(
-              stream: trackProgress,
-              builder: (context, snapshot) {
-                final positionData = snapshot.data;
-                return SeekBar(
-                  duration: positionData?.duration ?? Duration.zero,
-                  position: positionData?.position ?? Duration.zero,
-                  bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
-                  onChangeEnd: audioService.player.seek,
-                );
-              },
-            ),
+          StreamBuilder<TrackProgress>(
+            stream: trackProgress,
+            builder: (context, snapshot) {
+              final positionData = snapshot.data;
+              return SeekBar(
+                duration: positionData?.duration ?? Duration.zero,
+                position: positionData?.position ?? Duration.zero,
+                bufferedPosition: positionData?.bufferedPosition ?? Duration.zero,
+                onChangeEnd: audioService.player.seek,
+                enabled: isPlaying || (positionData?.enabled ?? false),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -61,6 +53,7 @@ class SeekBar extends StatefulWidget {
   final Duration bufferedPosition;
   final ValueChanged<Duration>? onChanged;
   final ValueChanged<Duration>? onChangeEnd;
+  final bool enabled;
 
   const SeekBar({
     Key? key,
@@ -69,6 +62,7 @@ class SeekBar extends StatefulWidget {
     required this.bufferedPosition,
     this.onChanged,
     this.onChangeEnd,
+    required this.enabled,
   }) : super(key: key);
 
   @override
@@ -88,6 +82,7 @@ class SeekBarState extends State<SeekBar> {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = widget.enabled;
     return Stack(
       children: [
         SliderTheme(
@@ -101,20 +96,26 @@ class SeekBarState extends State<SeekBar> {
               min: 0.0,
               max: widget.duration.inMilliseconds.toDouble(),
               value: min(widget.bufferedPosition.inMilliseconds.toDouble(), widget.duration.inMilliseconds.toDouble()),
-              onChanged: (value) {
-                setState(() {
-                  _dragValue = value;
-                });
-                if (widget.onChanged != null) {
-                  widget.onChanged!(Duration(milliseconds: value.round()));
-                }
-              },
-              onChangeEnd: (value) {
-                if (widget.onChangeEnd != null) {
-                  widget.onChangeEnd!(Duration(milliseconds: value.round()));
-                }
-                _dragValue = null;
-              },
+              onChanged:
+                  enabled
+                      ? (value) {
+                        setState(() {
+                          _dragValue = value;
+                        });
+                        if (widget.onChanged != null) {
+                          widget.onChanged!(Duration(milliseconds: value.round()));
+                        }
+                      }
+                      : null,
+              onChangeEnd:
+                  enabled
+                      ? (value) {
+                        if (widget.onChangeEnd != null) {
+                          widget.onChangeEnd!(Duration(milliseconds: value.round()));
+                        }
+                        _dragValue = null;
+                      }
+                      : null,
             ),
           ),
         ),
@@ -127,20 +128,26 @@ class SeekBarState extends State<SeekBar> {
               _dragValue ?? widget.position.inMilliseconds.toDouble(),
               widget.duration.inMilliseconds.toDouble(),
             ),
-            onChanged: (value) {
-              setState(() {
-                _dragValue = value;
-              });
-              if (widget.onChanged != null) {
-                widget.onChanged!(Duration(milliseconds: value.round()));
-              }
-            },
-            onChangeEnd: (value) {
-              if (widget.onChangeEnd != null) {
-                widget.onChangeEnd!(Duration(milliseconds: value.round()));
-              }
-              _dragValue = null;
-            },
+            onChanged:
+                enabled
+                    ? (value) {
+                      setState(() {
+                        _dragValue = value;
+                      });
+                      if (widget.onChanged != null) {
+                        widget.onChanged!(Duration(milliseconds: value.round()));
+                      }
+                    }
+                    : null,
+            onChangeEnd:
+                enabled
+                    ? (value) {
+                      if (widget.onChangeEnd != null) {
+                        widget.onChangeEnd!(Duration(milliseconds: value.round()));
+                      }
+                      _dragValue = null;
+                    }
+                    : null,
           ),
         ),
         Positioned(
