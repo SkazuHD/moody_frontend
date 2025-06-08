@@ -1,87 +1,72 @@
-import 'dart:developer';
-
 import 'package:Soullog/data/models/record.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 
-class PositionData {
+class TrackProgress {
   final Duration position;
   final Duration bufferedPosition;
   final Duration duration;
 
-  PositionData(this.position, this.bufferedPosition, this.duration);
+  TrackProgress(this.position, this.bufferedPosition, this.duration);
 }
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
+  late final AudioPlayer _player;
+
+  AudioPlayer get player => _player;
 
   factory AudioService() {
     return _instance;
   }
 
-  late final AudioPlayer player;
-  ValueNotifier<bool> isPlaying = ValueNotifier(false);
-  ValueNotifier<int> currentMedia = ValueNotifier(-1);
+  final _currentMedia = BehaviorSubject<Recording?>();
+  final _isPlaying = BehaviorSubject<bool>.seeded(false);
+
+  Stream<bool> isThisCurrentlyPlaying(Recording recording) =>
+      Rx.combineLatest2(_currentMedia, _isPlaying, (Recording? current, bool isPlaying) {
+        return current?.id == recording.id && isPlaying;
+      });
 
   AudioService._internal() {
-    player = AudioPlayer();
-    player.playerStateStream.listen((state) {
-      state.playing ? isPlaying.value = true : isPlaying.value = false;
-    });
-    currentMedia.addListener(() {
-      log("isCurrentlyPlaying changed to ${currentMedia.value}");
-    });
+    _player = AudioPlayer();
   }
 
-  Stream<PositionData> get positionDataStream => Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-    player.positionStream,
-    player.bufferedPositionStream,
-    player.durationStream,
-    (position, bufferedPosition, duration) => PositionData(position, bufferedPosition, duration ?? Duration.zero),
-  );
+  Stream<TrackProgress> trackProgressFor(Recording recording) {
+    return Rx.combineLatest4<Duration, Duration, Duration?, Recording?, TrackProgress>(
+      _player.positionStream,
+      _player.bufferedPositionStream,
+      _player.durationStream,
+      _currentMedia.stream,
+      (position, bufferedPosition, duration, currentMedia) {
+        if (currentMedia == null || currentMedia.id != recording.id) {
+          final recordingDuration = Duration(seconds: recording.duration ?? 0);
 
-  Future<void> setSource(Recording recording) async {
-    final filePath = recording.filePath!;
-    try {
-      await player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
-      currentMedia.value = recording.id!;
-    } catch (e) {
-      return Future.error('Error setting audio source: $e');
-    }
+          return TrackProgress(Duration.zero, Duration.zero, recordingDuration);
+        }
+        return TrackProgress(position, bufferedPosition, duration ?? Duration.zero);
+      },
+    );
   }
 
-  Future<void> playAudio() async {
-    try {
-      log("Playing audio for recording ID: ${currentMedia.value}");
-      await player.play();
-    } catch (e) {
-      return Future.error('Error playing audio: $e');
+  Future<void> play(Recording recording) async {
+    if (_currentMedia.valueOrNull != recording) {
+      final filePath = recording.filePath!;
+      await _player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
+      _currentMedia.add(recording);
     }
+    _isPlaying.add(true);
+    await _player.play();
   }
 
-  Future<void> pauseAudio() async {
-    try {
-      await player.pause();
-    } catch (e) {
-      return Future.error('Error pausing audio: $e');
-    }
+  Future<void> pause() async {
+    await _player.pause();
+    _isPlaying.add(false);
   }
 
-  Future<void> stopAudio() async {
-    try {
-      await player.stop();
-      currentMedia.value = -1;
-    } catch (e) {
-      return Future.error('Error stopping audio: $e');
-    }
-  }
-
-  Future<void> seekAudio(Duration position) async {
-    try {
-      await player.seek(position);
-    } catch (e) {
-      return Future.error('Error seeking audio: $e');
-    }
+  void dispose() {
+    _currentMedia.close();
+    _isPlaying.close();
+    _player.dispose();
   }
 }

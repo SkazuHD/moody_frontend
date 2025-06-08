@@ -10,8 +10,16 @@ class AudioControls extends StatelessWidget {
   final bool isPlaying;
   final bool showSeekBar;
   final AudioService audioService = AudioService();
+  final Stream<TrackProgress> trackProgress;
 
-  AudioControls({super.key, this.onPlay, this.onPause, this.isPlaying = false, this.showSeekBar = false});
+  AudioControls({
+    super.key,
+    this.onPlay,
+    this.onPause,
+    this.isPlaying = false,
+    this.showSeekBar = false,
+    required this.trackProgress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +37,8 @@ class AudioControls extends StatelessWidget {
               ],
             ),
           if (showSeekBar)
-            StreamBuilder<PositionData>(
-              stream: audioService.positionDataStream,
+            StreamBuilder<TrackProgress>(
+              stream: trackProgress,
               builder: (context, snapshot) {
                 final positionData = snapshot.data;
                 return SeekBar(
