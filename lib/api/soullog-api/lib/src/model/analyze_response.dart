@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:soullog_api/src/model/persona.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/json_object.dart';
 import 'package:built_value/built_value.dart';
@@ -16,6 +17,7 @@ part 'analyze_response.g.dart';
 /// * [mood]
 /// * [recommendations]
 /// * [quote]
+/// * [personality]
 @BuiltValue()
 abstract class AnalyzeResponse
     implements Built<AnalyzeResponse, AnalyzeResponseBuilder> {
@@ -28,6 +30,9 @@ abstract class AnalyzeResponse
 
   @BuiltValueField(wireName: r'quote')
   String get quote;
+
+  @BuiltValueField(wireName: r'personality')
+  Persona get personality;
 
   AnalyzeResponse._();
 
@@ -69,6 +74,11 @@ class _$AnalyzeResponseSerializer
     yield serializers.serialize(
       object.quote,
       specifiedType: const FullType(String),
+    );
+    yield r'personality';
+    yield serializers.serialize(
+      object.personality,
+      specifiedType: const FullType(Persona),
     );
   }
 
@@ -116,6 +126,13 @@ class _$AnalyzeResponseSerializer
             specifiedType: const FullType(String),
           ) as String;
           result.quote = valueDes;
+          break;
+        case r'personality':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(Persona),
+          ) as Persona;
+          result.personality.replace(valueDes);
           break;
         default:
           unhandled.add(key);

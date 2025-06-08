@@ -10,15 +10,15 @@ class _$ValidationErrorLocInner extends ValidationErrorLocInner {
   @override
   final AnyOf anyOf;
 
-  factory _$ValidationErrorLocInner(
-          [void Function(ValidationErrorLocInnerBuilder)? updates]) =>
-      (ValidationErrorLocInnerBuilder()..update(updates))._build();
+  factory _$ValidationErrorLocInner([
+    void Function(ValidationErrorLocInnerBuilder)? updates,
+  ]) => (ValidationErrorLocInnerBuilder()..update(updates))._build();
 
   _$ValidationErrorLocInner._({required this.anyOf}) : super._();
   @override
   ValidationErrorLocInner rebuild(
-          void Function(ValidationErrorLocInnerBuilder) updates) =>
-      (toBuilder()..update(updates)).build();
+    void Function(ValidationErrorLocInnerBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
 
   @override
   ValidationErrorLocInnerBuilder toBuilder() =>
@@ -41,8 +41,7 @@ class _$ValidationErrorLocInner extends ValidationErrorLocInner {
   @override
   String toString() {
     return (newBuiltValueToStringHelper(r'ValidationErrorLocInner')
-          ..add('anyOf', anyOf))
-        .toString();
+      ..add('anyOf', anyOf)).toString();
   }
 }
 
@@ -82,10 +81,14 @@ class ValidationErrorLocInnerBuilder
   ValidationErrorLocInner build() => _build();
 
   _$ValidationErrorLocInner _build() {
-    final _$result = _$v ??
+    final _$result =
+        _$v ??
         _$ValidationErrorLocInner._(
           anyOf: BuiltValueNullFieldError.checkNotNull(
-              anyOf, r'ValidationErrorLocInner', 'anyOf'),
+            anyOf,
+            r'ValidationErrorLocInner',
+            'anyOf',
+          ),
         );
     replace(_$result);
     return _$result;
