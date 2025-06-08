@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/constants/emotions.dart';
 import '../../data/models/record.dart';
+import '../../helper/dateHelper.dart';
 import '../../services/audio-service.dart';
 
 class RecordCard extends StatefulWidget {
@@ -27,28 +28,29 @@ class _RecordCardState extends State<RecordCard> {
 
   @override
   Widget build(BuildContext context) {
+    final recording = widget.recording;
     return Card(
       elevation: 8,
       margin: const EdgeInsets.all(8),
       child: Container(
-        decoration: BoxDecoration(
-          color: getEmotionColor(widget.recording.mood),
-          borderRadius: BorderRadius.circular(10),
-        ),
+        decoration: BoxDecoration(color: getEmotionColor(recording.mood), borderRadius: BorderRadius.circular(10)),
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          trailing: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            child: Text(getEmotionEmoji(recording.mood), style: TextStyle(fontSize: 24)),
+          ),
           title: Row(
             children: [
-              Text(widget.recording.id.toString()),
               ValueListenableBuilder(
                 valueListenable: audioService.isCurrentlyPlaying,
                 builder: (context, recordID, child) {
                   return AudioControls(
-                    isPlaying: recordID == widget.recording.id,
+                    isPlaying: recordID == recording.id,
                     onPlay: () async {
-                      log("On Play pressed with ID: ${widget.recording.id}");
-                      await audioService.setSource(widget.recording.filePath!);
-                      await audioService.playAudio(widget.recording);
+                      log("On Play pressed with ID: ${recording.id}");
+                      await audioService.setSource(recording.filePath!);
+                      await audioService.playAudio(recording);
                     },
                     onPause: () async {
                       log("On Pause pressed");
@@ -60,7 +62,7 @@ class _RecordCardState extends State<RecordCard> {
             ],
           ),
           subtitle: Text(
-            '${widget.recording.mood} ${widget.recording.createdAt.toLocal().toIso8601String()}',
+            '${recording.mood} ${getFullDate(recording.createdAt)}',
             style: TextStyle(color: Colors.white),
           ),
         ),

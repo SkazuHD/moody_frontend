@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/db.dart';
-import '../dashboard/chartHelpers.dart';
+import '../../helper/chartHelpers.dart';
 
 class MoodSpotsNotifier {
   final ValueNotifier<List<FlSpot>> spots = ValueNotifier([]);

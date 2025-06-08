@@ -7,7 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'chartHelpers.dart';
+import '../../helper/chartHelpers.dart';
 
 class MoodLineChart extends StatefulWidget {
   final List<FlSpot> spots;

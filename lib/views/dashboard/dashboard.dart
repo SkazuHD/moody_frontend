@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../data/models/record.dart';
-import 'chartHelpers.dart';
+import '../../helper/chartHelpers.dart';
 import 'moodLinechart.dart';
 
 class Dashboard extends StatefulWidget {

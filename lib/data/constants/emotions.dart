@@ -26,3 +26,12 @@ Color getEmotionColor(String? mood) {
     return Colors.grey;
   }
 }
+
+String getEmotionEmoji(String? mood) {
+  if (mood == null) return '😐';
+  try {
+    return Emotion.values.firstWhere((e) => e.label.toLowerCase() == mood.toLowerCase()).emoji;
+  } catch (_) {
+    return '😐';
+  }
+}
