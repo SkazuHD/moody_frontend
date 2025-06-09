@@ -16,7 +16,7 @@ class _$ShortTermState extends ShortTermState {
       (ShortTermStateBuilder()..update(updates))._build();
 
   _$ShortTermState._({required this.state, required this.lastMentioned})
-    : super._();
+      : super._();
   @override
   ShortTermState rebuild(void Function(ShortTermStateBuilder) updates) =>
       (toBuilder()..update(updates)).build();
@@ -91,8 +91,7 @@ class ShortTermStateBuilder
   ShortTermState build() => _build();
 
   _$ShortTermState _build() {
-    final _$result =
-        _$v ??
+    final _$result = _$v ??
         _$ShortTermState._(
           state: BuiltValueNullFieldError.checkNotNull(
             state,
