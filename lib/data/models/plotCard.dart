@@ -1,31 +1,31 @@
 class PlotCard {
   final String mood;
-  final String title;
-  final String description;
+  final String quote;
+  final List<String> recommendation;
   final DateTime date;
 
   PlotCard({
     required this.mood,
-    required this.title,
-    required this.description,
+    required this.quote,
+    required this.recommendation,
     required this.date,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'mood': mood,
-      'title': title,
-      'message': description,
-      'date': date,
+      'quote': quote,
+      'recommendation': recommendation,
+      'date': date.toIso8601String(),
     };
   }
 
   factory PlotCard.fromMap(Map<String, dynamic> map) {
     return PlotCard(
       mood: map['mood'],
-      title: map['title'],
-      description: map['message'],
-      date: map['date'],
+      quote: map['quote'],
+      recommendation: List<String>.from(map['recommendation']),
+      date: DateTime.parse(map['date']),
     );
   }
 }

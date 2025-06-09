@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:Soullog/data/db.dart';
+import 'package:Soullog/data/models/plotCard.dart';
 import 'package:Soullog/data/models/record.dart';
+import 'package:Soullog/services/api-service.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -9,15 +12,22 @@ import '/components/popupViewSave.dart';
 
 Recording recording = Recording(
   id: 0,
-  filePath: 'assets/audio/recording1.mp3',
+  filePath: 'assets/test_recording.m4a',
   duration: 30,
   createdAt: DateTime.now().subtract(Duration(days: 0)),
   transcription: 'This is a sample transcription.',
   mood: 'calm',
 );
 
-class Record extends StatelessWidget {
+class Record extends StatefulWidget {
   const Record({super.key});
+
+  @override
+  State<Record> createState() => _RecordState();
+}
+
+class _RecordState extends State<Record> {
+  final SoullogApiService _apiService = SoullogApiService();
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +59,48 @@ class Record extends StatelessWidget {
                       const Center(child: SwitchTranscription()),
                     ],
                   ),
-
                   SizedBox(height: 20),
                   const ObscuredTextFieldSample(),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).restorablePush(
-                        PopupViewSave.dialogBuilder,
-                        arguments: recording.toJson(),
+                    onPressed: () async {
+                      var res = await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return PopupViewSave(recording: recording);
+                        },
                       );
+                      if (res) {
+                        // Handle the saved recording
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Recording saved: ${res.filePath}'),
+                          ),
+                        );
+                        // Here you can save the recording to a database or perform any other action
+                        var db = await RecordsDB.getInstance();
+                        var data = await _apiService.analyzeRecording(
+                          recording,
+                        );
+                        recording.mood = data.mood as String?;
+                        recording.transcription = data.transcription;
+
+                        var todaysPlotCard = PlotCard(
+                          mood: data.mood as String,
+                          quote: data.quote,
+                          recommendation:
+                              data.recommendations
+                                  .map((e) => e.toString())
+                                  .toList(),
+                          date: DateTime.now(),
+                        );
+                        db.createTodaysPlotCard(todaysPlotCard);
+                        db.insertRecord(recording);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Recording not saved')),
+                        );
+                      }
                     },
                     child: Text("Save"),
                   ),
