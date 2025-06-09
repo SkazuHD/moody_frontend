@@ -14,7 +14,7 @@ import 'package:one_of_serializer/one_of_serializer.dart';
 import 'package:soullog_api/src/date_serializer.dart';
 import 'package:soullog_api/src/model/analyze_response.dart';
 import 'package:soullog_api/src/model/contextual_insight.dart';
-import 'package:soullog_api/src/model/datedart';
+import 'package:soullog_api/src/model/date.dart';
 import 'package:soullog_api/src/model/http_validation_error.dart';
 import 'package:soullog_api/src/model/persona.dart';
 import 'package:soullog_api/src/model/short_term_state.dart';

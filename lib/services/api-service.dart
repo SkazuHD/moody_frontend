@@ -1,4 +1,4 @@
-// Openapi Generator last run: : 2025-06-09T18:22:22.478782
+// Openapi Generator last run: : 2025-06-09T18:28:03.288496
 import 'package:Soullog/api/soullog-api/lib/soullog_api.dart';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';

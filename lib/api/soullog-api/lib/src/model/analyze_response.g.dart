@@ -6,22 +6,14 @@ part of 'analyze_response.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_happy =
-    const AnalyzeResponseMoodEnum._('happy');
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_sad =
-    const AnalyzeResponseMoodEnum._('sad');
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_calm =
-    const AnalyzeResponseMoodEnum._('calm');
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_fearful =
-    const AnalyzeResponseMoodEnum._('fearful');
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_angry =
-    const AnalyzeResponseMoodEnum._('angry');
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_disgust =
-    const AnalyzeResponseMoodEnum._('disgust');
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_neutral =
-    const AnalyzeResponseMoodEnum._('neutral');
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_suprised =
-    const AnalyzeResponseMoodEnum._('suprised');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_happy = const AnalyzeResponseMoodEnum._('happy');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_sad = const AnalyzeResponseMoodEnum._('sad');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_calm = const AnalyzeResponseMoodEnum._('calm');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_fearful = const AnalyzeResponseMoodEnum._('fearful');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_angry = const AnalyzeResponseMoodEnum._('angry');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_disgust = const AnalyzeResponseMoodEnum._('disgust');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_neutral = const AnalyzeResponseMoodEnum._('neutral');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_suprised = const AnalyzeResponseMoodEnum._('suprised');
 
 AnalyzeResponseMoodEnum _$analyzeResponseMoodEnumValueOf(String name) {
   switch (name) {
@@ -48,21 +40,19 @@ AnalyzeResponseMoodEnum _$analyzeResponseMoodEnumValueOf(String name) {
 
 final BuiltSet<AnalyzeResponseMoodEnum> _$analyzeResponseMoodEnumValues =
     BuiltSet<AnalyzeResponseMoodEnum>(const <AnalyzeResponseMoodEnum>[
-      _$analyzeResponseMoodEnum_happy,
-      _$analyzeResponseMoodEnum_sad,
-      _$analyzeResponseMoodEnum_calm,
-      _$analyzeResponseMoodEnum_fearful,
-      _$analyzeResponseMoodEnum_angry,
-      _$analyzeResponseMoodEnum_disgust,
-      _$analyzeResponseMoodEnum_neutral,
-      _$analyzeResponseMoodEnum_suprised,
-    ]);
+  _$analyzeResponseMoodEnum_happy,
+  _$analyzeResponseMoodEnum_sad,
+  _$analyzeResponseMoodEnum_calm,
+  _$analyzeResponseMoodEnum_fearful,
+  _$analyzeResponseMoodEnum_angry,
+  _$analyzeResponseMoodEnum_disgust,
+  _$analyzeResponseMoodEnum_neutral,
+  _$analyzeResponseMoodEnum_suprised,
+]);
 
-Serializer<AnalyzeResponseMoodEnum> _$analyzeResponseMoodEnumSerializer =
-    _$AnalyzeResponseMoodEnumSerializer();
+Serializer<AnalyzeResponseMoodEnum> _$analyzeResponseMoodEnumSerializer = _$AnalyzeResponseMoodEnumSerializer();
 
-class _$AnalyzeResponseMoodEnumSerializer
-    implements PrimitiveSerializer<AnalyzeResponseMoodEnum> {
+class _$AnalyzeResponseMoodEnumSerializer implements PrimitiveSerializer<AnalyzeResponseMoodEnum> {
   static const Map<String, Object> _toWire = const <String, Object>{
     'happy': 'happy',
     'sad': 'sad',
@@ -94,16 +84,18 @@ class _$AnalyzeResponseMoodEnumSerializer
     Serializers serializers,
     AnalyzeResponseMoodEnum object, {
     FullType specifiedType = FullType.unspecified,
-  }) => _toWire[object.name] ?? object.name;
+  }) =>
+      _toWire[object.name] ?? object.name;
 
   @override
   AnalyzeResponseMoodEnum deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
-  }) => AnalyzeResponseMoodEnum.valueOf(
-    _fromWire[serialized] ?? (serialized is String ? serialized : ''),
-  );
+  }) =>
+      AnalyzeResponseMoodEnum.valueOf(
+        _fromWire[serialized] ?? (serialized is String ? serialized : ''),
+      );
 }
 
 class _$AnalyzeResponse extends AnalyzeResponse {
@@ -129,8 +121,7 @@ class _$AnalyzeResponse extends AnalyzeResponse {
     required this.personality,
   }) : super._();
   @override
-  AnalyzeResponse rebuild(void Function(AnalyzeResponseBuilder) updates) =>
-      (toBuilder()..update(updates)).build();
+  AnalyzeResponse rebuild(void Function(AnalyzeResponseBuilder) updates) => (toBuilder()..update(updates)).build();
 
   @override
   AnalyzeResponseBuilder toBuilder() => AnalyzeResponseBuilder()..replace(this);
@@ -170,8 +161,7 @@ class _$AnalyzeResponse extends AnalyzeResponse {
   }
 }
 
-class AnalyzeResponseBuilder
-    implements Builder<AnalyzeResponse, AnalyzeResponseBuilder> {
+class AnalyzeResponseBuilder implements Builder<AnalyzeResponse, AnalyzeResponseBuilder> {
   _$AnalyzeResponse? _$v;
 
   AnalyzeResponseMoodEnum? _mood;
@@ -180,14 +170,11 @@ class AnalyzeResponseBuilder
 
   String? _transcription;
   String? get transcription => _$this._transcription;
-  set transcription(String? transcription) =>
-      _$this._transcription = transcription;
+  set transcription(String? transcription) => _$this._transcription = transcription;
 
   ListBuilder<JsonObject?>? _recommendations;
-  ListBuilder<JsonObject?> get recommendations =>
-      _$this._recommendations ??= ListBuilder<JsonObject?>();
-  set recommendations(ListBuilder<JsonObject?>? recommendations) =>
-      _$this._recommendations = recommendations;
+  ListBuilder<JsonObject?> get recommendations => _$this._recommendations ??= ListBuilder<JsonObject?>();
+  set recommendations(ListBuilder<JsonObject?>? recommendations) => _$this._recommendations = recommendations;
 
   String? _quote;
   String? get quote => _$this._quote;
@@ -195,8 +182,7 @@ class AnalyzeResponseBuilder
 
   PersonaBuilder? _personality;
   PersonaBuilder get personality => _$this._personality ??= PersonaBuilder();
-  set personality(PersonaBuilder? personality) =>
-      _$this._personality = personality;
+  set personality(PersonaBuilder? personality) => _$this._personality = personality;
 
   AnalyzeResponseBuilder() {
     AnalyzeResponse._defaults(this);
@@ -231,8 +217,7 @@ class AnalyzeResponseBuilder
   _$AnalyzeResponse _build() {
     _$AnalyzeResponse _$result;
     try {
-      _$result =
-          _$v ??
+      _$result = _$v ??
           _$AnalyzeResponse._(
             mood: BuiltValueNullFieldError.checkNotNull(
               mood,
