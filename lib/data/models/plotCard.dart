@@ -16,7 +16,7 @@ class PlotCard {
       'mood': mood,
       'quote': quote,
       'recommendation': recommendation,
-      'date': date,
+      'date': date.toIso8601String(),
     };
   }
 
@@ -24,8 +24,8 @@ class PlotCard {
     return PlotCard(
       mood: map['mood'],
       quote: map['quote'],
-      recommendation: map['recommendation'],
-      date: map['date'],
+      recommendation: List<String>.from(map['recommendation']),
+      date: DateTime.parse(map['date']),
     );
   }
 }

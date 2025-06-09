@@ -28,6 +28,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     moodSpotsNotifier.loadSpots(pastDays: 7);
+    // PlotCard aus SharedPreferences laden
+    RecordsDB.getInstance().then((db) => db.loadTodaysPlotCard());
   }
 
   @override
@@ -161,7 +163,6 @@ class _HomeState extends State<Home> {
             // fetch today's PlotCard from the DB
             FutureBuilder<RecordsDB>(
               future: RecordsDB.getInstance(),
-              // Passe ggf. an, wie du die Instanz bekommst
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const CircularProgressIndicator();
@@ -171,7 +172,10 @@ class _HomeState extends State<Home> {
                   stream: db.todaysPlotCardStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
+                    }
+                    if (!snapshot.hasData || snapshot.data == null) {
+                      return const Text('No plot card available');
                     }
                     final plotCard = snapshot.data!;
                     return PlotCardComponent(plotCard: plotCard);

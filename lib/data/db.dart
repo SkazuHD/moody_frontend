@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' hide log;
 
@@ -6,6 +7,7 @@ import 'package:Soullog/data/models/record.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../data/models/plotCard.dart';
@@ -16,6 +18,12 @@ class RecordsDB {
   final _todaysPlotCard = BehaviorSubject<PlotCard?>();
 
   Stream<PlotCard?> get todaysPlotCardStream => _todaysPlotCard.stream;
+  PlotCard emptyCard = PlotCard(
+    mood: "Neutral",
+    quote: "No mood recorded today.",
+    recommendation: ["Take a moment to reflect"],
+    date: DateTime.now(),
+  );
 
   RecordsDB._internal();
 
@@ -110,6 +118,36 @@ class RecordsDB {
     if (kDebugMode) {
       print('Database initialization process completed in _init.');
     }
+
+    // Load today's PlotCard if it exists
+    await loadTodaysPlotCard();
+  }
+
+  Future<void> loadTodaysPlotCard() async {
+    final store = await SharedPreferences.getInstance();
+    final todaysCardString = store.getString('todaysPlotCard');
+    if (todaysCardString != null) {
+      var date = DateTime.now();
+      try {
+        final Map<String, dynamic> map = jsonDecode(todaysCardString);
+        final todaysCard = PlotCard.fromMap(map);
+        var plotcardDate = todaysCard.date;
+        if (date.day != plotcardDate.day ||
+            date.month != plotcardDate.month ||
+            date.year != plotcardDate.year) {
+          _todaysPlotCard.add(emptyCard);
+          return;
+        }
+        _todaysPlotCard.add(todaysCard);
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error loading today\'s PlotCard: $e');
+        }
+        _todaysPlotCard.add(emptyCard);
+      }
+    } else {
+      _todaysPlotCard.add(emptyCard);
+    }
   }
 
   Future<bool> _ensureInitialized() async {
@@ -144,8 +182,12 @@ class RecordsDB {
     });
   }
 
-  Future<void> createTodaysPlotCard(PlotCard card) async {
-    _todaysPlotCard.add(card);
+  Future<void> createTodaysPlotCard(PlotCard? card) async {
+    if (card != null) {
+      final store = await SharedPreferences.getInstance();
+      store.setString('todaysPlotCard', jsonEncode(card.toJson()));
+      _todaysPlotCard.add(card);
+    }
   }
 
   Future<void> updateRecord(Recording record) async {
