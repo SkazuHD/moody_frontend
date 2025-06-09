@@ -12,6 +12,12 @@ void main() {
       // TODO
     });
 
+    // Transcription of the diary entry.
+    // String transcription
+    test('to test the property `transcription`', () async {
+      // TODO
+    });
+
     // BuiltList<JsonObject> recommendations
     test('to test the property `recommendations`', () async {
       // TODO
@@ -19,6 +25,11 @@ void main() {
 
     // String quote
     test('to test the property `quote`', () async {
+      // TODO
+    });
+
+    // Persona personality
+    test('to test the property `personality`', () async {
       // TODO
     });
   });

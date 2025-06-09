@@ -94,15 +94,9 @@ class ShortTermStateBuilder
     final _$result = _$v ??
         _$ShortTermState._(
           state: BuiltValueNullFieldError.checkNotNull(
-            state,
-            r'ShortTermState',
-            'state',
-          ),
+              state, r'ShortTermState', 'state'),
           lastMentioned: BuiltValueNullFieldError.checkNotNull(
-            lastMentioned,
-            r'ShortTermState',
-            'lastMentioned',
-          ),
+              lastMentioned, r'ShortTermState', 'lastMentioned'),
         );
     replace(_$result);
     return _$result;

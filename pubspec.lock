@@ -885,7 +885,7 @@ packages:
   soullog_api:
     dependency: "direct main"
     description:
-      path: "lib/api/soullog-api"
+      path: soullog-api
       relative: true
     source: path
     version: "1.0.0"

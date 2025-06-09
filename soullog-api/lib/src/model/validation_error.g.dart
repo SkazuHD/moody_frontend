@@ -17,13 +17,12 @@ class _$ValidationError extends ValidationError {
   factory _$ValidationError([void Function(ValidationErrorBuilder)? updates]) =>
       (ValidationErrorBuilder()..update(updates))._build();
 
-  _$ValidationError._({
-    required this.loc,
-    required this.msg,
-    required this.type,
-  }) : super._();
+  _$ValidationError._(
+      {required this.loc, required this.msg, required this.type})
+      : super._();
   @override
-  ValidationError rebuild(void Function(ValidationErrorBuilder) updates) => (toBuilder()..update(updates)).build();
+  ValidationError rebuild(void Function(ValidationErrorBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
 
   @override
   ValidationErrorBuilder toBuilder() => ValidationErrorBuilder()..replace(this);
@@ -31,7 +30,10 @@ class _$ValidationError extends ValidationError {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is ValidationError && loc == other.loc && msg == other.msg && type == other.type;
+    return other is ValidationError &&
+        loc == other.loc &&
+        msg == other.msg &&
+        type == other.type;
   }
 
   @override
@@ -54,11 +56,13 @@ class _$ValidationError extends ValidationError {
   }
 }
 
-class ValidationErrorBuilder implements Builder<ValidationError, ValidationErrorBuilder> {
+class ValidationErrorBuilder
+    implements Builder<ValidationError, ValidationErrorBuilder> {
   _$ValidationError? _$v;
 
   ListBuilder<ValidationErrorLocInner>? _loc;
-  ListBuilder<ValidationErrorLocInner> get loc => _$this._loc ??= ListBuilder<ValidationErrorLocInner>();
+  ListBuilder<ValidationErrorLocInner> get loc =>
+      _$this._loc ??= ListBuilder<ValidationErrorLocInner>();
   set loc(ListBuilder<ValidationErrorLocInner>? loc) => _$this._loc = loc;
 
   String? _msg;
@@ -104,15 +108,9 @@ class ValidationErrorBuilder implements Builder<ValidationError, ValidationError
           _$ValidationError._(
             loc: loc.build(),
             msg: BuiltValueNullFieldError.checkNotNull(
-              msg,
-              r'ValidationError',
-              'msg',
-            ),
+                msg, r'ValidationError', 'msg'),
             type: BuiltValueNullFieldError.checkNotNull(
-              type,
-              r'ValidationError',
-              'type',
-            ),
+                type, r'ValidationError', 'type'),
           );
     } catch (_) {
       late String _$failedField;
@@ -121,10 +119,7 @@ class ValidationErrorBuilder implements Builder<ValidationError, ValidationError
         loc.build();
       } catch (e) {
         throw BuiltValueNestedFieldError(
-          r'ValidationError',
-          _$failedField,
-          e.toString(),
-        );
+            r'ValidationError', _$failedField, e.toString());
       }
       rethrow;
     }

@@ -44,7 +44,7 @@ dependencies:
   openapi_generator_annotations: ^6.1.0
   dio: ^5.8.0
   soullog_api:
-    path: lib/api/soullog-api
+    path: soullog-api
   collection: ^1.19.1
   built_collection: ^5.1.1
   built_value: ^8.10.1

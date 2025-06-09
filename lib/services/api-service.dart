@@ -1,9 +1,9 @@
-// Openapi Generator last run: : 2025-06-09T18:28:03.288496
-import 'package:Soullog/api/soullog-api/lib/soullog_api.dart';
+// Openapi Generator last run: : 2025-06-09T19:29:18.635424
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soullog_api/soullog_api.dart';
 
 import '../data/models/record.dart';
 
@@ -14,7 +14,7 @@ import '../data/models/record.dart';
   // typeMappings: {'Pet': 'ExamplePet'},
   generatorName: Generator.dio,
   runSourceGenOnOutput: true,
-  outputDirectory: 'lib/api/soullog-api',
+  outputDirectory: 'soullog-api',
 )
 class SoullogApiService {
   static final SoullogApiService _instance = SoullogApiService._internal();
@@ -33,6 +33,13 @@ class SoullogApiService {
     _api = _soullogApi.getDefaultApi();
     _serializers = _soullogApi.serializers;
     _dio = _soullogApi.dio;
+
+    _dio.options.baseUrl = 'https://moody-app.skazu.net';
+
+    //SET TIMEOUTS
+    _dio.options.connectTimeout = const Duration(seconds: 60);
+    _dio.options.receiveTimeout = const Duration(seconds: 60);
+    _dio.options.sendTimeout = const Duration(seconds: 60);
   }
 
   Future<AnalyzeResponse> analyzeRecording(Recording recording) async {

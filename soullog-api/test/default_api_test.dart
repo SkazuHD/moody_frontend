@@ -6,10 +6,12 @@ void main() {
   final instance = SoullogApi().getDefaultApi();
 
   group(DefaultApi, () {
-    // Analyze
+    // Analyze audio diary entry
     //
-    //Future<AnalyzeResponse> analyzeAnalyzePost(MultipartFile audio, { BuiltList<JsonObject> personality }) async
-    test('test analyzeAnalyzePost', () async {
+    // Transcribe audio, detect mood, and update user persona based on the transcript.
+    //
+    //Future<AnalyzeResponse> analyzeAudio(MultipartFile audio, { String personality }) async
+    test('test analyzeAudio', () async {
       // TODO
     });
 

@@ -12,9 +12,8 @@ class _$ContextualInsight extends ContextualInsight {
   @override
   final int lastMentioned;
 
-  factory _$ContextualInsight([
-    void Function(ContextualInsightBuilder)? updates,
-  ]) =>
+  factory _$ContextualInsight(
+          [void Function(ContextualInsightBuilder)? updates]) =>
       (ContextualInsightBuilder()..update(updates))._build();
 
   _$ContextualInsight._({required this.insight, required this.lastMentioned})
@@ -97,15 +96,9 @@ class ContextualInsightBuilder
     final _$result = _$v ??
         _$ContextualInsight._(
           insight: BuiltValueNullFieldError.checkNotNull(
-            insight,
-            r'ContextualInsight',
-            'insight',
-          ),
+              insight, r'ContextualInsight', 'insight'),
           lastMentioned: BuiltValueNullFieldError.checkNotNull(
-            lastMentioned,
-            r'ContextualInsight',
-            'lastMentioned',
-          ),
+              lastMentioned, r'ContextualInsight', 'lastMentioned'),
         );
     replace(_$result);
     return _$result;

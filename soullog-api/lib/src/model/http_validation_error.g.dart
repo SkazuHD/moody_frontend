@@ -10,20 +10,19 @@ class _$HTTPValidationError extends HTTPValidationError {
   @override
   final BuiltList<ValidationError>? detail;
 
-  factory _$HTTPValidationError([
-    void Function(HTTPValidationErrorBuilder)? updates,
-  ]) =>
+  factory _$HTTPValidationError(
+          [void Function(HTTPValidationErrorBuilder)? updates]) =>
       (HTTPValidationErrorBuilder()..update(updates))._build();
 
   _$HTTPValidationError._({this.detail}) : super._();
   @override
   HTTPValidationError rebuild(
-    void Function(HTTPValidationErrorBuilder) updates,
-  ) =>
+          void Function(HTTPValidationErrorBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  HTTPValidationErrorBuilder toBuilder() => HTTPValidationErrorBuilder()..replace(this);
+  HTTPValidationErrorBuilder toBuilder() =>
+      HTTPValidationErrorBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
@@ -41,15 +40,19 @@ class _$HTTPValidationError extends HTTPValidationError {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper(r'HTTPValidationError')..add('detail', detail)).toString();
+    return (newBuiltValueToStringHelper(r'HTTPValidationError')
+          ..add('detail', detail))
+        .toString();
   }
 }
 
-class HTTPValidationErrorBuilder implements Builder<HTTPValidationError, HTTPValidationErrorBuilder> {
+class HTTPValidationErrorBuilder
+    implements Builder<HTTPValidationError, HTTPValidationErrorBuilder> {
   _$HTTPValidationError? _$v;
 
   ListBuilder<ValidationError>? _detail;
-  ListBuilder<ValidationError> get detail => _$this._detail ??= ListBuilder<ValidationError>();
+  ListBuilder<ValidationError> get detail =>
+      _$this._detail ??= ListBuilder<ValidationError>();
   set detail(ListBuilder<ValidationError>? detail) => _$this._detail = detail;
 
   HTTPValidationErrorBuilder() {
@@ -81,7 +84,10 @@ class HTTPValidationErrorBuilder implements Builder<HTTPValidationError, HTTPVal
   _$HTTPValidationError _build() {
     _$HTTPValidationError _$result;
     try {
-      _$result = _$v ?? _$HTTPValidationError._(detail: _detail?.build());
+      _$result = _$v ??
+          _$HTTPValidationError._(
+            detail: _detail?.build(),
+          );
     } catch (_) {
       late String _$failedField;
       try {
@@ -89,10 +95,7 @@ class HTTPValidationErrorBuilder implements Builder<HTTPValidationError, HTTPVal
         _detail?.build();
       } catch (e) {
         throw BuiltValueNestedFieldError(
-          r'HTTPValidationError',
-          _$failedField,
-          e.toString(),
-        );
+            r'HTTPValidationError', _$failedField, e.toString());
       }
       rethrow;
     }
