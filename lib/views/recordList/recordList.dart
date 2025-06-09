@@ -5,6 +5,7 @@ import '../../components/filterList.dart';
 import '../../components/header.dart';
 import '../../data/db.dart';
 import '../../data/models/record.dart';
+import '../../services/audio-service.dart';
 
 class RecordList extends StatefulWidget {
   const RecordList({super.key});
@@ -15,10 +16,12 @@ class RecordList extends StatefulWidget {
 
 class _RecordListState extends State<RecordList> {
   final _records = ValueNotifier<List<Recording>>([]);
+  final _audioService = AudioService();
 
   @override
   void dispose() {
     _records.dispose();
+    _audioService.stop();
     super.dispose();
   }
 

@@ -8,13 +8,13 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      automaticallyImplyLeading: ModalRoute.of(context)?.settings.name != '/home',
+      automaticallyImplyLeading: Navigator.canPop(context),
       backgroundColor: const Color(0xFF528A7D),
       title: GestureDetector(
         onTap: () {
-          final currentRoute = ModalRoute.of(context)?.settings.name;
-          if (currentRoute == '/home') return;
-          Navigator.of(context).pushNamed('/home');
+          if (Navigator.canPop(context)) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,
