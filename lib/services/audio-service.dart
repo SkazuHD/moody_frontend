@@ -94,9 +94,9 @@ class AudioService with WidgetsBindingObserver {
         await _player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
         _currentMedia.add(recording);
       }
+      _player.play();
       _isPlaying.add(true);
-      await _player.play();
-      _playerError.add(null); // Fehler zurücksetzen bei erfolgreichem Abspielen
+      _playerError.add(null);
     } catch (e) {
       _playerError.add(e.toString());
       _isPlaying.add(false);
