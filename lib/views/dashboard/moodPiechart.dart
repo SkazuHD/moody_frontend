@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:Soullog/components/loadingIndicator.dart';
+import 'package:Soullog/components/noDataView.dart';
 import 'package:Soullog/data/constants/emotions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
@@ -49,6 +50,12 @@ class MoodPieChartState extends State<MoodPieChart> {
               child:
                   widget.isLoading
                       ? loadingIndicator()
+                      : widget.sectionsData.isEmpty
+                      ? const NoDataView(
+                        title: 'No mood data available',
+                        subtitle: 'There is no data for the distribution',
+                        icon: Icons.pie_chart_outline,
+                      )
                       : PieChart(
                         PieChartData(
                           pieTouchData: PieTouchData(

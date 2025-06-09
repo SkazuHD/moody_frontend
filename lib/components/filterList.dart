@@ -1,3 +1,4 @@
+import 'package:Soullog/components/noDataView.dart';
 import 'package:Soullog/views/recordList/FastCheckInCard.dart';
 import 'package:Soullog/views/recordList/RecordCard.dart';
 import 'package:flutter/material.dart';
@@ -139,42 +140,51 @@ class _FilterListState extends State<FilterList> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: filterRecordings.length,
-              itemBuilder: (context, index) {
-                final recording = filterRecordings[index];
-                Widget cardWidget =
-                    recording.isFastCheckIn ? FastCheckInCard(recording: recording) : RecordCard(recording: recording);
+            child:
+                filterRecordings.isEmpty
+                    ? const NoDataView(
+                      title: 'No entries found',
+                      subtitle: 'Try other filters or create a new entry',
+                      icon: Icons.search_off,
+                    )
+                    : ListView.builder(
+                      itemCount: filterRecordings.length,
+                      itemBuilder: (context, index) {
+                        final recording = filterRecordings[index];
+                        Widget cardWidget =
+                            recording.isFastCheckIn
+                                ? FastCheckInCard(recording: recording)
+                                : RecordCard(recording: recording);
 
-                return GestureDetector(
-                  onLongPress: () {
-                    setState(() {
-                      if (!_selectedRecordings.contains(recording)) {
-                        _selectedRecordings.add(recording);
-                      }
-                      _toggleSelectionMode();
-                    });
-                  },
-                  child:
-                      _isSelectionMode
-                          ? CheckboxListTile(
-                            controlAffinity: ListTileControlAffinity.leading,
-                            value: _selectedRecordings.contains(recording),
-                            onChanged: (bool? selected) {
-                              setState(() {
-                                if (selected == true) {
-                                  _selectedRecordings.add(recording);
-                                } else {
-                                  _selectedRecordings.remove(recording);
-                                }
-                              });
-                            },
-                            title: cardWidget,
-                          )
-                          : cardWidget,
-                );
-              },
-            ),
+                        return GestureDetector(
+                          onLongPress: () {
+                            setState(() {
+                              if (!_selectedRecordings.contains(recording)) {
+                                _selectedRecordings.add(recording);
+                              }
+                              _toggleSelectionMode();
+                            });
+                          },
+                          child:
+                              _isSelectionMode
+                                  ? CheckboxListTile(
+                                    controlAffinity: ListTileControlAffinity.leading,
+                                    value: _selectedRecordings.contains(recording),
+                                    onChanged: (bool? selected) {
+                                      setState(() {
+                                        if (selected == true) {
+                                          _selectedRecordings.add(recording);
+                                        } else {
+                                          _selectedRecordings.remove(recording);
+                                        }
+                                      });
+                                    },
+                                    title: cardWidget,
+                                  )
+                                  : cardWidget,
+                        );
+                      },
+                    ),
           ),
         ],
       ),

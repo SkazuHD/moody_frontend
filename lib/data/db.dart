@@ -13,7 +13,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../data/models/plotCard.dart';
 
 class RecordsDB {
-  static final RecordsDB _instance = RecordsDB._internal();
+  static RecordsDB? _instance;
   static bool _initialized = false;
   final _todaysPlotCard = BehaviorSubject<PlotCard?>();
 
@@ -28,11 +28,12 @@ class RecordsDB {
   RecordsDB._internal();
 
   static Future<RecordsDB> getInstance() async {
-    if (!_initialized) {
-      await _instance._init();
+    if (_instance == null) {
+      _instance = RecordsDB._internal();
+      await _instance!._init();
       _initialized = true;
     }
-    return _instance;
+    return _instance!;
   }
 
   final String _databaseName = 'records.db';
@@ -109,11 +110,9 @@ class RecordsDB {
       });
     }
 
-    _initialized = true;
     if (kDebugMode) {
       print('Database initialization process completed in _init.');
     }
-
     // Load today's PlotCard if it exists
     await loadTodaysPlotCard();
   }

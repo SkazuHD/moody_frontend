@@ -22,6 +22,7 @@ List<PieChartSection> calculateSections(List<Recording> records) {
       ),
     );
   }
+  sections.removeWhere((section) => section.value == 0);
   return sections;
 }
 

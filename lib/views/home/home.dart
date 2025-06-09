@@ -51,10 +51,7 @@ class _HomeState extends State<Home> {
               width: double.infinity,
               margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFFFFF),
-                borderRadius: BorderRadius.circular(10),
-              ),
+              decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(10)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -89,37 +86,22 @@ class _HomeState extends State<Home> {
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (context) => Dashboard()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Dashboard()));
               },
               child: AbsorbPointer(
                 child: Container(
                   width: double.infinity,
                   margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(10)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Mood of the past 7 days:',
-                        style: h1Black,
-                        textAlign: TextAlign.center,
-                      ),
+                      const Text('Mood of the past 7 days:', style: h1Black, textAlign: TextAlign.center),
                       ValueListenableBuilder<List<FlSpot>>(
                         valueListenable: moodSpotsNotifier.spots,
                         builder: (context, spots, _) {
-                          if (spots.isEmpty) {
-                            return const CircularProgressIndicator();
-                          }
-                          return SizedBox(
-                            width: double.infinity,
-                            child: MoodLineChart(spots: spots),
-                          );
+                          return SizedBox(width: double.infinity, child: MoodLineChart(spots: spots));
                         },
                       ),
                     ],
@@ -136,11 +118,7 @@ class _HomeState extends State<Home> {
                 children: [
                   Expanded(
                     flex: 1, // 50% der Breite
-                    child: Text(
-                      'Review past thoughts?',
-                      style: h1White,
-                      softWrap: true,
-                    ), // Text kann umbrechen
+                    child: Text('Review past thoughts?', style: h1White, softWrap: true), // Text kann umbrechen
                   ),
                   SizedBox(width: 15), // Abstand zwischen Text und Button
                   Expanded(
@@ -148,9 +126,7 @@ class _HomeState extends State<Home> {
                     child: ElevatedButton(
                       style: greyButtonStyle,
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => RecordList()),
-                        );
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecordList()));
                       },
                       child: const Text('To your entries'),
                     ),
