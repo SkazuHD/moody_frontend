@@ -75,6 +75,10 @@ class RecordsDB {
         "assets/Surprise.mp3",
         "assets/surprise2.mp3",
         "assets/test_recording.m4a",
+        "assets/happier.mp3",
+        "assets/happy.mp3",
+        "assets/my_personal_favorite.mp3",
+        "assets/cans_favorite.mp3",
       ];
       await _db!.transaction((txn) async {
         log('Debug Mode: Dropping and recreating table $_tableName in _init.');

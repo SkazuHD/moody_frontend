@@ -125,13 +125,4 @@ class AudioService with WidgetsBindingObserver {
     _isPlaying.add(false);
     _currentMedia.add(null);
   }
-
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _currentMedia.close();
-    _isPlaying.close();
-    _playerError.close();
-    _player.dispose();
-    _isInitialized = false;
-  }
 }
