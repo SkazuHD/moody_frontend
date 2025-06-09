@@ -1,4 +1,5 @@
 import 'package:Soullog/data/models/record.dart';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -11,7 +12,7 @@ class TrackProgress {
   TrackProgress(this.position, this.bufferedPosition, this.duration, this.enabled);
 }
 
-class AudioService {
+class AudioService with WidgetsBindingObserver {
   static final AudioService _instance = AudioService._internal();
   late final AudioPlayer _player;
 
@@ -32,6 +33,14 @@ class AudioService {
   @pragma('vm:entry-point')
   AudioService._internal() {
     _player = AudioPlayer();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+      pause();
+    }
   }
 
   Stream<TrackProgress> trackProgressFor(Recording recording) {

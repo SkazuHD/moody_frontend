@@ -27,7 +27,6 @@ class _RecordCardState extends State<RecordCard> {
 
   @override
   void dispose() {
-    audioService.stop();
     super.dispose();
   }
 

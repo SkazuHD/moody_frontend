@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:Soullog/views/home/home.dart';
 import 'package:Soullog/views/record/record.dart';
@@ -17,14 +19,21 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _showWelcome = true;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkFirstVisit();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    log('App lifecycle state changed: $state');
   }
 
   Future<void> _checkFirstVisit() async {
