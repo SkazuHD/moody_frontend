@@ -30,10 +30,10 @@ class _FilterListState extends State<FilterList> {
     }
   }
 
-  void deleteSelectedRecordings() {
+  Future<void> deleteSelectedRecordings() async {
     if (_selectedRecordings.isEmpty) return _toggleSelectionMode();
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
