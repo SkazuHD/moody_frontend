@@ -5,7 +5,8 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/json_object.dart';
-import 'package:built_value/serializer.dart'; // ignore_for_file: unused_element
+import 'package:built_value/serializer.dart';
+// ignore_for_file: unused_element
 import 'package:soullog_api/src/model/persona.dart';
 
 part 'analyze_response.g.dart';
@@ -22,7 +23,6 @@ part 'analyze_response.g.dart';
 abstract class AnalyzeResponse implements Built<AnalyzeResponse, AnalyzeResponseBuilder> {
   @BuiltValueField(wireName: r'mood')
   AnalyzeResponseMoodEnum get mood;
-
   // enum moodEnum {  happy,  sad,  calm,  fearful,  angry,  disgust,  neutral,  suprised,  };
 
   /// Transcription of the diary entry.
@@ -196,6 +196,5 @@ class AnalyzeResponseMoodEnum extends EnumClass {
   const AnalyzeResponseMoodEnum._(String name) : super(name);
 
   static BuiltSet<AnalyzeResponseMoodEnum> get values => _$analyzeResponseMoodEnumValues;
-
   static AnalyzeResponseMoodEnum valueOf(String name) => _$analyzeResponseMoodEnumValueOf(name);
 }

@@ -14,8 +14,7 @@ class _$Persona extends Persona {
   @override
   final BuiltList<ContextualInsight> contextualInsights;
 
-  factory _$Persona([void Function(PersonaBuilder)? updates]) =>
-      (PersonaBuilder()..update(updates))._build();
+  factory _$Persona([void Function(PersonaBuilder)? updates]) => (PersonaBuilder()..update(updates))._build();
 
   _$Persona._({
     required this.longTermTraits,
@@ -23,8 +22,7 @@ class _$Persona extends Persona {
     required this.contextualInsights,
   }) : super._();
   @override
-  Persona rebuild(void Function(PersonaBuilder) updates) =>
-      (toBuilder()..update(updates)).build();
+  Persona rebuild(void Function(PersonaBuilder) updates) => (toBuilder()..update(updates)).build();
 
   @override
   PersonaBuilder toBuilder() => PersonaBuilder()..replace(this);
@@ -62,16 +60,12 @@ class PersonaBuilder implements Builder<Persona, PersonaBuilder> {
   _$Persona? _$v;
 
   ListBuilder<String>? _longTermTraits;
-  ListBuilder<String> get longTermTraits =>
-      _$this._longTermTraits ??= ListBuilder<String>();
-  set longTermTraits(ListBuilder<String>? longTermTraits) =>
-      _$this._longTermTraits = longTermTraits;
+  ListBuilder<String> get longTermTraits => _$this._longTermTraits ??= ListBuilder<String>();
+  set longTermTraits(ListBuilder<String>? longTermTraits) => _$this._longTermTraits = longTermTraits;
 
   ListBuilder<ShortTermState>? _shortTermStates;
-  ListBuilder<ShortTermState> get shortTermStates =>
-      _$this._shortTermStates ??= ListBuilder<ShortTermState>();
-  set shortTermStates(ListBuilder<ShortTermState>? shortTermStates) =>
-      _$this._shortTermStates = shortTermStates;
+  ListBuilder<ShortTermState> get shortTermStates => _$this._shortTermStates ??= ListBuilder<ShortTermState>();
+  set shortTermStates(ListBuilder<ShortTermState>? shortTermStates) => _$this._shortTermStates = shortTermStates;
 
   ListBuilder<ContextualInsight>? _contextualInsights;
   ListBuilder<ContextualInsight> get contextualInsights =>
@@ -110,8 +104,7 @@ class PersonaBuilder implements Builder<Persona, PersonaBuilder> {
   _$Persona _build() {
     _$Persona _$result;
     try {
-      _$result =
-          _$v ??
+      _$result = _$v ??
           _$Persona._(
             longTermTraits: longTermTraits.build(),
             shortTermStates: shortTermStates.build(),

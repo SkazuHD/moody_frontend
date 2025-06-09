@@ -4,12 +4,22 @@
 
 import 'dart:async';
 
-import 'package:built_collection/built_collection.dart';
 import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
+
+import 'package:built_collection/built_collection.dart';
+import 'package:built_value/json_object.dart';
 import 'package:soullog_api/src/api_util.dart';
-import 'package:soullog_api/src/model/analyze_responses._serializers);
+import 'package:soullog_api/src/model/analyze_response.dart';
+import 'package:soullog_api/src/model/http_validation_error.dart';
+
+class DefaultApi {
+  final Dio _dio;
+
+  final Serializers _serializers;
+
+  const DefaultApi(this._dio, this._serializers);
 
   /// Analyze audio diary entry
   /// Transcribe audio, detect mood, and update user persona based on the transcript.
