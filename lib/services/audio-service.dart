@@ -15,6 +15,7 @@ class TrackProgress {
 class AudioService with WidgetsBindingObserver {
   static final AudioService _instance = AudioService._internal();
   late final AudioPlayer _player;
+  bool _isInitialized = false;
 
   AudioPlayer get player => _player;
 
@@ -24,16 +25,42 @@ class AudioService with WidgetsBindingObserver {
 
   final _currentMedia = BehaviorSubject<Recording?>();
   final _isPlaying = BehaviorSubject<bool>.seeded(false);
+  final _playerError = BehaviorSubject<String?>.seeded(null);
 
   Stream<bool> isThisCurrentlyPlaying(Recording recording) =>
       Rx.combineLatest2(_currentMedia, _isPlaying, (Recording? current, bool isPlaying) {
         return current?.id == recording.id && isPlaying;
-      });
+      }).shareValueSeeded(false);
+
+  Stream<String?> get playerErrorStream => _playerError.stream;
 
   @pragma('vm:entry-point')
   AudioService._internal() {
-    _player = AudioPlayer();
-    WidgetsBinding.instance.addObserver(this);
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    if (!_isInitialized) {
+      _player = AudioPlayer();
+      _setupPlayerListeners();
+      WidgetsBinding.instance.addObserver(this);
+      _isInitialized = true;
+    }
+  }
+
+  void _setupPlayerListeners() {
+    _player.playbackEventStream.listen(
+      (event) {},
+      onError: (Object e, StackTrace stackTrace) {
+        _playerError.add(e.toString());
+      },
+    );
+
+    _player.processingStateStream.listen((state) {
+      if (state == ProcessingState.completed) {
+        _isPlaying.add(false);
+      }
+    });
   }
 
   @override
@@ -56,18 +83,24 @@ class AudioService with WidgetsBindingObserver {
         }
         return TrackProgress(position, bufferedPosition, duration ?? Duration.zero, true);
       },
-    );
+    ).shareValue();
   }
 
   @pragma('vm:entry-point')
   Future<void> play(Recording recording) async {
-    if (_currentMedia.valueOrNull != recording) {
-      final filePath = recording.filePath!;
-      await _player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
-      _currentMedia.add(recording);
+    try {
+      if (_currentMedia.valueOrNull != recording) {
+        final filePath = recording.filePath!;
+        await _player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
+        _currentMedia.add(recording);
+      }
+      _isPlaying.add(true);
+      await _player.play();
+      _playerError.add(null); // Fehler zurücksetzen bei erfolgreichem Abspielen
+    } catch (e) {
+      _playerError.add(e.toString());
+      _isPlaying.add(false);
     }
-    _isPlaying.add(true);
-    await _player.play();
   }
 
   @pragma('vm:entry-point')
@@ -84,8 +117,11 @@ class AudioService with WidgetsBindingObserver {
   }
 
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _currentMedia.close();
     _isPlaying.close();
+    _playerError.close();
     _player.dispose();
+    _isInitialized = false;
   }
 }
