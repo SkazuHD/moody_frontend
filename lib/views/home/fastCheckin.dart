@@ -1,5 +1,6 @@
 import 'package:Soullog/views/home/fastCheckInDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../components/headlines.dart';
 import '../../data/constants/emotions.dart';
@@ -70,6 +71,7 @@ class _FastcheckinState extends State<Fastcheckin> {
                     setState(() {
                       selectedEmotionIndex = index;
                     });
+                    HapticFeedback.lightImpact();
                     await _openDialog(emotion);
                   },
                   child: Container(
