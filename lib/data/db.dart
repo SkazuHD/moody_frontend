@@ -62,18 +62,32 @@ class RecordsDB {
   final String _tableName = 'records';
   Database? _db;
 
+  // Add DB scripts for future migrations here
+  final migrations = <int, Future<void> Function(Database)>{2: (db) async => await Future.delayed(Duration.zero)};
+
   Future<void> _init() async {
     final String initScript =
         'CREATE TABLE $_tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT, isFastCheckIn BOOLEAN DEFAULT 0)';
     _db = await openDatabase(
       join(await getDatabasesPath(), _databaseName),
+      version: 1, // The Target version for the database
       onCreate: (db, version) {
         if (kDebugMode) {
           print('Database file created. Creating table $_tableName via onCreate.');
         }
         return db.execute(initScript);
       },
-      version: 1,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (kDebugMode) {
+          print('Database upgraded from version $oldVersion to $newVersion.');
+        }
+        for (int v = oldVersion + 1; v <= newVersion; v++) {
+          final migration = migrations[v];
+          if (migration != null) {
+            await migration(db);
+          }
+        }
+      },
     );
 
     if (kDebugMode) {

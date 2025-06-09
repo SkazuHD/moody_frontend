@@ -1,3 +1,4 @@
+import 'package:Soullog/views/home/fastCheckInDialog.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/headlines.dart';
@@ -16,6 +17,32 @@ class Fastcheckin extends StatefulWidget {
 
 class _FastcheckinState extends State<Fastcheckin> {
   int? selectedEmotionIndex;
+
+  Future<bool?> _openDialog(Emotion emotion) async {
+    var res = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return FastCheckInDialog(emotion: emotion);
+      },
+    );
+    if (res == true) {
+      final selectedMood = emotion.label;
+      final db = await RecordsDB.getInstance();
+      await db.insertRecord(
+        Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood, isFastCheckIn: true),
+      );
+      await db.createTodaysPlotCard(selectedMood);
+      widget.onDataChanged();
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Your mood has been recorded!')));
+    } else {
+      setState(() {
+        selectedEmotionIndex = null;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fast check-in cancelled')));
+    }
+    return res;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,43 +70,7 @@ class _FastcheckinState extends State<Fastcheckin> {
                     setState(() {
                       selectedEmotionIndex = index;
                     });
-
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Confirm Mood'),
-                          content: Text(
-                            'Are you sure you want to record your mood as "${emotion.label}"?',
-                            style: bodyBlack,
-                          ),
-                          actions: [
-                            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
-                            TextButton(
-                              onPressed: () async {
-                                final selectedMood = emotion.label;
-                                final db = await RecordsDB.getInstance();
-                                await db.insertRecord(
-                                  Recording(
-                                    createdAt: DateTime.now(),
-                                    transcription: null,
-                                    mood: selectedMood,
-                                    isFastCheckIn: true,
-                                  ),
-                                );
-                                await db.createTodaysPlotCard(selectedMood);
-                                widget.onDataChanged();
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(const SnackBar(content: Text('Your mood has been recorded!')));
-                                return Navigator.of(context).pop();
-                              },
-                              child: const Text('Confirm'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    await _openDialog(emotion);
                   },
                   child: Container(
                     width: 65,
