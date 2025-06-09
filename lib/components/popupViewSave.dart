@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '/data/db.dart';
 import '/data/models/record.dart';
 import '../data/constants/emotions.dart';
 
