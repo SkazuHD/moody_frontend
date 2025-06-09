@@ -40,9 +40,7 @@ class RecordsDB {
   Database? _db;
 
   // Add DB scripts for future migrations here
-  final migrations = <int, Future<void> Function(Database)>{
-    2: (db) async => await Future.delayed(Duration.zero),
-  };
+  final migrations = <int, Future<void> Function(Database)>{2: (db) async => await Future.delayed(Duration.zero)};
 
   Future<void> _init() async {
     final String initScript =
@@ -52,9 +50,7 @@ class RecordsDB {
       version: 1, // The Target version for the database
       onCreate: (db, version) {
         if (kDebugMode) {
-          print(
-            'Database file created. Creating table $_tableName via onCreate.',
-          );
+          print('Database file created. Creating table $_tableName via onCreate.');
         }
         return db.execute(initScript);
       },
@@ -73,12 +69,16 @@ class RecordsDB {
 
     if (kDebugMode) {
       var links = [
-        "https://cdn.discordapp.com/attachments/1107642333920497755/1381342131494457354/Bread.mp3?ex=68472a9c&is=6845d91c&hm=abb343ba0da46f3430c18c00f65d9d575f5df9e891b42083f8c9aeaedd7c6956&",
         "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345893739004115/surprise2.mp3?ex=68472e1d&is=6845dc9d&hm=e8998599e4cd28ddca4ac0dd70e56015e0328f3ac3d7b23ffc35d9f88d0f91f6&",
-        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345541484712196/Surprise.mp3?ex=68472dc9&is=6845dc49&hm=4c64b35e33f0877abd387e2d2ae2751503557d0573b728714c10ca3fe12f1077&",
-        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345232049668116/amogus.mp3?ex=68472d7f&is=6845dbff&hm=7d4a7d180969bad1146f8316cf0bedf813259b74a8f25a9a905223cc9aca2ae1&",
+        "assets/amogus.mp3",
+        "assets/Bread.mp3",
+        "assets/Surprise.mp3",
+        "assets/surprise2.mp3",
+        "assets/test_recording.m4a",
+        "assets/happier.mp3",
+        "assets/happy.mp3",
+        "assets/my_personal_favorite.mp3",
+        "assets/cans_favorite.mp3",
       ];
       await _db!.transaction((txn) async {
         log('Debug Mode: Dropping and recreating table $_tableName in _init.');
@@ -88,8 +88,7 @@ class RecordsDB {
         final batch = txn.batch();
         final int recordCount = 31;
         for (var i = 0; i < recordCount; i++) {
-          final randomEmotion =
-              Emotion.values[Random().nextInt(Emotion.values.length)];
+          final randomEmotion = Emotion.values[Random().nextInt(Emotion.values.length)];
 
           final record = Recording(
             filePath: links[Random().nextInt(links.length)],
@@ -99,11 +98,7 @@ class RecordsDB {
             mood: randomEmotion.label,
           );
 
-          batch.insert(
-            _tableName,
-            record.toDbValuesMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
+          batch.insert(_tableName, record.toDbValuesMap(), conflictAlgorithm: ConflictAlgorithm.replace);
         }
 
         await batch.commit();
@@ -132,9 +127,7 @@ class RecordsDB {
         final Map<String, dynamic> map = jsonDecode(todaysCardString);
         final todaysCard = PlotCard.fromMap(map);
         var plotcardDate = todaysCard.date;
-        if (date.day != plotcardDate.day ||
-            date.month != plotcardDate.month ||
-            date.year != plotcardDate.year) {
+        if (date.day != plotcardDate.day || date.month != plotcardDate.month || date.year != plotcardDate.year) {
           _todaysPlotCard.add(emptyCard);
           return;
         }
@@ -168,11 +161,7 @@ class RecordsDB {
         print('Inserting record: ${record.toDbValuesMap()}');
       }
 
-      int res = await txn.insert(
-        _tableName,
-        record.toDbValuesMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      int res = await txn.insert(_tableName, record.toDbValuesMap(), conflictAlgorithm: ConflictAlgorithm.replace);
 
       if (kDebugMode) {
         print('Inserted record with id: $res');
@@ -198,12 +187,7 @@ class RecordsDB {
         print('Updating record: ${record.toJson()}');
       }
 
-      await txn.update(
-        _tableName,
-        record.toJson(),
-        where: 'id = ?',
-        whereArgs: [record.id],
-      );
+      await txn.update(_tableName, record.toJson(), where: 'id = ?', whereArgs: [record.id]);
     });
   }
 
@@ -214,11 +198,7 @@ class RecordsDB {
       print('Fetching record with id: $id');
     }
 
-    final List<Map<String, dynamic>> maps = await _db!.query(
-      _tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final List<Map<String, dynamic>> maps = await _db!.query(_tableName, where: 'id = ?', whereArgs: [id]);
 
     if (maps.isNotEmpty) {
       return Recording.fromJson(maps.first);
@@ -226,10 +206,7 @@ class RecordsDB {
     return null;
   }
 
-  Future<List<Recording>> getRecordsByDateRange(
-    DateTime start,
-    DateTime end,
-  ) async {
+  Future<List<Recording>> getRecordsByDateRange(DateTime start, DateTime end) async {
     await _ensureInitialized();
 
     if (kDebugMode) {
@@ -248,19 +225,13 @@ class RecordsDB {
     });
   }
 
-  Future<List<Recording>> getRecords({
-    String sort = "DESC",
-    String orderBy = "createdAt",
-  }) async {
+  Future<List<Recording>> getRecords({String sort = "DESC", String orderBy = "createdAt"}) async {
     await _ensureInitialized();
 
     if (kDebugMode) {
       print('Fetching all records');
     }
-    final List<Map<String, dynamic>> maps = await _db!.query(
-      _tableName,
-      orderBy: '$orderBy $sort',
-    );
+    final List<Map<String, dynamic>> maps = await _db!.query(_tableName, orderBy: '$orderBy $sort');
 
     return List.generate(maps.length, (i) {
       return Recording.fromJson(maps[i]);
@@ -284,9 +255,7 @@ class RecordsDB {
 
     await _db!.transaction((txn) async {
       if (kDebugMode) {
-        print(
-          'Löschen von ${records.length} Aufzeichnungen mit IDs: ${records.map((r) => r.id).join(', ')}',
-        );
+        print('Löschen von ${records.length} Aufzeichnungen mit IDs: ${records.map((r) => r.id).join(', ')}');
       }
       final batch = txn.batch();
 
