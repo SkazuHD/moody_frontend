@@ -43,19 +43,18 @@ List<PlotCard> plotCards = [
 ];
 
 class RecordsDB {
-  static RecordsDB? _instance;
+  static final RecordsDB _instance = RecordsDB._internal();
   static bool _initialized = false;
   PlotCard? _todaysPlotCard;
 
   RecordsDB._internal();
 
   static Future<RecordsDB> getInstance() async {
-    if (_instance == null) {
-      _instance = RecordsDB._internal();
-      await _instance!._init();
+    if (!_initialized) {
+      await _instance._init();
       _initialized = true;
     }
-    return _instance!;
+    return _instance;
   }
 
   final String _databaseName = 'records.db';
