@@ -29,6 +29,7 @@ class AudioService {
         return current?.id == recording.id && isPlaying;
       });
 
+  @pragma('vm:entry-point')
   AudioService._internal() {
     _player = AudioPlayer();
   }
@@ -49,6 +50,7 @@ class AudioService {
     );
   }
 
+  @pragma('vm:entry-point')
   Future<void> play(Recording recording) async {
     if (_currentMedia.valueOrNull != recording) {
       final filePath = recording.filePath!;
@@ -59,11 +61,13 @@ class AudioService {
     await _player.play();
   }
 
+  @pragma('vm:entry-point')
   Future<void> pause() async {
     await _player.pause();
     _isPlaying.add(false);
   }
 
+  @pragma('vm:entry-point')
   Future<void> stop() async {
     await _player.stop();
     _isPlaying.add(false);
