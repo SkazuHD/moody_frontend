@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
+import '../data/db.dart';
+import '../data/models/plotCard.dart';
 import '../services/api-service.dart';
 
 class AudioRecorderPlayer extends StatefulWidget {
@@ -64,6 +66,17 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
         );
 
         widget.onRecordingComplete(analyzedRecording);
+
+        var todaysPlotCard = PlotCard(
+          mood: response.mood.toString(),
+          quote: response.quote,
+          recommendation:
+              response.recommendations.map((e) => e.toString()).toList(),
+          date: DateTime.now(),
+        );
+
+        var db = await RecordsDB.getInstance();
+        db.createTodaysPlotCard(todaysPlotCard);
 
         setState(() {
           widget.controller.clear();
