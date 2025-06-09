@@ -1,11 +1,11 @@
 import 'package:Soullog/views/home/fastCheckInDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../../components/headlines.dart';
 import '../../data/constants/emotions.dart';
 import '../../data/db.dart';
 import '../../data/models/record.dart';
+import '../../services/api-service.dart';
 
 class Fastcheckin extends StatefulWidget {
   final VoidCallback onDataChanged;
@@ -29,21 +29,38 @@ class _FastcheckinState extends State<Fastcheckin> {
     );
     if (res == true) {
       final selectedMood = emotion.label;
-      final db = await RecordsDB.getInstance();
-      await db.insertRecord(
-        Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood, isFastCheckIn: true),
-      );
-      await db.createTodaysPlotCard(selectedMood);
-      widget.onDataChanged();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Your mood has been recorded!')));
+      final apiService = SoullogApiService();
+
+      try {
+        final apiResponse = await apiService.sendFastCheckIn(selectedMood);
+
+        // DB speichern
+        final db = await RecordsDB.getInstance();
+        int recordingsId = await db.insertRecord(
+          Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood, isFastCheckIn: true),);
+        await db.createTodaysPlotCard(recordingsId, selectedMood, apiResponse.quote?.toString() ?? '', apiResponse.recommendation.isNotEmpty ? apiResponse.recommendation.first.toString() : '',);
+        widget.onDataChanged();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Your mood has been recorded!')),
+        );
+      } catch (e) {
+        debugPrint("Error during FastCheckIn: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Something went wrong during Fast check-in.')),
+        );
+      }
     } else {
       setState(() {
         selectedEmotionIndex = null;
       });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fast check-in cancelled')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fast check-in cancelled')),
+      );
     }
+
     return res;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,3 +119,4 @@ class _FastcheckinState extends State<Fastcheckin> {
     );
   }
 }
+
