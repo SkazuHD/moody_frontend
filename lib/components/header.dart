@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/headlines.dart';
+import '../views/home/home.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   const Header({super.key});
@@ -13,7 +14,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       title: GestureDetector(
         onTap: () {
           if (Navigator.canPop(context)) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Home()), (route) => false);
           }
         },
         child: Row(

@@ -17,10 +17,9 @@ class Welcome extends StatelessWidget {
               Image(image: AssetImage('assets/Soullog.png')),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    //Replace with route to Home when done
-                    MaterialPageRoute(builder: (context) => Home()),
-                  );
+                  Navigator.of(
+                    context,
+                  ).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Home()), (route) => false);
                 },
                 child: Text("Get Started"),
               ),
