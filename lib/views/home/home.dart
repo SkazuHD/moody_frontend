@@ -1,4 +1,6 @@
+import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:Soullog/views/home/fastCheckin.dart';
+import 'package:Soullog/views/recordList/recordList.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +22,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final moodSpotsNotifier = MoodSpotsNotifier();
+
   @override
   void initState() {
     super.initState();
@@ -77,25 +80,33 @@ class _HomeState extends State<Home> {
             ),
 
             // 3. Container Chart
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(10)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text('Mood of the past 7 days:', style: h1Black, textAlign: TextAlign.center),
-                  ValueListenableBuilder<List<FlSpot>>(
-                    valueListenable: moodSpotsNotifier.spots,
-                    builder: (context, spots, _) {
-                      if (spots.isEmpty) {
-                        return const CircularProgressIndicator();
-                      }
-                      return SizedBox(width: double.infinity, child: MoodLineChart(spots: spots));
-                    },
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Dashboard()));
+              },
+              child: AbsorbPointer(
+                child: Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text('Mood of the past 7 days:', style: h1Black, textAlign: TextAlign.center),
+                      ValueListenableBuilder<List<FlSpot>>(
+                        valueListenable: moodSpotsNotifier.spots,
+                        builder: (context, spots, _) {
+                          if (spots.isEmpty) {
+                            return const CircularProgressIndicator();
+                          }
+                          return SizedBox(width: double.infinity, child: MoodLineChart(spots: spots));
+                        },
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
 
@@ -115,7 +126,7 @@ class _HomeState extends State<Home> {
                     child: ElevatedButton(
                       style: greyButtonStyle,
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => Record()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecordList()));
                       },
                       child: const Text('To your entries'),
                     ),

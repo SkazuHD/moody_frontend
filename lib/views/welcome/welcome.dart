@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../home/home.dart';
 
@@ -16,11 +17,12 @@ class Welcome extends StatelessWidget {
             children: [
               Image(image: AssetImage('assets/Soullog.png')),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    //Replace with route to Home when done
-                    MaterialPageRoute(builder: (context) => Home()),
-                  );
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('firstVisit', false);
+                  Navigator.of(
+                    context,
+                  ).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Home()), (route) => false);
                 },
                 child: Text("Get Started"),
               ),

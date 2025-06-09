@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:Soullog/helper/theme_constants.dart';
 import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:Soullog/views/home/home.dart';
 import 'package:Soullog/views/record/record.dart';
@@ -17,33 +20,31 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _showWelcome = true;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkFirstVisit();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    log('App lifecycle state changed: $state');
   }
 
   Future<void> _checkFirstVisit() async {
     final prefs = await SharedPreferences.getInstance();
-
     final bool isFirstVisit = prefs.getBool('firstVisit') ?? true;
 
-    if (isFirstVisit) {
-      await prefs.setBool('firstVisit', false);
-      setState(() {
-        _showWelcome = true;
-        _isLoading = false;
-      });
-    } else {
-      setState(() {
-        _showWelcome = false;
-        _isLoading = false;
-      });
-    }
+    setState(() {
+      _showWelcome = isFirstVisit;
+      _isLoading = false;
+    });
   }
 
   @override
@@ -51,36 +52,13 @@ class _MyAppState extends State<MyApp> {
     if (_isLoading) {
       return MaterialApp(
         home: Scaffold(body: Center(child: CircularProgressIndicator())),
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-          scaffoldBackgroundColor: Color(0xFF528a7d),
-        ),
+        theme: AppTheme.defaultTheme,
       );
     }
 
     return MaterialApp(
       title: 'Soullog',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        scaffoldBackgroundColor: Color(0xFF528a7d),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 16,
-            color: Colors.white,
-          ),
-          bodyMedium: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 14,
-            color: Colors.white,
-          ),
-          bodySmall: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 12,
-            color: Colors.white,
-          ),
-        ),
-      ),
+      theme: AppTheme.defaultTheme,
       //Replace with route to Home when done
       home: _showWelcome ? const Welcome() : Home(),
       routes: {

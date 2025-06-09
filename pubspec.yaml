@@ -49,6 +49,7 @@ dependencies:
   built_collection: ^5.1.1
   built_value: ^8.10.1
   quiver: ^3.2.2
+  just_audio: ^0.10.4
 
 
 dev_dependencies:

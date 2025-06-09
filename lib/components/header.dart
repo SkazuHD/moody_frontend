@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/headlines.dart';
+import '../views/home/home.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   const Header({super.key});
@@ -8,13 +9,13 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      automaticallyImplyLeading: ModalRoute.of(context)?.settings.name != '/home',
+      automaticallyImplyLeading: Navigator.canPop(context),
       backgroundColor: const Color(0xFF528A7D),
       title: GestureDetector(
         onTap: () {
-          final currentRoute = ModalRoute.of(context)?.settings.name;
-          if (currentRoute == '/home') return;
-          Navigator.of(context).pushNamed('/home');
+          if (Navigator.canPop(context)) {
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Home()), (route) => false);
+          }
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,

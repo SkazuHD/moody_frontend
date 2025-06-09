@@ -26,3 +26,29 @@ Color getEmotionColor(String? mood) {
     return Colors.grey;
   }
 }
+
+String getEmotionEmoji(String? mood) {
+  if (mood == null) return '😐';
+  try {
+    return Emotion.values.firstWhere((e) => e.label.toLowerCase() == mood.toLowerCase()).emoji;
+  } catch (_) {
+    return '😐';
+  }
+}
+
+class EmotionMetadata {
+  final String validationMessage;
+
+  const EmotionMetadata({required this.validationMessage});
+}
+
+const Map<Emotion, EmotionMetadata> emotionMetadata = {
+  Emotion.angry: EmotionMetadata(validationMessage: "Anger is valid too."),
+  Emotion.disgusted: EmotionMetadata(validationMessage: "Not a great moment — let’s log it."),
+  Emotion.fear: EmotionMetadata(validationMessage: "It's okay to feel fear. Let's acknowledge it."),
+  Emotion.sad: EmotionMetadata(validationMessage: "Tough day? Let's log it."),
+  Emotion.neutral: EmotionMetadata(validationMessage: "A neutral moment is worth logging too."),
+  Emotion.surprised: EmotionMetadata(validationMessage: "Surprised? Let’s capture that."),
+  Emotion.calm: EmotionMetadata(validationMessage: "Feeling calm? Nice, let's lock that in."),
+  Emotion.happy: EmotionMetadata(validationMessage: "Great to hear that!"),
+};

@@ -7,7 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'chartHelpers.dart';
+import '../../helper/chartHelpers.dart';
 
 class MoodLineChart extends StatefulWidget {
   final List<FlSpot> spots;
@@ -21,9 +21,9 @@ class MoodLineChart extends StatefulWidget {
 }
 
 class _MoodLineChartState extends State<MoodLineChart> {
-  List<Color> _gradientColors = [const Color(0xff23b6e6), const Color(0xff02d39a)];
-  List<FlSpot> _plotPoints = [];
-  List<FlSpot> _spots = [];
+  late List<Color> _gradientColors;
+  late List<FlSpot> _plotPoints;
+  late List<FlSpot> _spots;
   Timer? _resetTouchTimer;
   List<ShowingTooltipIndicators> _toolTipSpots = [];
   final bool _handleBuiltInTouches = true;
@@ -37,17 +37,24 @@ class _MoodLineChartState extends State<MoodLineChart> {
   @override
   void didUpdateWidget(MoodLineChart oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.spots != oldWidget.spots) {
+    if (!listEquals(widget.spots, oldWidget.spots)) {
       _updateChartData(widget.spots);
     }
   }
 
   void _updateChartData(List<FlSpot> spots) {
-    setState(() {
-      _gradientColors = calculateGradientColors(spots);
-      _plotPoints = calculatePlotPoints(spots);
-      _spots = spots;
-    });
+    _gradientColors = calculateGradientColors(spots);
+    _plotPoints = calculatePlotPoints(spots);
+    _spots = spots;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    _resetTouchTimer?.cancel();
+    super.dispose();
   }
 
   @override

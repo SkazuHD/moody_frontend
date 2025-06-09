@@ -1,9 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../../data/constants/emotions.dart';
-import '../../data/models/record.dart';
-import 'moodPiechart.dart';
+import '../data/constants/emotions.dart';
+import '../data/models/record.dart';
+import '../views/dashboard/moodPiechart.dart';
 
 List<PieChartSection> calculateSections(List<Recording> records) {
   List<PieChartSection> sections = [];
