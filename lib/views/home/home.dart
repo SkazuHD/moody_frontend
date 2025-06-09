@@ -160,9 +160,9 @@ class _HomeState extends State<Home> {
                         const Text('Today\'s Plot-Card:', style: h1Black, textAlign: TextAlign.center),
                         const SizedBox(height: 10),
                         if (plotCard != null) ...[
-                          Text(plotCard.title, style: h2Black, textAlign: TextAlign.center),
+                          Text(plotCard.quote, style: h2Black, textAlign: TextAlign.center),
                           const SizedBox(height: 8),
-                          Text(plotCard.description, style: bodyBlack, textAlign: TextAlign.center),
+                          Text(plotCard.recommendation, style: bodyBlack, textAlign: TextAlign.center),
                           const SizedBox(height: 16),
                         ] else ...[
                           // fallback message if no data is found
