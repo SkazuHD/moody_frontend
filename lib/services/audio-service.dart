@@ -86,12 +86,22 @@ class AudioService with WidgetsBindingObserver {
     ).shareValue();
   }
 
+  AudioSource _createAudioSource(String path) {
+    if (path.startsWith('assets/')) {
+      return AudioSource.asset(path);
+    }
+    if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('file://')) {
+      return AudioSource.uri(Uri.parse(path));
+    }
+    return AudioSource.uri(Uri.file(path));
+  }
+
   @pragma('vm:entry-point')
   Future<void> play(Recording recording) async {
     try {
       if (_currentMedia.valueOrNull != recording) {
         final filePath = recording.filePath!;
-        await _player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
+        await _player.setAudioSource(_createAudioSource(filePath));
         _currentMedia.add(recording);
       }
       _player.play();
