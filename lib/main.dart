@@ -42,7 +42,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final bool isFirstVisit = prefs.getBool('firstVisit') ?? true;
 
     if (isFirstVisit) {
-      await prefs.setBool('firstVisit', false);
       setState(() {
         _showWelcome = true;
         _isLoading = false;
