@@ -2,12 +2,11 @@
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
 
-// ignore_for_file: unused_element
-import 'package:soullog_api/src/model/persona.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:built_value/json_object.dart';
 import 'package:built_value/built_value.dart';
-import 'package:built_value/serializer.dart';
+import 'package:built_value/json_object.dart';
+import 'package:built_value/serializer.dart'; // ignore_for_file: unused_element
+import 'package:soullog_api/src/model/persona.dart';
 
 part 'analyze_response.g.dart';
 
@@ -15,15 +14,20 @@ part 'analyze_response.g.dart';
 ///
 /// Properties:
 /// * [mood]
+/// * [transcription] - Transcription of the diary entry.
 /// * [recommendations]
 /// * [quote]
 /// * [personality]
 @BuiltValue()
-abstract class AnalyzeResponse
-    implements Built<AnalyzeResponse, AnalyzeResponseBuilder> {
+abstract class AnalyzeResponse implements Built<AnalyzeResponse, AnalyzeResponseBuilder> {
   @BuiltValueField(wireName: r'mood')
   AnalyzeResponseMoodEnum get mood;
+
   // enum moodEnum {  happy,  sad,  calm,  fearful,  angry,  disgust,  neutral,  suprised,  };
+
+  /// Transcription of the diary entry.
+  @BuiltValueField(wireName: r'transcription')
+  String get transcription;
 
   @BuiltValueField(wireName: r'recommendations')
   BuiltList<JsonObject?> get recommendations;
@@ -36,19 +40,16 @@ abstract class AnalyzeResponse
 
   AnalyzeResponse._();
 
-  factory AnalyzeResponse([void updates(AnalyzeResponseBuilder b)]) =
-      _$AnalyzeResponse;
+  factory AnalyzeResponse([void updates(AnalyzeResponseBuilder b)]) = _$AnalyzeResponse;
 
   @BuiltValueHook(initializeBuilder: true)
   static void _defaults(AnalyzeResponseBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<AnalyzeResponse> get serializer =>
-      _$AnalyzeResponseSerializer();
+  static Serializer<AnalyzeResponse> get serializer => _$AnalyzeResponseSerializer();
 }
 
-class _$AnalyzeResponseSerializer
-    implements PrimitiveSerializer<AnalyzeResponse> {
+class _$AnalyzeResponseSerializer implements PrimitiveSerializer<AnalyzeResponse> {
   @override
   final Iterable<Type> types = const [AnalyzeResponse, _$AnalyzeResponse];
 
@@ -64,6 +65,11 @@ class _$AnalyzeResponseSerializer
     yield serializers.serialize(
       object.mood,
       specifiedType: const FullType(AnalyzeResponseMoodEnum),
+    );
+    yield r'transcription';
+    yield serializers.serialize(
+      object.transcription,
+      specifiedType: const FullType(String),
     );
     yield r'recommendations';
     yield serializers.serialize(
@@ -88,9 +94,7 @@ class _$AnalyzeResponseSerializer
     AnalyzeResponse object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    return _serializeProperties(serializers, object,
-            specifiedType: specifiedType)
-        .toList();
+    return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
   }
 
   void _deserializeProperties(
@@ -112,11 +116,17 @@ class _$AnalyzeResponseSerializer
           ) as AnalyzeResponseMoodEnum;
           result.mood = valueDes;
           break;
+        case r'transcription':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.transcription = valueDes;
+          break;
         case r'recommendations':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType:
-                const FullType(BuiltList, [FullType.nullable(JsonObject)]),
+            specifiedType: const FullType(BuiltList, [FullType.nullable(JsonObject)]),
           ) as BuiltList<JsonObject?>;
           result.recommendations.replace(valueDes);
           break;
@@ -171,27 +181,21 @@ class AnalyzeResponseMoodEnum extends EnumClass {
   @BuiltValueEnumConst(wireName: r'calm')
   static const AnalyzeResponseMoodEnum calm = _$analyzeResponseMoodEnum_calm;
   @BuiltValueEnumConst(wireName: r'fearful')
-  static const AnalyzeResponseMoodEnum fearful =
-      _$analyzeResponseMoodEnum_fearful;
+  static const AnalyzeResponseMoodEnum fearful = _$analyzeResponseMoodEnum_fearful;
   @BuiltValueEnumConst(wireName: r'angry')
   static const AnalyzeResponseMoodEnum angry = _$analyzeResponseMoodEnum_angry;
   @BuiltValueEnumConst(wireName: r'disgust')
-  static const AnalyzeResponseMoodEnum disgust =
-      _$analyzeResponseMoodEnum_disgust;
+  static const AnalyzeResponseMoodEnum disgust = _$analyzeResponseMoodEnum_disgust;
   @BuiltValueEnumConst(wireName: r'neutral')
-  static const AnalyzeResponseMoodEnum neutral =
-      _$analyzeResponseMoodEnum_neutral;
+  static const AnalyzeResponseMoodEnum neutral = _$analyzeResponseMoodEnum_neutral;
   @BuiltValueEnumConst(wireName: r'suprised')
-  static const AnalyzeResponseMoodEnum suprised =
-      _$analyzeResponseMoodEnum_suprised;
+  static const AnalyzeResponseMoodEnum suprised = _$analyzeResponseMoodEnum_suprised;
 
-  static Serializer<AnalyzeResponseMoodEnum> get serializer =>
-      _$analyzeResponseMoodEnumSerializer;
+  static Serializer<AnalyzeResponseMoodEnum> get serializer => _$analyzeResponseMoodEnumSerializer;
 
   const AnalyzeResponseMoodEnum._(String name) : super(name);
 
-  static BuiltSet<AnalyzeResponseMoodEnum> get values =>
-      _$analyzeResponseMoodEnumValues;
-  static AnalyzeResponseMoodEnum valueOf(String name) =>
-      _$analyzeResponseMoodEnumValueOf(name);
+  static BuiltSet<AnalyzeResponseMoodEnum> get values => _$analyzeResponseMoodEnumValues;
+
+  static AnalyzeResponseMoodEnum valueOf(String name) => _$analyzeResponseMoodEnumValueOf(name);
 }

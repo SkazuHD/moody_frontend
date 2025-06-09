@@ -9,6 +9,7 @@ import 'package:soullog_api/api.dart';
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **mood** | **String** |  | 
+**transcription** | **String** | Transcription of the diary entry. | 
 **recommendations** | [**BuiltList&lt;JsonObject&gt;**](JsonObject.md) |  | 
 **quote** | **String** |  | 
 **personality** | [**Persona**](Persona.md) |  | 
