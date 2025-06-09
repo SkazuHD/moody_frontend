@@ -52,11 +52,22 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
         );
 
         final apiService = SoullogApiService();
-        await apiService.analyzeRecording(newRecording);
+        final response = await apiService.analyzeRecording(newRecording);
+        print('API-Answer: $response');
+
+        final analyzedRecording = Recording(
+          filePath: newRecording.filePath,
+          duration: newRecording.duration,
+          createdAt: newRecording.createdAt,
+          transcription: response.transcription,
+          mood: response.mood?.name,
+        );
+
+        widget.onRecordingComplete(analyzedRecording);
 
         setState(() {
           widget.controller.clear();
-          audioPath = newRecording.filePath;
+          audioPath = analyzedRecording.filePath;
           _recordingSeconds = 0;
           isRecording = false;
         });
