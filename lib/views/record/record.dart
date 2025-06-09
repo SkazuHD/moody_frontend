@@ -6,6 +6,7 @@ import '/components/popupViewSave.dart';
 import '../../components/ObscuredTextField.dart';
 import '../../components/SwitchTransciption.dart';
 import '../../components/audioRecorder.dart';
+import '../../components/header.dart';
 
 
 Recording recording = Recording(
@@ -40,6 +41,7 @@ class _RecordState extends State<Record> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const Header(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

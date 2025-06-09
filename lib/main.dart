@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       routes: {
         '/dashboard': (context) => const Dashboard(),
         '/entries': (context) => const RecordList(),
-        '/record': (context) => Record(),
+        '/record': (context) => const Record(),
         '/home': (context) => const Home(),
         '/welcome': (context) => const Welcome(),
       },

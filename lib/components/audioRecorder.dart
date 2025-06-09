@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:Soullog/data/models/record.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
-import '../../data/db.dart';
+import '../services/api-service.dart';
 
 class AudioRecorderPlayer extends StatefulWidget {
   final TextEditingController controller;
@@ -22,48 +23,48 @@ class AudioRecorderPlayer extends StatefulWidget {
 }
 
 class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
-  bool showPlayer = false;
   String? audioPath;
-  DateTime? recordingStartTime;
+  Timer? _timer;
+  int _recordingSeconds = 0;
+  bool isRecording = false;
 
   final recorder = AudioRecorder();
 
   @override
   void dispose() {
+    _timer?.cancel();
     recorder.dispose();
     super.dispose();
   }
 
   Future<void> toggleRecording() async {
     if (await recorder.isRecording()) {
-      final db = await RecordsDB.getInstance();
       final path = await recorder.stop();
+      _timer?.cancel();
 
-      if (path != null && recordingStartTime != null) {
-        final duration =
-            DateTime.now().difference(recordingStartTime!).inSeconds;
-
+      if (path != null) {
         final newRecording = Recording(
           filePath: path,
-          duration: duration,
+          duration: _recordingSeconds,
           createdAt: DateTime.now(),
           transcription: widget.controller.text,
           mood: 'calm',
         );
 
-        widget.onRecordingComplete(newRecording);
+        final apiService = SoullogApiService();
+        await apiService.analyzeRecording(newRecording);
 
         setState(() {
           widget.controller.clear();
           audioPath = newRecording.filePath;
-          showPlayer = true;
+          _recordingSeconds = 0;
+          isRecording = false;
         });
       }
     } else {
       if (await recorder.hasPermission()) {
         final directory = await getApplicationDocumentsDirectory();
         final audioDirectory = Directory('${directory.path}/Audio');
-
         if (!await audioDirectory.exists()) {
           await audioDirectory.create(recursive: true);
         }
@@ -71,11 +72,17 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
             '${audioDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
 
         await recorder.start(const RecordConfig(), path: filePath);
-        recordingStartTime = DateTime.now();
 
+        _timer?.cancel();
         setState(() {
-          showPlayer = false;
           audioPath = null;
+          _recordingSeconds = 0;
+          isRecording = true;
+        });
+        _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          setState(() {
+            _recordingSeconds++;
+          });
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -85,32 +92,92 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
     }
   }
 
+  Future<void> cancelRecording() async {
+    if (await recorder.isRecording()) {
+      await recorder.stop();
+    }
+    _timer?.cancel();
+    setState(() {
+      isRecording = false;
+      _recordingSeconds = 0;
+      audioPath = null;
+    });
+  }
+
+  String get _formattedTime {
+    final minutes = (_recordingSeconds ~/ 60).toString().padLeft(2, '0');
+    final seconds = (_recordingSeconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+
   @override
   Widget build(BuildContext context) {
-    return showPlayer
-        ? Column(
-          children: [
-            Text('Playing: $audioPath'),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  showPlayer = false;
-                  audioPath = null;
-                });
-              },
-              child: const Text('Delete'),
-            ),
-          ],
-        )
-        : InkWell(
-          onTap: toggleRecording,
-          child: SizedBox(
-            width: 70,
-            height: 70,
-            child: Image.asset(
-              'assets/radio_button_checked_200dp_EA3323_FILL0_wght400_GRAD0_opsz24.png',
+    return SizedBox(
+      width: 170, // genug Platz für Button + Mülleimer
+      height: 70,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: InkWell(
+              onTap: toggleRecording,
+              child: SizedBox(
+                width: 70,
+                height: 70,
+                child: Center(
+                  child:
+                      isRecording
+                          ? Container(
+                            width: 90,
+                            height: 90,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.red, width: 4),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              _formattedTime,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                          : Container(
+                            width: 90,
+                            height: 90,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                ),
+              ),
             ),
           ),
-        );
+          if (isRecording)
+            Positioned(
+              right: 0,
+              top: 23,
+              child: GestureDetector(
+                onTap: cancelRecording,
+                child: const Icon(Icons.delete, color: Colors.white, size: 40),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
