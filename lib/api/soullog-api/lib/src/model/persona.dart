@@ -2,12 +2,12 @@
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
 
-// ignore_for_file: unused_element
-import 'package:soullog_api/src/model/contextual_insight.dart';
-import 'package:soullog_api/src/model/short_term_state.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+// ignore_for_file: unused_element
+import 'package:soullog_api/src/model/contextual_insight.dart';
+import 'package:soullog_api/src/model/short_term_state.dart';
 
 part 'persona.g.dart';
 
@@ -77,9 +77,7 @@ class _$PersonaSerializer implements PrimitiveSerializer<Persona> {
     Persona object, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    return _serializeProperties(serializers, object,
-            specifiedType: specifiedType)
-        .toList();
+    return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
   }
 
   void _deserializeProperties(
@@ -104,16 +102,14 @@ class _$PersonaSerializer implements PrimitiveSerializer<Persona> {
         case r'short_term_states':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType:
-                const FullType(BuiltList, [FullType(ShortTermState)]),
+            specifiedType: const FullType(BuiltList, [FullType(ShortTermState)]),
           ) as BuiltList<ShortTermState>;
           result.shortTermStates.replace(valueDes);
           break;
         case r'contextual_insights':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType:
-                const FullType(BuiltList, [FullType(ContextualInsight)]),
+            specifiedType: const FullType(BuiltList, [FullType(ContextualInsight)]),
           ) as BuiltList<ContextualInsight>;
           result.contextualInsights.replace(valueDes);
           break;

@@ -110,6 +110,8 @@ class _$AnalyzeResponse extends AnalyzeResponse {
   @override
   final AnalyzeResponseMoodEnum mood;
   @override
+  final String transcription;
+  @override
   final BuiltList<JsonObject?> recommendations;
   @override
   final String quote;
@@ -121,6 +123,7 @@ class _$AnalyzeResponse extends AnalyzeResponse {
 
   _$AnalyzeResponse._({
     required this.mood,
+    required this.transcription,
     required this.recommendations,
     required this.quote,
     required this.personality,
@@ -137,6 +140,7 @@ class _$AnalyzeResponse extends AnalyzeResponse {
     if (identical(other, this)) return true;
     return other is AnalyzeResponse &&
         mood == other.mood &&
+        transcription == other.transcription &&
         recommendations == other.recommendations &&
         quote == other.quote &&
         personality == other.personality;
@@ -146,6 +150,7 @@ class _$AnalyzeResponse extends AnalyzeResponse {
   int get hashCode {
     var _$hash = 0;
     _$hash = $jc(_$hash, mood.hashCode);
+    _$hash = $jc(_$hash, transcription.hashCode);
     _$hash = $jc(_$hash, recommendations.hashCode);
     _$hash = $jc(_$hash, quote.hashCode);
     _$hash = $jc(_$hash, personality.hashCode);
@@ -157,6 +162,7 @@ class _$AnalyzeResponse extends AnalyzeResponse {
   String toString() {
     return (newBuiltValueToStringHelper(r'AnalyzeResponse')
           ..add('mood', mood)
+          ..add('transcription', transcription)
           ..add('recommendations', recommendations)
           ..add('quote', quote)
           ..add('personality', personality))
@@ -171,6 +177,11 @@ class AnalyzeResponseBuilder
   AnalyzeResponseMoodEnum? _mood;
   AnalyzeResponseMoodEnum? get mood => _$this._mood;
   set mood(AnalyzeResponseMoodEnum? mood) => _$this._mood = mood;
+
+  String? _transcription;
+  String? get transcription => _$this._transcription;
+  set transcription(String? transcription) =>
+      _$this._transcription = transcription;
 
   ListBuilder<JsonObject?>? _recommendations;
   ListBuilder<JsonObject?> get recommendations =>
@@ -195,6 +206,7 @@ class AnalyzeResponseBuilder
     final $v = _$v;
     if ($v != null) {
       _mood = $v.mood;
+      _transcription = $v.transcription;
       _recommendations = $v.recommendations.toBuilder();
       _quote = $v.quote;
       _personality = $v.personality.toBuilder();
@@ -226,6 +238,11 @@ class AnalyzeResponseBuilder
               mood,
               r'AnalyzeResponse',
               'mood',
+            ),
+            transcription: BuiltValueNullFieldError.checkNotNull(
+              transcription,
+              r'AnalyzeResponse',
+              'transcription',
             ),
             recommendations: recommendations.build(),
             quote: BuiltValueNullFieldError.checkNotNull(
