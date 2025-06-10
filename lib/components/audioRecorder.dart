@@ -13,11 +13,13 @@ import '../services/api-service.dart';
 class AudioRecorderPlayer extends StatefulWidget {
   final TextEditingController controller;
   final void Function(Recording) onRecordingComplete;
+  final VoidCallback? onRecordingStarted;
 
   const AudioRecorderPlayer({
     required this.controller,
     super.key,
     required this.onRecordingComplete,
+    this.onRecordingStarted,
   });
 
   @override
@@ -87,6 +89,7 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
       }
     } else {
       if (await recorder.hasPermission()) {
+        widget.onRecordingStarted?.call();
         final directory = await getApplicationDocumentsDirectory();
         final audioDirectory = Directory('${directory.path}/Audio');
         if (!await audioDirectory.exists()) {
@@ -137,7 +140,7 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 170, // genug Platz für Button + Mülleimer
+      width: 170,
       height: 70,
       child: Stack(
         alignment: Alignment.center,
