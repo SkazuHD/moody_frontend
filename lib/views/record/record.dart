@@ -8,15 +8,6 @@ import '../../components/audioRecorder.dart';
 import '../../components/header.dart';
 import '../../data/db.dart';
 
-Recording recording = Recording(
-  id: 0,
-  filePath: 'assets/test_recording.m4a',
-  duration: 30,
-  createdAt: DateTime.now().subtract(Duration(days: 0)),
-  transcription: 'This is a sample transcription.',
-  mood: 'calm',
-);
-
 class Record extends StatefulWidget {
   const Record({super.key});
 
@@ -27,10 +18,19 @@ class Record extends StatefulWidget {
 class _RecordState extends State<Record> {
   final TextEditingController transcriptionController = TextEditingController();
   Recording? newRecording;
+  bool isAnalyzing = false;
+
+  void onRecordingStarted() {
+    setState(() {
+      newRecording = null;
+      isAnalyzing = true;
+    });
+  }
 
   void setNewRecording(Recording recording) {
     setState(() {
       newRecording = recording;
+      isAnalyzing = false;
     });
   }
 
@@ -57,6 +57,7 @@ class _RecordState extends State<Record> {
                   AudioRecorderPlayer(
                     controller: transcriptionController,
                     onRecordingComplete: setNewRecording,
+                    onRecordingStarted: onRecordingStarted,
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -73,30 +74,36 @@ class _RecordState extends State<Record> {
                   ObscuredTextField(controller: transcriptionController),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () async {
-                      var res = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return PopupViewSave(recording: newRecording!);
-                        },
-                      );
-                      if (res) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Recording saved: ${newRecording!.filePath}',
-                            ),
-                          ),
-                        );
-                        var db = await RecordsDB.getInstance();
-
-                        db.insertRecord(newRecording!);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Recording not saved')),
-                        );
-                      }
-                    },
+                    onPressed:
+                        (newRecording != null && !isAnalyzing)
+                            ? () async {
+                              var res = await showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return PopupViewSave(
+                                    recording: newRecording!,
+                                  );
+                                },
+                              );
+                              if (res == true) {
+                                var db = await RecordsDB.getInstance();
+                                await db.insertRecord(newRecording!);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Recording saved: ${newRecording!.filePath}',
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Recording not saved'),
+                                  ),
+                                );
+                              }
+                            }
+                            : null,
                     child: Text("Save"),
                   ),
                 ],
