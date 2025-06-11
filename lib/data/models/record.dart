@@ -40,9 +40,14 @@ class Recording {
     };
   }
 
+  @override
+  String toString() {
+    return 'Recording(filePath: $filePath, duration: $duration, createdAt: $createdAt, transcription: $transcription, mood: $mood)';
+  }
+
   factory Recording.fromJson(Map<String, dynamic> json) {
     return Recording(
-      id: json['id'] as int,
+      id: json['id'] as int?,
       filePath: json['filePath'],
       duration: json['duration'],
       createdAt: DateTime.parse(json['createdAt'] as String),

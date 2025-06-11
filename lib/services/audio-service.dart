@@ -86,12 +86,22 @@ class AudioService with WidgetsBindingObserver {
     ).shareValue();
   }
 
+  AudioSource _createAudioSource(String path) {
+    if (path.startsWith('assets/')) {
+      return AudioSource.asset(path);
+    }
+    if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('file://')) {
+      return AudioSource.uri(Uri.parse(path));
+    }
+    return AudioSource.uri(Uri.file(path));
+  }
+
   @pragma('vm:entry-point')
   Future<void> play(Recording recording) async {
     try {
       if (_currentMedia.valueOrNull != recording) {
         final filePath = recording.filePath!;
-        await _player.setAudioSource(AudioSource.uri(Uri.parse(filePath)));
+        await _player.setAudioSource(_createAudioSource(filePath));
         _currentMedia.add(recording);
       }
       _player.play();
@@ -114,14 +124,5 @@ class AudioService with WidgetsBindingObserver {
     await _player.stop();
     _isPlaying.add(false);
     _currentMedia.add(null);
-  }
-
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _currentMedia.close();
-    _isPlaying.close();
-    _playerError.close();
-    _player.dispose();
-    _isInitialized = false;
   }
 }

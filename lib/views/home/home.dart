@@ -1,3 +1,4 @@
+import 'package:Soullog/components/plotCardComponent.dart';
 import 'package:Soullog/views/dashboard/dashboard.dart';
 import 'package:Soullog/views/home/fastCheckin.dart';
 import 'package:Soullog/views/recordList/recordList.dart';
@@ -27,6 +28,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     moodSpotsNotifier.loadSpots(pastDays: 7);
+    // PlotCard aus SharedPreferences laden
+    RecordsDB.getInstance().then((db) => db.loadTodaysPlotCard());
   }
 
   @override
@@ -48,7 +51,10 @@ class _HomeState extends State<Home> {
               width: double.infinity,
               margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFFFF),
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -83,25 +89,37 @@ class _HomeState extends State<Home> {
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Dashboard()));
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (context) => Dashboard()));
               },
               child: AbsorbPointer(
                 child: Container(
                   width: double.infinity,
                   margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFFFFF),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text('Mood of the past 7 days:', style: h1Black, textAlign: TextAlign.center),
+                      const Text(
+                        'Mood of the past 7 days:',
+                        style: h1Black,
+                        textAlign: TextAlign.center,
+                      ),
                       ValueListenableBuilder<List<FlSpot>>(
                         valueListenable: moodSpotsNotifier.spots,
                         builder: (context, spots, _) {
                           if (spots.isEmpty) {
                             return const CircularProgressIndicator();
                           }
-                          return SizedBox(width: double.infinity, child: MoodLineChart(spots: spots));
+                          return SizedBox(
+                            width: double.infinity,
+                            child: MoodLineChart(spots: spots),
+                          );
                         },
                       ),
                     ],
@@ -118,7 +136,11 @@ class _HomeState extends State<Home> {
                 children: [
                   Expanded(
                     flex: 1, // 50% der Breite
-                    child: Text('Review past thoughts?', style: h1White, softWrap: true), // Text kann umbrechen
+                    child: Text(
+                      'Review past thoughts?',
+                      style: h1White,
+                      softWrap: true,
+                    ), // Text kann umbrechen
                   ),
                   SizedBox(width: 15), // Abstand zwischen Text und Button
                   Expanded(
@@ -126,7 +148,9 @@ class _HomeState extends State<Home> {
                     child: ElevatedButton(
                       style: greyButtonStyle,
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecordList()));
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => RecordList()),
+                        );
                       },
                       child: const Text('To your entries'),
                     ),
@@ -136,54 +160,27 @@ class _HomeState extends State<Home> {
             ),
 
             // 5. Container - Plot Card
-            FutureBuilder<PlotCard?>(
-              future: RecordsDB.getInstance().then(
-                (db) => db.getTodaysPlotCard(),
-              ), // fetch today's PlotCard from the DB
+            // fetch today's PlotCard from the DB
+            FutureBuilder<RecordsDB>(
+              future: RecordsDB.getInstance(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // loading spinner while waiting for data
-                  // Show an error message when error during loading
-                } else if (snapshot.hasError) {
-                  return Text('Error loading PlotCard. ${snapshot.error}');
-                } else {
-                  final plotCard = snapshot.data; // Store the fetched data in a local variable when succ
-
-                  return Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(color: const Color(0xFFDEBB97), borderRadius: BorderRadius.circular(10)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text('Today\'s Plot-Card:', style: h1Black, textAlign: TextAlign.center),
-                        const SizedBox(height: 10),
-                        if (plotCard != null) ...[
-                          Text(plotCard.quote, style: h2Black, textAlign: TextAlign.center),
-                          const SizedBox(height: 8),
-                          Text(plotCard.recommendation, style: bodyBlack, textAlign: TextAlign.center),
-                          const SizedBox(height: 16),
-                        ] else ...[
-                          // fallback message if no data is found
-                          const Text(
-                            'No activities tracked today. Start your day by logging your progress!',
-                            style: bodyBlack,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            style: greyButtonStyle,
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => Record()));
-                            },
-                            child: const Text('Record'),
-                          ),
-                        ],
-                      ],
-                    ),
-                  );
+                if (!snapshot.hasData) {
+                  return const CircularProgressIndicator();
                 }
+                final db = snapshot.data!;
+                return StreamBuilder<PlotCard?>(
+                  stream: db.todaysPlotCardStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (!snapshot.hasData || snapshot.data == null) {
+                      return const Text('No plot card available');
+                    }
+                    final plotCard = snapshot.data!;
+                    return PlotCardComponent(plotCard: plotCard);
+                  },
+                );
               },
             ),
           ],

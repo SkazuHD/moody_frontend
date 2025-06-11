@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' hide log;
 
@@ -5,6 +6,8 @@ import 'package:Soullog/data/constants/emotions.dart';
 import 'package:Soullog/data/models/record.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../data/models/plotCard.dart';
@@ -12,7 +15,15 @@ import '../../data/models/plotCard.dart';
 class RecordsDB {
   static final RecordsDB _instance = RecordsDB._internal();
   static bool _initialized = false;
-  PlotCard? _todaysPlotCard;
+  final _todaysPlotCard = BehaviorSubject<PlotCard?>();
+
+  Stream<PlotCard?> get todaysPlotCardStream => _todaysPlotCard.stream;
+  PlotCard emptyCard = PlotCard(
+    mood: "Neutral",
+    quote: "No mood recorded today.",
+    recommendation: ["Take a moment to reflect"],
+    date: DateTime.now(),
+  );
 
   RecordsDB._internal();
 
@@ -58,12 +69,16 @@ class RecordsDB {
 
     if (kDebugMode) {
       var links = [
-        "https://cdn.discordapp.com/attachments/1107642333920497755/1381342131494457354/Bread.mp3?ex=68472a9c&is=6845d91c&hm=abb343ba0da46f3430c18c00f65d9d575f5df9e891b42083f8c9aeaedd7c6956&",
         "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345893739004115/surprise2.mp3?ex=68472e1d&is=6845dc9d&hm=e8998599e4cd28ddca4ac0dd70e56015e0328f3ac3d7b23ffc35d9f88d0f91f6&",
-        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345541484712196/Surprise.mp3?ex=68472dc9&is=6845dc49&hm=4c64b35e33f0877abd387e2d2ae2751503557d0573b728714c10ca3fe12f1077&",
-        "https://cdn.discordapp.com/attachments/1107642333920497755/1381345232049668116/amogus.mp3?ex=68472d7f&is=6845dbff&hm=7d4a7d180969bad1146f8316cf0bedf813259b74a8f25a9a905223cc9aca2ae1&",
+        "assets/amogus.mp3",
+        "assets/Bread.mp3",
+        "assets/Surprise.mp3",
+        "assets/surprise2.mp3",
+        "assets/test_recording.m4a",
+        "assets/happier.mp3",
+        "assets/happy.mp3",
+        "assets/my_personal_favorite.mp3",
+        "assets/cans_favorite.mp3",
       ];
       await _db!.transaction((txn) async {
         log('Debug Mode: Dropping and recreating table $_tableName in _init.');
@@ -98,6 +113,34 @@ class RecordsDB {
     if (kDebugMode) {
       print('Database initialization process completed in _init.');
     }
+
+    // Load today's PlotCard if it exists
+    await loadTodaysPlotCard();
+  }
+
+  Future<void> loadTodaysPlotCard() async {
+    final store = await SharedPreferences.getInstance();
+    final todaysCardString = store.getString('todaysPlotCard');
+    if (todaysCardString != null) {
+      var date = DateTime.now();
+      try {
+        final Map<String, dynamic> map = jsonDecode(todaysCardString);
+        final todaysCard = PlotCard.fromMap(map);
+        var plotcardDate = todaysCard.date;
+        if (date.day != plotcardDate.day || date.month != plotcardDate.month || date.year != plotcardDate.year) {
+          _todaysPlotCard.add(emptyCard);
+          return;
+        }
+        _todaysPlotCard.add(todaysCard);
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error loading today\'s PlotCard: $e');
+        }
+        _todaysPlotCard.add(emptyCard);
+      }
+    } else {
+      _todaysPlotCard.add(emptyCard);
+    }
   }
 
   Future<bool> _ensureInitialized() async {
@@ -123,38 +166,16 @@ class RecordsDB {
       if (kDebugMode) {
         print('Inserted record with id: $res');
       }
-
       return res;
     });
   }
 
-  Future<void> createTodaysPlotCard(int id, String mood, String quote, String recommendation) async {
-    try {
-      _todaysPlotCard = PlotCard(
-        id: id,
-        mood: mood,
-        quote: quote,
-        recommendation: recommendation,
-        date: DateTime.now(),
-      );
-    } catch (e) {
-      if (kDebugMode) print("Oops, something went wrong");
+  Future<void> createTodaysPlotCard(PlotCard? card) async {
+    if (card != null) {
+      final store = await SharedPreferences.getInstance();
+      store.setString('todaysPlotCard', jsonEncode(card.toJson()));
+      _todaysPlotCard.add(card);
     }
-  }
-
-  Future<PlotCard?> getTodaysPlotCard() async {
-    final now = DateTime.now();
-
-    // Return cached PlotCard if it already exists for today
-    if (_todaysPlotCard != null &&
-        _todaysPlotCard!.date.year == now.year &&
-        _todaysPlotCard!.date.month == now.month &&
-        _todaysPlotCard!.date.day == now.day) {
-      return _todaysPlotCard;
-    }
-
-    // No PlotCard for today found
-    return null;
   }
 
   Future<void> updateRecord(Recording record) async {
