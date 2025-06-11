@@ -46,7 +46,9 @@ class _FastcheckinState extends State<Fastcheckin> {
       PlotCard todaysPlotCard = PlotCard(
         mood: selectedMood,
         quote: apiResponse.quote?.toString() ?? '',
-        recommendation: apiResponse.recommendations.isNotEmpty ? apiResponse.recommendations.first.toString() : '',
+        recommendation: apiResponse.recommendations.isNotEmpty
+            ? [apiResponse.recommendations.first.toString()]
+            : [],
         date: DateTime.now(),
       );
       await db.createTodaysPlotCard(todaysPlotCard);
