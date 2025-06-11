@@ -38,7 +38,7 @@ class _FastcheckinState extends State<Fastcheckin> {
         final db = await RecordsDB.getInstance();
         int recordingsId = await db.insertRecord(
           Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood, isFastCheckIn: true),);
-        await db.createTodaysPlotCard(recordingsId, selectedMood, apiResponse.quote?.toString() ?? '', apiResponse.recommendation.isNotEmpty ? apiResponse.recommendation.first.toString() : '',);
+        await db.createTodaysPlotCard(recordingsId, selectedMood, apiResponse.quote?.toString() ?? '', apiResponse.recommendations.isNotEmpty ? apiResponse.recommendations.first.toString() : '',);
         widget.onDataChanged();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Your mood has been recorded!')),
