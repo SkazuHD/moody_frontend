@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 README.md
 analysis_options.yaml
 doc/AnalyzeResponse.md
@@ -30,11 +29,3 @@ lib/src/model/validation_error.dart
 lib/src/model/validation_error_loc_inner.dart
 lib/src/serializers.dart
 pubspec.yaml
-test/analyze_response_test.dart
-test/contextual_insight_test.dart
-test/default_api_test.dart
-test/http_validation_error_test.dart
-test/persona_test.dart
-test/short_term_state_test.dart
-test/validation_error_loc_inner_test.dart
-test/validation_error_test.dart
