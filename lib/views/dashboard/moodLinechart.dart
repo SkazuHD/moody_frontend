@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:Soullog/components/loadingIndicator.dart';
+import 'package:Soullog/components/noDataView.dart';
 import 'package:Soullog/data/constants/emotions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
@@ -65,7 +66,12 @@ class _MoodLineChartState extends State<MoodLineChart> {
           aspectRatio: 1.1,
           child: Padding(
             padding: const EdgeInsets.only(right: 18, left: 12, top: 24, bottom: 12),
-            child: widget.isLoading ? loadingIndicator() : LineChart(mainData(_plotPoints, _gradientColors)),
+            child:
+                widget.isLoading
+                    ? loadingIndicator()
+                    : widget.spots.isEmpty
+                    ? const NoDataView()
+                    : LineChart(mainData(_plotPoints, _gradientColors)),
           ),
         ),
       ],
