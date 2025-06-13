@@ -19,6 +19,9 @@ Serializers _$serializers = (Serializers().toBuilder()
           const FullType(BuiltList, const [const FullType(String)]),
           () => ListBuilder<String>())
       ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => ListBuilder<String>())
+      ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(ShortTermState)]),
           () => ListBuilder<ShortTermState>())
       ..addBuilderFactory(
@@ -30,11 +33,7 @@ Serializers _$serializers = (Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(
               BuiltList, const [const FullType(ValidationErrorLocInner)]),
-          () => ListBuilder<ValidationErrorLocInner>())
-      ..addBuilderFactory(
-          const FullType(
-              BuiltList, const [const FullType.nullable(JsonObject)]),
-          () => ListBuilder<JsonObject?>()))
+          () => ListBuilder<ValidationErrorLocInner>()))
     .build();
 
 // ignore_for_file: deprecated_member_use_from_same_package,type=lint

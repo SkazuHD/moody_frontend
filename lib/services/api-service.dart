@@ -1,4 +1,4 @@
-// Openapi Generator last run: : 2025-06-11T17:28:21.981154
+// Openapi Generator last run: : 2025-06-13T14:46:05.590527
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';

@@ -5,7 +5,6 @@
 // ignore_for_file: unused_element
 import 'package:soullog_api/src/model/persona.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:built_value/json_object.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -16,26 +15,29 @@ part 'analyze_response.g.dart';
 /// Properties:
 /// * [mood]
 /// * [transcription] - Transcription of the diary entry.
-/// * [recommendations]
-/// * [quote]
-/// * [personality]
+/// * [recommendations] - Suggestions for improving mood or well-being.
+/// * [quote] - A random quote related to the mood.
+/// * [personality] - Updated Personality traits and insights derived from the diary entry.
 @BuiltValue()
 abstract class AnalyzeResponse
     implements Built<AnalyzeResponse, AnalyzeResponseBuilder> {
   @BuiltValueField(wireName: r'mood')
   AnalyzeResponseMoodEnum get mood;
-  // enum moodEnum {  happy,  sad,  calm,  fearful,  angry,  disgust,  neutral,  suprised,  };
+  // enum moodEnum {  happy,  sad,  calm,  fearful,  angry,  disgust,  neutral,  surprised,  };
 
   /// Transcription of the diary entry.
   @BuiltValueField(wireName: r'transcription')
   String get transcription;
 
+  /// Suggestions for improving mood or well-being.
   @BuiltValueField(wireName: r'recommendations')
-  BuiltList<JsonObject?> get recommendations;
+  BuiltList<String> get recommendations;
 
+  /// A random quote related to the mood.
   @BuiltValueField(wireName: r'quote')
   String get quote;
 
+  /// Updated Personality traits and insights derived from the diary entry.
   @BuiltValueField(wireName: r'personality')
   Persona get personality;
 
@@ -78,7 +80,7 @@ class _$AnalyzeResponseSerializer
     yield r'recommendations';
     yield serializers.serialize(
       object.recommendations,
-      specifiedType: const FullType(BuiltList, [FullType.nullable(JsonObject)]),
+      specifiedType: const FullType(BuiltList, [FullType(String)]),
     );
     yield r'quote';
     yield serializers.serialize(
@@ -132,9 +134,8 @@ class _$AnalyzeResponseSerializer
         case r'recommendations':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType:
-                const FullType(BuiltList, [FullType.nullable(JsonObject)]),
-          ) as BuiltList<JsonObject?>;
+            specifiedType: const FullType(BuiltList, [FullType(String)]),
+          ) as BuiltList<String>;
           result.recommendations.replace(valueDes);
           break;
         case r'quote':
@@ -198,9 +199,9 @@ class AnalyzeResponseMoodEnum extends EnumClass {
   @BuiltValueEnumConst(wireName: r'neutral')
   static const AnalyzeResponseMoodEnum neutral =
       _$analyzeResponseMoodEnum_neutral;
-  @BuiltValueEnumConst(wireName: r'suprised')
-  static const AnalyzeResponseMoodEnum suprised =
-      _$analyzeResponseMoodEnum_suprised;
+  @BuiltValueEnumConst(wireName: r'surprised')
+  static const AnalyzeResponseMoodEnum surprised =
+      _$analyzeResponseMoodEnum_surprised;
 
   static Serializer<AnalyzeResponseMoodEnum> get serializer =>
       _$analyzeResponseMoodEnumSerializer;
