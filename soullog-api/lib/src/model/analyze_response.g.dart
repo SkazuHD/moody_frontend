@@ -20,8 +20,8 @@ const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_disgust =
     const AnalyzeResponseMoodEnum._('disgust');
 const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_neutral =
     const AnalyzeResponseMoodEnum._('neutral');
-const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_suprised =
-    const AnalyzeResponseMoodEnum._('suprised');
+const AnalyzeResponseMoodEnum _$analyzeResponseMoodEnum_surprised =
+    const AnalyzeResponseMoodEnum._('surprised');
 
 AnalyzeResponseMoodEnum _$analyzeResponseMoodEnumValueOf(String name) {
   switch (name) {
@@ -39,8 +39,8 @@ AnalyzeResponseMoodEnum _$analyzeResponseMoodEnumValueOf(String name) {
       return _$analyzeResponseMoodEnum_disgust;
     case 'neutral':
       return _$analyzeResponseMoodEnum_neutral;
-    case 'suprised':
-      return _$analyzeResponseMoodEnum_suprised;
+    case 'surprised':
+      return _$analyzeResponseMoodEnum_surprised;
     default:
       throw ArgumentError(name);
   }
@@ -55,7 +55,7 @@ final BuiltSet<AnalyzeResponseMoodEnum> _$analyzeResponseMoodEnumValues =
   _$analyzeResponseMoodEnum_angry,
   _$analyzeResponseMoodEnum_disgust,
   _$analyzeResponseMoodEnum_neutral,
-  _$analyzeResponseMoodEnum_suprised,
+  _$analyzeResponseMoodEnum_surprised,
 ]);
 
 Serializer<AnalyzeResponseMoodEnum> _$analyzeResponseMoodEnumSerializer =
@@ -71,7 +71,7 @@ class _$AnalyzeResponseMoodEnumSerializer
     'angry': 'angry',
     'disgust': 'disgust',
     'neutral': 'neutral',
-    'suprised': 'suprised',
+    'surprised': 'surprised',
   };
   static const Map<Object, String> _fromWire = const <Object, String>{
     'happy': 'happy',
@@ -81,7 +81,7 @@ class _$AnalyzeResponseMoodEnumSerializer
     'angry': 'angry',
     'disgust': 'disgust',
     'neutral': 'neutral',
-    'suprised': 'suprised',
+    'surprised': 'surprised',
   };
 
   @override
@@ -108,7 +108,7 @@ class _$AnalyzeResponse extends AnalyzeResponse {
   @override
   final String transcription;
   @override
-  final BuiltList<JsonObject?> recommendations;
+  final BuiltList<String> recommendations;
   @override
   final String quote;
   @override
@@ -179,10 +179,10 @@ class AnalyzeResponseBuilder
   set transcription(String? transcription) =>
       _$this._transcription = transcription;
 
-  ListBuilder<JsonObject?>? _recommendations;
-  ListBuilder<JsonObject?> get recommendations =>
-      _$this._recommendations ??= ListBuilder<JsonObject?>();
-  set recommendations(ListBuilder<JsonObject?>? recommendations) =>
+  ListBuilder<String>? _recommendations;
+  ListBuilder<String> get recommendations =>
+      _$this._recommendations ??= ListBuilder<String>();
+  set recommendations(ListBuilder<String>? recommendations) =>
       _$this._recommendations = recommendations;
 
   String? _quote;

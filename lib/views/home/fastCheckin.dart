@@ -1,12 +1,12 @@
 import 'package:Soullog/views/home/fastCheckInDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../../components/headlines.dart';
 import '../../data/constants/emotions.dart';
 import '../../data/db.dart';
 import '../../data/models/plotCard.dart';
 import '../../data/models/record.dart';
+import '../../services/api-service.dart';
 
 class Fastcheckin extends StatefulWidget {
   final VoidCallback onDataChanged;
@@ -30,6 +30,9 @@ class _FastcheckinState extends State<Fastcheckin> {
     );
     if (res == true) {
       final selectedMood = emotion.label;
+      final apiService = SoullogApiService();
+      final apiResponse = await apiService.sendFastCheckIn(selectedMood);
+  
       final db = await RecordsDB.getInstance();
       await db.insertRecord(
         Recording(
@@ -41,9 +44,11 @@ class _FastcheckinState extends State<Fastcheckin> {
       );
 
       PlotCard todaysPlotCard = PlotCard(
-        mood: "Angry",
-        quote: "I am, I am not, I am.",
-        recommendation: ["Take a deep breath", "Go for a walk"],
+        mood: selectedMood,
+        quote: apiResponse.quote?.toString() ?? '',
+        recommendation: apiResponse.recommendations.isNotEmpty
+            ? [apiResponse.recommendations.first.toString()]
+            : [],
         date: DateTime.now(),
       );
       await db.createTodaysPlotCard(todaysPlotCard);
@@ -60,8 +65,10 @@ class _FastcheckinState extends State<Fastcheckin> {
         context,
       ).showSnackBar(const SnackBar(content: Text('Fast check-in cancelled')));
     }
+
     return res;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,3 +141,4 @@ class _FastcheckinState extends State<Fastcheckin> {
     );
   }
 }
+

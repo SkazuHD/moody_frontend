@@ -67,12 +67,14 @@ All URIs are relative to *http://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*DefaultApi*](doc/DefaultApi.md) | [**analyzeAudio**](doc/DefaultApi.md#analyzeaudio) | **POST** /analyze | Analyze audio diary entry
+[*DefaultApi*](doc/DefaultApi.md) | [**emojiCheckin**](doc/DefaultApi.md#emojicheckin) | **POST** /emoji_checkin | Emoji mood check-in
 [*DefaultApi*](doc/DefaultApi.md) | [**rootGet**](doc/DefaultApi.md#rootget) | **GET** / | Root
 
 
 ## Documentation For Models
 
  - [AnalyzeResponse](doc/AnalyzeResponse.md)
+ - [AnalyzeResponseFastCheckin](doc/AnalyzeResponseFastCheckin.md)
  - [ContextualInsight](doc/ContextualInsight.md)
  - [HTTPValidationError](doc/HTTPValidationError.md)
  - [Persona](doc/Persona.md)

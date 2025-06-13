@@ -13,6 +13,7 @@ export 'package:soullog_api/src/model/date.dart';
 export 'package:soullog_api/src/api/default_api.dart';
 
 export 'package:soullog_api/src/model/analyze_response.dart';
+export 'package:soullog_api/src/model/analyze_response_fast_checkin.dart';
 export 'package:soullog_api/src/model/contextual_insight.dart';
 export 'package:soullog_api/src/model/http_validation_error.dart';
 export 'package:soullog_api/src/model/persona.dart';
