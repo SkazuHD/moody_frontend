@@ -60,7 +60,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **emojiCheckin**
-> AnalyzeResponse emojiCheckin(mood, personality)
+> AnalyzeResponseFastCheckin emojiCheckin(mood)
 
 Emoji mood check-in
 
@@ -72,10 +72,9 @@ import 'package:soullog_api/api.dart';
 
 final api = SoullogApi().getDefaultApi();
 final String mood = mood_example; // String | 
-final String personality = personality_example; // String | 
 
 try {
-    final response = api.emojiCheckin(mood, personality);
+    final response = api.emojiCheckin(mood);
     print(response);
 } catch on DioException (e) {
     print('Exception when calling DefaultApi->emojiCheckin: $e\n');
@@ -87,11 +86,10 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **mood** | **String**|  | 
- **personality** | **String**|  | [optional] 
 
 ### Return type
 
-[**AnalyzeResponse**](AnalyzeResponse.md)
+[**AnalyzeResponseFastCheckin**](AnalyzeResponseFastCheckin.md)
 
 ### Authorization
 

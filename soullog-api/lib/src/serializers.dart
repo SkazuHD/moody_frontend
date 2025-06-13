@@ -15,6 +15,7 @@ import 'package:soullog_api/src/date_serializer.dart';
 import 'package:soullog_api/src/model/date.dart';
 
 import 'package:soullog_api/src/model/analyze_response.dart';
+import 'package:soullog_api/src/model/analyze_response_fast_checkin.dart';
 import 'package:soullog_api/src/model/contextual_insight.dart';
 import 'package:soullog_api/src/model/http_validation_error.dart';
 import 'package:soullog_api/src/model/persona.dart';
@@ -26,6 +27,7 @@ part 'serializers.g.dart';
 
 @SerializersFor([
   AnalyzeResponse,
+  AnalyzeResponseFastCheckin,
   ContextualInsight,
   HTTPValidationError,
   Persona,

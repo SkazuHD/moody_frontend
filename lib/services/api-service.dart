@@ -1,4 +1,4 @@
-// Openapi Generator last run: : 2025-06-13T14:46:05.590527
+// Openapi Generator last run: : 2025-06-13T15:35:03.803510
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
@@ -65,7 +65,7 @@ class SoullogApiService {
     }
   }
 
-  Future<AnalyzeResponse> sendFastCheckIn(String mood) async {
+  Future<AnalyzeResponseFastCheckin> sendFastCheckIn(String mood) async {
     final result = await _api.emojiCheckin(
       mood: mood,
       cancelToken: CancelToken(),

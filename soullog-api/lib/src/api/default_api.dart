@@ -12,6 +12,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/json_object.dart';
 import 'package:soullog_api/src/api_util.dart';
 import 'package:soullog_api/src/model/analyze_response.dart';
+import 'package:soullog_api/src/model/analyze_response_fast_checkin.dart';
 import 'package:soullog_api/src/model/http_validation_error.dart';
 
 class DefaultApi {
@@ -126,7 +127,6 @@ class DefaultApi {
   ///
   /// Parameters:
   /// * [mood]
-  /// * [personality]
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -134,11 +134,10 @@ class DefaultApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [AnalyzeResponse] as data
+  /// Returns a [Future] containing a [Response] with a [AnalyzeResponseFastCheckin] as data
   /// Throws [DioException] if API call or serialization fails
-  Future<Response<AnalyzeResponse>> emojiCheckin({
+  Future<Response<AnalyzeResponseFastCheckin>> emojiCheckin({
     required String mood,
-    String? personality,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -166,8 +165,6 @@ class DefaultApi {
       _bodyData = <String, dynamic>{
         r'mood':
             encodeQueryParameter(_serializers, mood, const FullType(String)),
-        r'personality': encodeQueryParameter(
-            _serializers, personality, const FullType(String)),
       };
     } catch (error, stackTrace) {
       throw DioException(
@@ -190,7 +187,7 @@ class DefaultApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    AnalyzeResponse? _responseData;
+    AnalyzeResponseFastCheckin? _responseData;
 
     try {
       final rawResponse = _response.data;
@@ -198,8 +195,8 @@ class DefaultApi {
           ? null
           : _serializers.deserialize(
               rawResponse,
-              specifiedType: const FullType(AnalyzeResponse),
-            ) as AnalyzeResponse;
+              specifiedType: const FullType(AnalyzeResponseFastCheckin),
+            ) as AnalyzeResponseFastCheckin;
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -210,7 +207,7 @@ class DefaultApi {
       );
     }
 
-    return Response<AnalyzeResponse>(
+    return Response<AnalyzeResponseFastCheckin>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,

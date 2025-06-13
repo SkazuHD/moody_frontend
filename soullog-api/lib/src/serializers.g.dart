@@ -8,6 +8,8 @@ part of 'serializers.dart';
 
 Serializers _$serializers = (Serializers().toBuilder()
       ..add(AnalyzeResponse.serializer)
+      ..add(AnalyzeResponseFastCheckin.serializer)
+      ..add(AnalyzeResponseFastCheckinMoodEnum.serializer)
       ..add(AnalyzeResponseMoodEnum.serializer)
       ..add(ContextualInsight.serializer)
       ..add(HTTPValidationError.serializer)
@@ -15,6 +17,9 @@ Serializers _$serializers = (Serializers().toBuilder()
       ..add(ShortTermState.serializer)
       ..add(ValidationError.serializer)
       ..add(ValidationErrorLocInner.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => ListBuilder<String>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => ListBuilder<String>())

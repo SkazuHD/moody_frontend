@@ -74,6 +74,7 @@ Class | Method | HTTP request | Description
 ## Documentation For Models
 
  - [AnalyzeResponse](doc/AnalyzeResponse.md)
+ - [AnalyzeResponseFastCheckin](doc/AnalyzeResponseFastCheckin.md)
  - [ContextualInsight](doc/ContextualInsight.md)
  - [HTTPValidationError](doc/HTTPValidationError.md)
  - [Persona](doc/Persona.md)
