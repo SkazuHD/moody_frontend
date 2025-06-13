@@ -66,17 +66,11 @@ class SoullogApiService {
   }
 
   Future<AnalyzeResponse> sendFastCheckIn(String mood) async {
-    final store = await SharedPreferences.getInstance();
-    final String personality = store.getString('personality') ?? "";
-
     final result = await _api.emojiCheckin(
       mood: mood,
-      personality: personality,
       cancelToken: CancelToken(),
     );
     if (result.statusCode == 200) {
-      final store = await SharedPreferences.getInstance();
-      store.setString('personality', result.data?.personality.toString() ?? '');
       return result.data!;
     } else {
       throw Exception('Failed to send mood');
