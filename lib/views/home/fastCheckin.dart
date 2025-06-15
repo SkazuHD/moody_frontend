@@ -19,6 +19,7 @@ class Fastcheckin extends StatefulWidget {
 
 class _FastcheckinState extends State<Fastcheckin> {
   int? selectedEmotionIndex;
+  final apiService = SoullogApiService();
 
   Future<bool?> _openDialog(Emotion emotion) async {
     var res = await showDialog<bool>(
@@ -30,7 +31,6 @@ class _FastcheckinState extends State<Fastcheckin> {
     );
     if (res == true) {
       final selectedMood = emotion.label;
-      final apiService = SoullogApiService();
       final apiResponse = await apiService.sendFastCheckIn(selectedMood);
   
       final db = await RecordsDB.getInstance();
