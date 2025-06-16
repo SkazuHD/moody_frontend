@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '/data/db.dart';
 import '/data/models/record.dart';
 import '../data/constants/emotions.dart';
 
@@ -11,11 +10,7 @@ class PopupViewSave extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        "Save Recording",
-        style: Theme.of(context).textTheme.headlineSmall,
-        textAlign: TextAlign.center,
-      ),
+      title: Text("Save Recording", style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
       content: SizedBox(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -27,10 +22,7 @@ class PopupViewSave extends StatelessWidget {
             ),
             TextField(
               style: TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                labelText: 'Title',
-                hintText: 'Enter a title for your recording',
-              ),
+              decoration: InputDecoration(labelText: 'Title', hintText: 'Enter a title for your recording'),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20),
@@ -39,25 +31,16 @@ class PopupViewSave extends StatelessWidget {
                 margin: const EdgeInsets.all(8),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: getEmotionColor(recording.mood),
+                    color: Emotion.getEmotionColor(recording.mood),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 10,
-                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     title: Text(
                       recording.transcription as String,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(
-                      recording.mood as String,
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    subtitle: Text(recording.mood as String, style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ),
@@ -73,9 +56,7 @@ class PopupViewSave extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
+                style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),
                 child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.of(context).pop(false);
@@ -83,9 +64,7 @@ class PopupViewSave extends StatelessWidget {
               ),
               const SizedBox(width: 16), // Abstand zwischen den Buttons
               ElevatedButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
+                style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),
                 child: const Text('Save'),
                 onPressed: () {
                   Navigator.of(context).pop(true);

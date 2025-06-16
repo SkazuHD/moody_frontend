@@ -46,10 +46,7 @@ List<FlSpot> calculateSpots(List<Recording> records) {
   return latestPerDay.values.map((record) {
     final date = record.createdAt;
     final x = date.day.toDouble();
-    final y =
-        record.mood != null
-            ? Emotion.values.firstWhere((e) => e.label.toLowerCase() == record.mood!.toLowerCase()).value
-            : 0.0;
+    final y = Emotion.getEmotionValue(record.mood);
     return FlSpot(x, y);
   }).toList();
 }

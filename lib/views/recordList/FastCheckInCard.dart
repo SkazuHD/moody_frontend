@@ -15,11 +15,14 @@ class FastCheckInCard extends StatelessWidget {
       elevation: 8,
       margin: const EdgeInsets.all(8),
       child: Container(
-        decoration: BoxDecoration(color: getEmotionColor(recording.mood), borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+          color: Emotion.getEmotionColor(recording.mood),
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: ListTile(
           trailing: CircleAvatar(
             backgroundColor: Colors.transparent,
-            child: Text(getEmotionEmoji(recording.mood), style: TextStyle(fontSize: 24)),
+            child: Text(Emotion.getEmotionEmoji(recording.mood), style: TextStyle(fontSize: 24)),
           ),
           contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           title: Text('Fast Check-In', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),

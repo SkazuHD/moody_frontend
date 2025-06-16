@@ -16,23 +16,32 @@ enum Emotion {
   final String label;
   final Color color;
   final double value;
-}
 
-Color getEmotionColor(String? mood) {
-  if (mood == null) return Colors.grey;
-  try {
-    return Emotion.values.firstWhere((e) => e.label.toLowerCase() == mood.toLowerCase()).color;
-  } catch (_) {
-    return Colors.grey;
+  static Color getEmotionColor(String? mood) {
+    if (mood == null) return Colors.grey;
+    try {
+      return Emotion.values.firstWhere((e) => e.label.toLowerCase() == mood.toLowerCase()).color;
+    } catch (_) {
+      return Colors.grey;
+    }
   }
-}
 
-String getEmotionEmoji(String? mood) {
-  if (mood == null) return '😐';
-  try {
-    return Emotion.values.firstWhere((e) => e.label.toLowerCase() == mood.toLowerCase()).emoji;
-  } catch (_) {
-    return '😐';
+  static String getEmotionEmoji(String? mood) {
+    if (mood == null) return '😐';
+    try {
+      return Emotion.values.firstWhere((e) => e.label.toLowerCase() == mood.toLowerCase()).emoji;
+    } catch (_) {
+      return '😐';
+    }
+  }
+
+  static double getEmotionValue(String? mood) {
+    if (mood == null) return 0;
+    try {
+      return Emotion.values.firstWhere((e) => e.label.toLowerCase() == mood.toLowerCase()).value;
+    } catch (_) {
+      return 0;
+    }
   }
 }
 

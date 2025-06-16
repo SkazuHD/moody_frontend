@@ -37,7 +37,7 @@ class _RecordCardState extends State<RecordCard> {
       elevation: 8,
       margin: const EdgeInsets.all(8),
       child: ListTile(
-        tileColor: getEmotionColor(recording.mood),
+        tileColor: Emotion.getEmotionColor(recording.mood),
         horizontalTitleGap: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -46,7 +46,7 @@ class _RecordCardState extends State<RecordCard> {
             Expanded(
               child: CircleAvatar(
                 backgroundColor: Colors.transparent,
-                child: Text(getEmotionEmoji(recording.mood), style: TextStyle(fontSize: 24)),
+                child: Text(Emotion.getEmotionEmoji(recording.mood), style: TextStyle(fontSize: 24)),
               ),
             ),
           ],
