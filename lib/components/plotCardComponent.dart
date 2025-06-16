@@ -28,6 +28,7 @@ class PlotCardComponent extends StatelessWidget {
                 Text(plotCard.quote, style: h2Black, textAlign: TextAlign.center),
                 const SizedBox(height: 8),
                 Column(
+                  spacing: 12,
                   children:
                       plotCard.recommendation
                           .map(
@@ -48,6 +49,7 @@ class PlotCardComponent extends StatelessWidget {
             Text(plotCard.quote, style: h2Black, textAlign: TextAlign.center),
             const SizedBox(height: 8),
             Column(
+              spacing: 12,
               children:
                   plotCard.recommendation
                       .map(

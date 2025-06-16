@@ -1,6 +1,7 @@
 import 'package:Soullog/views/home/fastCheckInDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../components/headlines.dart';
 import '../../data/constants/emotions.dart';
 import '../../data/db.dart';
@@ -32,43 +33,32 @@ class _FastcheckinState extends State<Fastcheckin> {
     if (res == true) {
       final selectedMood = emotion.label;
       final apiResponse = await apiService.sendFastCheckIn(selectedMood);
-  
+
       final db = await RecordsDB.getInstance();
       await db.insertRecord(
-        Recording(
-          createdAt: DateTime.now(),
-          transcription: null,
-          mood: selectedMood,
-          isFastCheckIn: true,
-        ),
+        Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood, isFastCheckIn: true),
       );
 
       PlotCard todaysPlotCard = PlotCard(
         mood: selectedMood,
-        quote: apiResponse.quote?.toString() ?? '',
-        recommendation: apiResponse.recommendations.isNotEmpty
-            ? [apiResponse.recommendations.first.toString()]
-            : [],
+        quote: apiResponse.quote.toString() ?? '',
+        recommendation:
+            apiResponse.recommendations.isNotEmpty ? apiResponse.recommendations.map((e) => e.toString()).toList() : [],
         date: DateTime.now(),
       );
       await db.createTodaysPlotCard(todaysPlotCard);
 
       widget.onDataChanged();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Your mood has been recorded!')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Your mood has been recorded!')));
     } else {
       setState(() {
         selectedEmotionIndex = null;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Fast check-in cancelled')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fast check-in cancelled')));
     }
 
     return res;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,11 +68,7 @@ class _FastcheckinState extends State<Fastcheckin> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            'Fast check-in:',
-            style: h1White,
-            textAlign: TextAlign.center,
-          ),
+          const Text('Fast check-in:', style: h1White, textAlign: TextAlign.center),
           const SizedBox(height: 16),
           SizedBox(
             height: 100,
@@ -112,22 +98,12 @@ class _FastcheckinState extends State<Fastcheckin> {
                         CircleAvatar(
                           radius: isSelected ? 32 : 24,
                           backgroundColor: emotion.color,
-                          child: Text(
-                            emotion.emoji,
-                            style: bodyWhite.copyWith(
-                              fontSize: isSelected ? 32 : 24,
-                            ),
-                          ),
+                          child: Text(emotion.emoji, style: bodyWhite.copyWith(fontSize: isSelected ? 32 : 24)),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           emotion.label,
-                          style: bodyWhite.copyWith(
-                            fontWeight:
-                                isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                          ),
+                          style: bodyWhite.copyWith(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                         ),
                       ],
                     ),
@@ -141,4 +117,3 @@ class _FastcheckinState extends State<Fastcheckin> {
     );
   }
 }
-
