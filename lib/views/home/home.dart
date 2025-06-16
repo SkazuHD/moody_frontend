@@ -154,7 +154,12 @@ class _HomeState extends State<Home> {
                       return const Text('No plot card available');
                     }
                     final plotCard = snapshot.data!;
-                    return PlotCardComponent(plotCard: plotCard);
+                    return PlotCardComponent(
+                      plotCard: plotCard,
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => Record()));
+                      },
+                    );
                   },
                 );
               },

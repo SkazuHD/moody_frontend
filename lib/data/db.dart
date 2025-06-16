@@ -23,6 +23,7 @@ class RecordsDB {
     quote: "No mood recorded today.",
     recommendation: ["Take a moment to reflect"],
     date: DateTime.now(),
+    isEmpty: true,
   );
 
   RecordsDB._internal();
@@ -119,6 +120,7 @@ class RecordsDB {
 
   Future<void> loadTodaysPlotCard() async {
     final store = await SharedPreferences.getInstance();
+    store.remove('todaysPlotCard');
     final todaysCardString = store.getString('todaysPlotCard');
     if (todaysCardString != null) {
       var date = DateTime.now();
