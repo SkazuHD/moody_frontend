@@ -1,4 +1,4 @@
-// Openapi Generator last run: : 2025-06-09T19:29:18.635424
+// Openapi Generator last run: : 2025-06-13T15:35:03.803510
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi_generator_annotations/openapi_generator_annotations.dart';
@@ -64,4 +64,17 @@ class SoullogApiService {
       return Future.error('Failed to analyze recording: ${result.statusMessage}');
     }
   }
+
+  Future<AnalyzeResponseFastCheckin> sendFastCheckIn(String mood) async {
+    final result = await _api.emojiCheckin(
+      mood: mood,
+      cancelToken: CancelToken(),
+    );
+    if (result.statusCode == 200) {
+      return result.data!;
+    } else {
+      throw Exception('Failed to send mood');
+    }
+  }
+
 }

@@ -10,6 +10,7 @@ All URIs are relative to *http://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**analyzeAudio**](DefaultApi.md#analyzeaudio) | **POST** /analyze | Analyze audio diary entry
+[**emojiCheckin**](DefaultApi.md#emojicheckin) | **POST** /emoji_checkin | Emoji mood check-in
 [**rootGet**](DefaultApi.md#rootget) | **GET** / | Root
 
 
@@ -54,6 +55,49 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: multipart/form-data
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **emojiCheckin**
+> AnalyzeResponseFastCheckin emojiCheckin(mood)
+
+Emoji mood check-in
+
+Generate recommendations and a quote based on selected mood.
+
+### Example
+```dart
+import 'package:soullog_api/api.dart';
+
+final api = SoullogApi().getDefaultApi();
+final String mood = mood_example; // String | 
+
+try {
+    final response = api.emojiCheckin(mood);
+    print(response);
+} catch on DioException (e) {
+    print('Exception when calling DefaultApi->emojiCheckin: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **mood** | **String**|  | 
+
+### Return type
+
+[**AnalyzeResponseFastCheckin**](AnalyzeResponseFastCheckin.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

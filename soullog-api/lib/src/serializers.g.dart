@@ -8,6 +8,8 @@ part of 'serializers.dart';
 
 Serializers _$serializers = (Serializers().toBuilder()
       ..add(AnalyzeResponse.serializer)
+      ..add(AnalyzeResponseFastCheckin.serializer)
+      ..add(AnalyzeResponseFastCheckinMoodEnum.serializer)
       ..add(AnalyzeResponseMoodEnum.serializer)
       ..add(ContextualInsight.serializer)
       ..add(HTTPValidationError.serializer)
@@ -15,6 +17,12 @@ Serializers _$serializers = (Serializers().toBuilder()
       ..add(ShortTermState.serializer)
       ..add(ValidationError.serializer)
       ..add(ValidationErrorLocInner.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => ListBuilder<String>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => ListBuilder<String>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => ListBuilder<String>())
@@ -30,11 +38,7 @@ Serializers _$serializers = (Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(
               BuiltList, const [const FullType(ValidationErrorLocInner)]),
-          () => ListBuilder<ValidationErrorLocInner>())
-      ..addBuilderFactory(
-          const FullType(
-              BuiltList, const [const FullType.nullable(JsonObject)]),
-          () => ListBuilder<JsonObject?>()))
+          () => ListBuilder<ValidationErrorLocInner>()))
     .build();
 
 // ignore_for_file: deprecated_member_use_from_same_package,type=lint

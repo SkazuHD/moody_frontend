@@ -3,31 +3,25 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:soullog_api/src/model/persona.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'analyze_response.g.dart';
+part 'analyze_response_fast_checkin.g.dart';
 
-/// AnalyzeResponse
+/// AnalyzeResponseFastCheckin
 ///
 /// Properties:
 /// * [mood]
-/// * [transcription] - Transcription of the diary entry.
 /// * [recommendations] - Suggestions for improving mood or well-being.
 /// * [quote] - A random quote related to the mood.
-/// * [personality] - Updated Personality traits and insights derived from the diary entry.
 @BuiltValue()
-abstract class AnalyzeResponse
-    implements Built<AnalyzeResponse, AnalyzeResponseBuilder> {
+abstract class AnalyzeResponseFastCheckin
+    implements
+        Built<AnalyzeResponseFastCheckin, AnalyzeResponseFastCheckinBuilder> {
   @BuiltValueField(wireName: r'mood')
-  AnalyzeResponseMoodEnum get mood;
+  AnalyzeResponseFastCheckinMoodEnum get mood;
   // enum moodEnum {  happy,  sad,  calm,  fearful,  angry,  disgust,  neutral,  surprised,  };
-
-  /// Transcription of the diary entry.
-  @BuiltValueField(wireName: r'transcription')
-  String get transcription;
 
   /// Suggestions for improving mood or well-being.
   @BuiltValueField(wireName: r'recommendations')
@@ -37,45 +31,40 @@ abstract class AnalyzeResponse
   @BuiltValueField(wireName: r'quote')
   String get quote;
 
-  /// Updated Personality traits and insights derived from the diary entry.
-  @BuiltValueField(wireName: r'personality')
-  Persona get personality;
+  AnalyzeResponseFastCheckin._();
 
-  AnalyzeResponse._();
-
-  factory AnalyzeResponse([void updates(AnalyzeResponseBuilder b)]) =
-      _$AnalyzeResponse;
+  factory AnalyzeResponseFastCheckin(
+          [void updates(AnalyzeResponseFastCheckinBuilder b)]) =
+      _$AnalyzeResponseFastCheckin;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(AnalyzeResponseBuilder b) => b;
+  static void _defaults(AnalyzeResponseFastCheckinBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<AnalyzeResponse> get serializer =>
-      _$AnalyzeResponseSerializer();
+  static Serializer<AnalyzeResponseFastCheckin> get serializer =>
+      _$AnalyzeResponseFastCheckinSerializer();
 }
 
-class _$AnalyzeResponseSerializer
-    implements PrimitiveSerializer<AnalyzeResponse> {
+class _$AnalyzeResponseFastCheckinSerializer
+    implements PrimitiveSerializer<AnalyzeResponseFastCheckin> {
   @override
-  final Iterable<Type> types = const [AnalyzeResponse, _$AnalyzeResponse];
+  final Iterable<Type> types = const [
+    AnalyzeResponseFastCheckin,
+    _$AnalyzeResponseFastCheckin
+  ];
 
   @override
-  final String wireName = r'AnalyzeResponse';
+  final String wireName = r'AnalyzeResponseFastCheckin';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    AnalyzeResponse object, {
+    AnalyzeResponseFastCheckin object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
     yield r'mood';
     yield serializers.serialize(
       object.mood,
-      specifiedType: const FullType(AnalyzeResponseMoodEnum),
-    );
-    yield r'transcription';
-    yield serializers.serialize(
-      object.transcription,
-      specifiedType: const FullType(String),
+      specifiedType: const FullType(AnalyzeResponseFastCheckinMoodEnum),
     );
     yield r'recommendations';
     yield serializers.serialize(
@@ -87,17 +76,12 @@ class _$AnalyzeResponseSerializer
       object.quote,
       specifiedType: const FullType(String),
     );
-    yield r'personality';
-    yield serializers.serialize(
-      object.personality,
-      specifiedType: const FullType(Persona),
-    );
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    AnalyzeResponse object, {
+    AnalyzeResponseFastCheckin object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object,
@@ -110,7 +94,7 @@ class _$AnalyzeResponseSerializer
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required AnalyzeResponseBuilder result,
+    required AnalyzeResponseFastCheckinBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
@@ -120,16 +104,9 @@ class _$AnalyzeResponseSerializer
         case r'mood':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(AnalyzeResponseMoodEnum),
-          ) as AnalyzeResponseMoodEnum;
+            specifiedType: const FullType(AnalyzeResponseFastCheckinMoodEnum),
+          ) as AnalyzeResponseFastCheckinMoodEnum;
           result.mood = valueDes;
-          break;
-        case r'transcription':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.transcription = valueDes;
           break;
         case r'recommendations':
           final valueDes = serializers.deserialize(
@@ -145,13 +122,6 @@ class _$AnalyzeResponseSerializer
           ) as String;
           result.quote = valueDes;
           break;
-        case r'personality':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(Persona),
-          ) as Persona;
-          result.personality.replace(valueDes);
-          break;
         default:
           unhandled.add(key);
           unhandled.add(value);
@@ -161,12 +131,12 @@ class _$AnalyzeResponseSerializer
   }
 
   @override
-  AnalyzeResponse deserialize(
+  AnalyzeResponseFastCheckin deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = AnalyzeResponseBuilder();
+    final result = AnalyzeResponseFastCheckinBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(
@@ -181,35 +151,39 @@ class _$AnalyzeResponseSerializer
   }
 }
 
-class AnalyzeResponseMoodEnum extends EnumClass {
+class AnalyzeResponseFastCheckinMoodEnum extends EnumClass {
   @BuiltValueEnumConst(wireName: r'happy')
-  static const AnalyzeResponseMoodEnum happy = _$analyzeResponseMoodEnum_happy;
+  static const AnalyzeResponseFastCheckinMoodEnum happy =
+      _$analyzeResponseFastCheckinMoodEnum_happy;
   @BuiltValueEnumConst(wireName: r'sad')
-  static const AnalyzeResponseMoodEnum sad = _$analyzeResponseMoodEnum_sad;
+  static const AnalyzeResponseFastCheckinMoodEnum sad =
+      _$analyzeResponseFastCheckinMoodEnum_sad;
   @BuiltValueEnumConst(wireName: r'calm')
-  static const AnalyzeResponseMoodEnum calm = _$analyzeResponseMoodEnum_calm;
+  static const AnalyzeResponseFastCheckinMoodEnum calm =
+      _$analyzeResponseFastCheckinMoodEnum_calm;
   @BuiltValueEnumConst(wireName: r'fearful')
-  static const AnalyzeResponseMoodEnum fearful =
-      _$analyzeResponseMoodEnum_fearful;
+  static const AnalyzeResponseFastCheckinMoodEnum fearful =
+      _$analyzeResponseFastCheckinMoodEnum_fearful;
   @BuiltValueEnumConst(wireName: r'angry')
-  static const AnalyzeResponseMoodEnum angry = _$analyzeResponseMoodEnum_angry;
+  static const AnalyzeResponseFastCheckinMoodEnum angry =
+      _$analyzeResponseFastCheckinMoodEnum_angry;
   @BuiltValueEnumConst(wireName: r'disgust')
-  static const AnalyzeResponseMoodEnum disgust =
-      _$analyzeResponseMoodEnum_disgust;
+  static const AnalyzeResponseFastCheckinMoodEnum disgust =
+      _$analyzeResponseFastCheckinMoodEnum_disgust;
   @BuiltValueEnumConst(wireName: r'neutral')
-  static const AnalyzeResponseMoodEnum neutral =
-      _$analyzeResponseMoodEnum_neutral;
+  static const AnalyzeResponseFastCheckinMoodEnum neutral =
+      _$analyzeResponseFastCheckinMoodEnum_neutral;
   @BuiltValueEnumConst(wireName: r'surprised')
-  static const AnalyzeResponseMoodEnum surprised =
-      _$analyzeResponseMoodEnum_surprised;
+  static const AnalyzeResponseFastCheckinMoodEnum surprised =
+      _$analyzeResponseFastCheckinMoodEnum_surprised;
 
-  static Serializer<AnalyzeResponseMoodEnum> get serializer =>
-      _$analyzeResponseMoodEnumSerializer;
+  static Serializer<AnalyzeResponseFastCheckinMoodEnum> get serializer =>
+      _$analyzeResponseFastCheckinMoodEnumSerializer;
 
-  const AnalyzeResponseMoodEnum._(String name) : super(name);
+  const AnalyzeResponseFastCheckinMoodEnum._(String name) : super(name);
 
-  static BuiltSet<AnalyzeResponseMoodEnum> get values =>
-      _$analyzeResponseMoodEnumValues;
-  static AnalyzeResponseMoodEnum valueOf(String name) =>
-      _$analyzeResponseMoodEnumValueOf(name);
+  static BuiltSet<AnalyzeResponseFastCheckinMoodEnum> get values =>
+      _$analyzeResponseFastCheckinMoodEnumValues;
+  static AnalyzeResponseFastCheckinMoodEnum valueOf(String name) =>
+      _$analyzeResponseFastCheckinMoodEnumValueOf(name);
 }

@@ -165,7 +165,6 @@ class RecordsDB {
       if (kDebugMode) {
         print('Inserted record with id: $res');
       }
-      // Automatically create today's PlotCard if mood is set and record is from today
       return res;
     });
   }
