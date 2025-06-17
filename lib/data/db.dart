@@ -120,7 +120,6 @@ class RecordsDB {
 
   Future<void> loadTodaysPlotCard() async {
     final store = await SharedPreferences.getInstance();
-    store.remove('todaysPlotCard');
     final todaysCardString = store.getString('todaysPlotCard');
     if (todaysCardString != null) {
       var date = DateTime.now();
