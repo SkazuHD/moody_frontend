@@ -1,7 +1,7 @@
 import 'dart:developer';
+import 'dart:convert';
 
 import 'package:Soullog/data/models/plotCard.dart';
-import 'dart:convert';
 
 class Recording {
   final int? id;
@@ -32,7 +32,7 @@ class Recording {
       'transcription': transcription,
       'mood': mood,
       'isFastCheckIn': isFastCheckIn ? 1 : 0,
-      'plotCard': plotCard?.toJson().toString(),
+      'plotCard': plotCard != null ? jsonEncode(plotCard) : null,
     };
   }
 
@@ -75,13 +75,20 @@ class Recording {
   }
 
   factory Recording.fromJson(Map<String, dynamic> json) {
-
     var plotCardJson = json['plotCard'];
     PlotCard? plotCard;
     if (plotCardJson != null) {
-      log('PlotCardJson: $plotCardJson');
-      final Map<String, dynamic> map = jsonDecode(plotCardJson);
-      plotCard = PlotCard.fromMap(map);
+      if (plotCardJson is String) {
+        try {
+          plotCardJson = jsonDecode(plotCardJson);
+        } catch (e) {
+          log('Fehler beim Parsen von plotCardJson: $e');
+          plotCardJson = null;
+        }
+      }
+      if (plotCardJson != null) {
+        plotCard = PlotCard.fromMap(plotCardJson);
+      }
     }
 
     return Recording(
@@ -95,5 +102,4 @@ class Recording {
       plotCard: plotCard,
     );
   }
-
 }
