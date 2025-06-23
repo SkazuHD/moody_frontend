@@ -24,6 +24,7 @@ class _RecordState extends State<Record> {
     setState(() {
       newRecording = null;
       isAnalyzing = true;
+      transcriptionController.text = '';
     });
   }
 
@@ -31,6 +32,9 @@ class _RecordState extends State<Record> {
     setState(() {
       newRecording = recording;
       isAnalyzing = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      transcriptionController.text = recording.transcription ?? '';
     });
   }
 
@@ -71,12 +75,18 @@ class _RecordState extends State<Record> {
                   ),
 
                   SizedBox(height: 20),
-                  ObscuredTextField(controller: transcriptionController),
+                  ObscuredTextField(
+                    key: ValueKey(transcriptionController),
+                    controller: transcriptionController,
+                  ),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed:
                         (newRecording != null && !isAnalyzing)
                             ? () async {
+                              newRecording = newRecording!.copyWith(
+                                transcription: transcriptionController.text,
+                              );
                               var res = await showDialog(
                                 context: context,
                                 builder: (context) {

@@ -28,6 +28,26 @@ class Recording {
     };
   }
 
+  Recording copyWith({
+    int? id,
+    String? filePath,
+    int? duration,
+    DateTime? createdAt,
+    String? transcription,
+    String? mood,
+    bool? isFastCheckIn,
+  }) {
+    return Recording(
+      id: id ?? this.id,
+      filePath: filePath ?? this.filePath,
+      duration: duration ?? this.duration,
+      createdAt: createdAt ?? this.createdAt,
+      transcription: transcription ?? this.transcription,
+      mood: mood ?? this.mood,
+      isFastCheckIn: isFastCheckIn ?? this.isFastCheckIn,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
