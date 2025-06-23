@@ -63,23 +63,26 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
         final response = await apiService.analyzeRecording(newRecording);
         print('API-Answer: $response');
 
+        var todaysPlotCard = PlotCard(
+          mood: response.mood.toString(),
+          quote: response.quote,
+          recommendation:
+          response.recommendations.map((e) => e.toString()).toList(),
+          date: DateTime.now(),
+        );
+
+
         final analyzedRecording = Recording(
           filePath: newRecording.filePath,
           duration: newRecording.duration,
           createdAt: newRecording.createdAt,
           transcription: response.transcription,
-          mood: response.mood?.name,
+          mood: response.mood.toString(),
+          plotCard: todaysPlotCard,
         );
 
         widget.onRecordingComplete(analyzedRecording);
 
-        var todaysPlotCard = PlotCard(
-          mood: response.mood.toString(),
-          quote: response.quote,
-          recommendation:
-              response.recommendations.map((e) => e.toString()).toList(),
-          date: DateTime.now(),
-        );
 
         var db = await RecordsDB.getInstance();
         db.createTodaysPlotCard(todaysPlotCard);

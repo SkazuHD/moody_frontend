@@ -1,3 +1,8 @@
+import 'dart:developer';
+
+import 'package:Soullog/data/models/plotCard.dart';
+import 'dart:convert';
+
 class Recording {
   final int? id;
   final String? filePath;
@@ -6,6 +11,7 @@ class Recording {
   String? transcription;
   String? mood;
   final bool isFastCheckIn;
+  PlotCard? plotCard;
 
   Recording({
     this.id,
@@ -15,6 +21,7 @@ class Recording {
     this.transcription,
     this.mood,
     this.isFastCheckIn = false,
+    this.plotCard,
   });
 
   Map<String, dynamic> toDbValuesMap() {
@@ -25,6 +32,7 @@ class Recording {
       'transcription': transcription,
       'mood': mood,
       'isFastCheckIn': isFastCheckIn ? 1 : 0,
+      'plotCard': plotCard?.toJson().toString(),
     };
   }
 
@@ -57,6 +65,7 @@ class Recording {
       'transcription': transcription,
       'mood': mood,
       'isFastCheckIn': isFastCheckIn ? 1 : 0,
+      'plotCard': plotCard?.toJson(),
     };
   }
 
@@ -66,6 +75,15 @@ class Recording {
   }
 
   factory Recording.fromJson(Map<String, dynamic> json) {
+
+    var plotCardJson = json['plotCard'];
+    PlotCard? plotCard;
+    if (plotCardJson != null) {
+      log('PlotCardJson: $plotCardJson');
+      final Map<String, dynamic> map = jsonDecode(plotCardJson);
+      plotCard = PlotCard.fromMap(map);
+    }
+
     return Recording(
       id: json['id'] as int?,
       filePath: json['filePath'],
@@ -74,6 +92,8 @@ class Recording {
       transcription: json['transcription'] as String?,
       mood: json['mood'] as String?,
       isFastCheckIn: json['isFastCheckIn'] == 1,
+      plotCard: plotCard,
     );
   }
+
 }

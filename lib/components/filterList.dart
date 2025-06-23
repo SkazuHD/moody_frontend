@@ -1,6 +1,7 @@
 import 'package:Soullog/components/noDataView.dart';
 import 'package:Soullog/views/recordList/FastCheckInCard.dart';
 import 'package:Soullog/views/recordList/RecordCard.dart';
+import 'package:Soullog/views/recordList/RecordListDialog.dart';
 import 'package:flutter/material.dart';
 
 import '../data/db.dart';
@@ -164,6 +165,15 @@ class _FilterListState extends State<FilterList> {
                               }
                               _toggleSelectionMode();
                             });
+                          },
+                          onTap: () async {
+                            var res = await showDialog<bool>(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (context) {
+                                return RecordListDialog(recording: recording);
+                              },
+                            );
                           },
                           child:
                               _isSelectionMode

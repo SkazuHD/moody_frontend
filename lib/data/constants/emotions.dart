@@ -43,6 +43,15 @@ enum Emotion {
       return 0;
     }
   }
+
+  static Emotion getEmotionFromLabel(String? label) {
+    if (label == null) return Emotion.neutral;
+    try {
+      return Emotion.values.firstWhere((e) => e.label.toLowerCase() == label.toLowerCase());
+    } catch (_) {
+      return Emotion.neutral;
+    }
+  }
 }
 
 class EmotionMetadata {
