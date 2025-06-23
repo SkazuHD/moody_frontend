@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 
-class SwitchTranscription extends StatefulWidget {
-  const SwitchTranscription({super.key});
+class SwitchTranscription extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
-  @override
-  State<SwitchTranscription> createState() => _SwitchState();
-}
-
-class _SwitchState extends State<SwitchTranscription> {
-  bool light = false;
+  const SwitchTranscription({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Switch(
-      // This bool value toggles the switch.
-      value: light,
-      activeColor: Colors.red,
-      onChanged: (bool value) {
-        setState(() {
-          light = value;
-        });
-      },
+      value: value,
+      activeColor: Colors.white,
+      onChanged: onChanged,
     );
   }
 }

@@ -19,6 +19,7 @@ class _RecordState extends State<Record> {
   final TextEditingController transcriptionController = TextEditingController();
   Recording? newRecording;
   bool isAnalyzing = false;
+  bool isTranscriptionActive = true;
 
   void onRecordingStarted() {
     setState(() {
@@ -70,22 +71,41 @@ class _RecordState extends State<Record> {
                         'Deactivate Transcription',
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      const Center(child: SwitchTranscription()),
+                      Center(
+                        child: SwitchTranscription(
+                          value: isTranscriptionActive,
+                          onChanged: (val) {
+                            setState(() {
+                              isTranscriptionActive = val;
+                              if (!val) {
+                                transcriptionController.text = '';
+                              }
+                            });
+                          },
+                        ),
+                      ),
                     ],
                   ),
 
                   SizedBox(height: 20),
-                  ObscuredTextField(
-                    key: ValueKey(transcriptionController),
-                    controller: transcriptionController,
-                  ),
+
+                  if (isTranscriptionActive)
+                    ObscuredTextField(
+                      key: ValueKey(transcriptionController),
+                      controller: transcriptionController,
+                    ),
+
                   SizedBox(height: 20),
+
                   ElevatedButton(
                     onPressed:
                         (newRecording != null && !isAnalyzing)
                             ? () async {
                               newRecording = newRecording!.copyWith(
-                                transcription: transcriptionController.text,
+                                transcription:
+                                    isTranscriptionActive
+                                        ? transcriptionController.text
+                                        : '',
                               );
                               var res = await showDialog(
                                 context: context,
