@@ -1,4 +1,5 @@
 import 'package:Soullog/data/models/record.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter/material.dart';
 
 import '/components/popupViewSave.dart';
@@ -20,6 +21,19 @@ class _RecordState extends State<Record> {
   Recording? newRecording;
   bool isAnalyzing = false;
   bool isTranscriptionActive = true;
+  late final RecorderController recorderController;
+
+  @override
+  void initState() {
+    super.initState();
+    recorderController = RecorderController();
+  }
+
+  @override
+  void dispose() {
+    recorderController.dispose();
+    super.dispose();
+  }
 
   void onRecordingStarted() {
     setState(() {
@@ -53,7 +67,20 @@ class _RecordState extends State<Record> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 80),
+          Center(
+            child: AudioWaveforms(
+              enableGesture: false,
+              size: Size(MediaQuery.of(context).size.width * 0.55, 120),
+              recorderController: recorderController,
+              waveStyle: const WaveStyle(
+                waveColor: Colors.black,
+                extendWaveform: true,
+                showMiddleLine: false,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           Expanded(
             child: Center(
               child: Column(
@@ -63,6 +90,7 @@ class _RecordState extends State<Record> {
                     controller: transcriptionController,
                     onRecordingComplete: setNewRecording,
                     onRecordingStarted: onRecordingStarted,
+                    recorderController: recorderController,
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -77,9 +105,6 @@ class _RecordState extends State<Record> {
                           onChanged: (val) {
                             setState(() {
                               isTranscriptionActive = val;
-                              if (!val) {
-                                transcriptionController.text = '';
-                              }
                             });
                           },
                         ),
