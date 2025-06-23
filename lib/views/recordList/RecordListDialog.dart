@@ -36,7 +36,9 @@ class RecordListDialog extends StatelessWidget {
             style: h2Black,
           ),
           const SizedBox(height: 24),
+          if (recording.plotCard != null) ...[
           Text(recording.plotCard!.quote.toString() ?? "", style: bodyBlack.copyWith(fontStyle: FontStyle.italic),textAlign: TextAlign.center),
+          ],
           const SizedBox(height: 24),
           if (recording.transcription != null) ...[
             Text("Transcription:", style: h2Black),
