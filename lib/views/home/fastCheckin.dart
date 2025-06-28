@@ -34,18 +34,21 @@ class _FastcheckinState extends State<Fastcheckin> {
       final selectedMood = emotion.label;
       final apiResponse = await apiService.sendFastCheckIn(selectedMood);
 
-      final db = await RecordsDB.getInstance();
-      await db.insertRecord(
-        Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood, isFastCheckIn: true),
-      );
-
       PlotCard todaysPlotCard = PlotCard(
         mood: selectedMood,
         quote: apiResponse.quote.toString() ?? '',
         recommendation:
-            apiResponse.recommendations.isNotEmpty ? apiResponse.recommendations.map((e) => e.toString()).toList() : [],
+        apiResponse.recommendations.isNotEmpty ? apiResponse.recommendations.map((e) => e.toString()).toList() : [],
         date: DateTime.now(),
       );
+
+      final db = await RecordsDB.getInstance();
+      await db.insertRecord(
+        Recording(createdAt: DateTime.now(), transcription: null, mood: selectedMood, isFastCheckIn: true,
+          plotCard: todaysPlotCard,
+        ),
+      );
+
       await db.createTodaysPlotCard(todaysPlotCard);
 
       widget.onDataChanged();

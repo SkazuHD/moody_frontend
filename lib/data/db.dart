@@ -46,7 +46,7 @@ class RecordsDB {
 
   Future<void> _init() async {
     final String initScript =
-        'CREATE TABLE $_tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT, isFastCheckIn BOOLEAN DEFAULT 0)';
+        'CREATE TABLE $_tableName(id INTEGER PRIMARY KEY, filePath TEXT, duration INTEGER, createdAt TEXT, transcription TEXT, mood TEXT, isFastCheckIn BOOLEAN DEFAULT 0, plotCard TEXT)';
     _db = await openDatabase(
       join(await getDatabasesPath(), _databaseName),
       version: 1, // The Target version for the database
@@ -124,7 +124,9 @@ class RecordsDB {
     if (todaysCardString != null) {
       var date = DateTime.now();
       try {
+        log(todaysCardString);
         final Map<String, dynamic> map = jsonDecode(todaysCardString);
+
         final todaysCard = PlotCard.fromMap(map);
         var plotcardDate = todaysCard.date;
         if (date.day != plotcardDate.day || date.month != plotcardDate.month || date.year != plotcardDate.year) {

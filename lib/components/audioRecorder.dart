@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:Soullog/data/models/record.dart';
@@ -63,26 +64,27 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
         final response = await apiService.analyzeRecording(newRecording);
         print('API-Answer: $response');
 
-        final analyzedRecording = Recording(
-          filePath: newRecording.filePath,
-          duration: newRecording.duration,
-          createdAt: newRecording.createdAt,
-          transcription: response.transcription,
-          mood: response.mood?.name,
-        );
-
-        widget.onRecordingComplete(analyzedRecording);
-
         var todaysPlotCard = PlotCard(
           mood: response.mood.toString(),
           quote: response.quote,
-          recommendation:
-              response.recommendations.map((e) => e.toString()).toList(),
+          recommendation: response.recommendations.map((e) => e.toString()).toList(),
           date: DateTime.now(),
         );
 
         var db = await RecordsDB.getInstance();
         db.createTodaysPlotCard(todaysPlotCard);
+
+        final analyzedRecording = Recording(
+          filePath: newRecording.filePath,
+          duration: newRecording.duration,
+          createdAt: newRecording.createdAt,
+          transcription: response.transcription,
+          mood: response.mood.toString(),
+          plotCard: todaysPlotCard,
+        );
+        log('Recording completed: ${analyzedRecording.plotCard!.quote}');
+
+        widget.onRecordingComplete(analyzedRecording);
 
         setState(() {
           widget.controller.clear();
@@ -99,8 +101,7 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
         if (!await audioDirectory.exists()) {
           await audioDirectory.create(recursive: true);
         }
-        final filePath =
-            '${audioDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
+        final filePath = '${audioDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
 
         await recorder.start(const RecordConfig(), path: filePath);
         await widget.recorderController.record();
@@ -117,9 +118,7 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
           });
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Microphone permission denied')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Microphone permission denied')));
       }
     }
   }
@@ -172,28 +171,18 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
                             alignment: Alignment.center,
                             child: Text(
                               _formattedTime,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                           )
                           : Container(
                             width: 90,
                             height: 90,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
+                            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                             alignment: Alignment.center,
                             child: Container(
                               width: 30,
                               height: 30,
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
+                              decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                             ),
                           ),
                 ),
