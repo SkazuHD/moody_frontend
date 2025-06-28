@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:Soullog/data/models/record.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +47,7 @@ class _RecordState extends State<Record> {
 
   void setNewRecording(Recording recording) {
     setState(() {
+      log("New recording set: ${recording}");
       newRecording = recording;
       isAnalyzing = false;
     });
@@ -61,23 +64,14 @@ class _RecordState extends State<Record> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 60),
-          Center(
-            child: Text(
-              'What’s on your mind',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ),
+          Center(child: Text('What’s on your mind', style: Theme.of(context).textTheme.bodyLarge)),
           const SizedBox(height: 80),
           Center(
             child: AudioWaveforms(
               enableGesture: false,
               size: Size(MediaQuery.of(context).size.width * 0.55, 120),
               recorderController: recorderController,
-              waveStyle: const WaveStyle(
-                waveColor: Colors.black,
-                extendWaveform: true,
-                showMiddleLine: false,
-              ),
+              waveStyle: const WaveStyle(waveColor: Colors.black, extendWaveform: true, showMiddleLine: false),
             ),
           ),
           const SizedBox(height: 10),
@@ -95,10 +89,7 @@ class _RecordState extends State<Record> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Deactivate Transcription',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
+                      Text('Deactivate Transcription', style: Theme.of(context).textTheme.bodyLarge),
                       Center(
                         child: SwitchTranscription(
                           value: isTranscriptionActive,
@@ -115,10 +106,7 @@ class _RecordState extends State<Record> {
                   SizedBox(height: 20),
 
                   if (isTranscriptionActive)
-                    ObscuredTextField(
-                      key: ValueKey(transcriptionController),
-                      controller: transcriptionController,
-                    ),
+                    ObscuredTextField(key: ValueKey(transcriptionController), controller: transcriptionController),
 
                   SizedBox(height: 20),
 
@@ -127,35 +115,25 @@ class _RecordState extends State<Record> {
                         (newRecording != null && !isAnalyzing)
                             ? () async {
                               newRecording = newRecording!.copyWith(
-                                transcription:
-                                    isTranscriptionActive
-                                        ? transcriptionController.text
-                                        : '',
+                                transcription: isTranscriptionActive ? transcriptionController.text : '',
                               );
                               var res = await showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return PopupViewSave(
-                                    recording: newRecording!,
-                                  );
+                                  return PopupViewSave(recording: newRecording!);
                                 },
                               );
                               if (res == true) {
                                 var db = await RecordsDB.getInstance();
+                                log("Saving recording: ${newRecording!}");
                                 await db.insertRecord(newRecording!);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Recording saved: ${newRecording!.filePath}',
-                                    ),
-                                  ),
-                                );
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(SnackBar(content: Text('Recording saved: ${newRecording!.filePath}')));
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Recording not saved'),
-                                  ),
-                                );
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(const SnackBar(content: Text('Recording not saved')));
                               }
                             }
                             : null,

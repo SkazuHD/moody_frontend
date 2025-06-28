@@ -1,5 +1,5 @@
-import 'dart:developer';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:Soullog/data/models/plotCard.dart';
 
@@ -44,6 +44,7 @@ class Recording {
     String? transcription,
     String? mood,
     bool? isFastCheckIn,
+    PlotCard? plotCard,
   }) {
     return Recording(
       id: id ?? this.id,
@@ -53,6 +54,7 @@ class Recording {
       transcription: transcription ?? this.transcription,
       mood: mood ?? this.mood,
       isFastCheckIn: isFastCheckIn ?? this.isFastCheckIn,
+      plotCard: plotCard ?? this.plotCard,
     );
   }
 
@@ -71,7 +73,7 @@ class Recording {
 
   @override
   String toString() {
-    return 'Recording(filePath: $filePath, duration: $duration, createdAt: $createdAt, transcription: $transcription, mood: $mood)';
+    return 'Recording(filePath: $filePath, duration: $duration, createdAt: $createdAt, transcription: $transcription, mood: $mood, isFastCheckIn: $isFastCheckIn, plotCard: $plotCard)';
   }
 
   factory Recording.fromJson(Map<String, dynamic> json) {
