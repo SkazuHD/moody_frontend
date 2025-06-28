@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:Soullog/data/models/record.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -14,12 +15,14 @@ class AudioRecorderPlayer extends StatefulWidget {
   final TextEditingController controller;
   final void Function(Recording) onRecordingComplete;
   final VoidCallback? onRecordingStarted;
+  final RecorderController recorderController;
 
   const AudioRecorderPlayer({
     required this.controller,
     super.key,
     required this.onRecordingComplete,
     this.onRecordingStarted,
+    required this.recorderController,
   });
 
   @override
@@ -44,6 +47,7 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
   Future<void> toggleRecording() async {
     if (await recorder.isRecording()) {
       final path = await recorder.stop();
+      await widget.recorderController.stop();
       _timer?.cancel();
 
       if (path != null) {
@@ -99,6 +103,7 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
             '${audioDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
 
         await recorder.start(const RecordConfig(), path: filePath);
+        await widget.recorderController.record();
 
         _timer?.cancel();
         setState(() {
@@ -122,6 +127,7 @@ class _AudioRecorderPlayerState extends State<AudioRecorderPlayer> {
   Future<void> cancelRecording() async {
     if (await recorder.isRecording()) {
       await recorder.stop();
+      await widget.recorderController.stop();
     }
     _timer?.cancel();
     setState(() {

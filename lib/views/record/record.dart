@@ -1,4 +1,5 @@
 import 'package:Soullog/data/models/record.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter/material.dart';
 
 import '/components/popupViewSave.dart';
@@ -19,11 +20,26 @@ class _RecordState extends State<Record> {
   final TextEditingController transcriptionController = TextEditingController();
   Recording? newRecording;
   bool isAnalyzing = false;
+  bool isTranscriptionActive = true;
+  late final RecorderController recorderController;
+
+  @override
+  void initState() {
+    super.initState();
+    recorderController = RecorderController();
+  }
+
+  @override
+  void dispose() {
+    recorderController.dispose();
+    super.dispose();
+  }
 
   void onRecordingStarted() {
     setState(() {
       newRecording = null;
       isAnalyzing = true;
+      transcriptionController.text = '';
     });
   }
 
@@ -31,6 +47,9 @@ class _RecordState extends State<Record> {
     setState(() {
       newRecording = recording;
       isAnalyzing = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      transcriptionController.text = recording.transcription ?? '';
     });
   }
 
@@ -48,7 +67,20 @@ class _RecordState extends State<Record> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 80),
+          Center(
+            child: AudioWaveforms(
+              enableGesture: false,
+              size: Size(MediaQuery.of(context).size.width * 0.55, 120),
+              recorderController: recorderController,
+              waveStyle: const WaveStyle(
+                waveColor: Colors.black,
+                extendWaveform: true,
+                showMiddleLine: false,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           Expanded(
             child: Center(
               child: Column(
@@ -58,6 +90,7 @@ class _RecordState extends State<Record> {
                     controller: transcriptionController,
                     onRecordingComplete: setNewRecording,
                     onRecordingStarted: onRecordingStarted,
+                    recorderController: recorderController,
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -66,17 +99,39 @@ class _RecordState extends State<Record> {
                         'Deactivate Transcription',
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      const Center(child: SwitchTranscription()),
+                      Center(
+                        child: SwitchTranscription(
+                          value: isTranscriptionActive,
+                          onChanged: (val) {
+                            setState(() {
+                              isTranscriptionActive = val;
+                            });
+                          },
+                        ),
+                      ),
                     ],
                   ),
 
                   SizedBox(height: 20),
-                  ObscuredTextField(controller: transcriptionController),
+
+                  if (isTranscriptionActive)
+                    ObscuredTextField(
+                      key: ValueKey(transcriptionController),
+                      controller: transcriptionController,
+                    ),
+
                   SizedBox(height: 20),
+
                   ElevatedButton(
                     onPressed:
                         (newRecording != null && !isAnalyzing)
                             ? () async {
+                              newRecording = newRecording!.copyWith(
+                                transcription:
+                                    isTranscriptionActive
+                                        ? transcriptionController.text
+                                        : '',
+                              );
                               var res = await showDialog(
                                 context: context,
                                 builder: (context) {
